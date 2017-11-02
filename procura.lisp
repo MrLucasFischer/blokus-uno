@@ -6,5 +6,6 @@
 
 ;; Breadth First (Procura em Largura)
 (defun bfs (abertos sucessores)
+  "Função"
   (append (abertos sucessores))
 )

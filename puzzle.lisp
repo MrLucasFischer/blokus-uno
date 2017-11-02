@@ -1,14 +1,14 @@
 ;;;; puzzle.lisp
 ;;;; Disciplina de IA - 2017/2018
 ;;;; Projeto 1 - Blokus Uno
-;;;; Autor: Andreia Pereira (nº 150221021) e Lucas Fischer (nº 140221004)
-;;;; Funções do domínio do problema
+;;;; Autor: Andreia Pereira (nï¿½ 150221021) e Lucas Fischer (nï¿½ 140221004)
+;;;; Funï¿½ï¿½es do domï¿½nio do problema
 
 ;;;Tabuleiros
 
 ;;tabuleiro-vazio
 (defun tabuleiro-vazio ()
-  "Função que retorna um tabuleiro vazio"
+  "Funï¿½ï¿½o que retorna um tabuleiro vazio"
   (list 
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -32,7 +32,7 @@
 
 ;;Cria-no
 (defun cria-no (estado &optional (profundidade 0) (heuristica nil) (no-pai nil))
-  "Cria uma lista que representa um nó que tem um estado. Este nó pode também ter uma profunidade, heuristica e um nó que o gerou"
+  "Cria uma lista que representa um nï¿½ que tem um estado. Este nï¿½ pode tambï¿½m ter uma profunidade, heuristica e um nï¿½ que o gerou"
   (list estado profundidade heuristica no-pai)
 )
 
@@ -41,76 +41,162 @@
 
 ;;get-estado-no
 (defun get-estado-no (no)
-  "Funcao que retorna o estado de um nó"
+  "Funcao que retorna o estado de um nï¿½"
   (first no)
 )
 
 ;;get-profundidade-no 
 (defun get-profundidade-no (no)
-  "Função que retorna a profundidade de um nó"
+  "Funï¿½ï¿½o que retorna a profundidade de um nï¿½"
   (second no)
 )
 
 ;;get-heuristica-no
 (defun get-heuristica-no (no)
-  "Função que retorna a heuristica de um nó"
+  "Funï¿½ï¿½o que retorna a heuristica de um nï¿½"
   (third no)
 )
 
 ;;get-pai-no
 (defun get-pai-no (no)
-  "Função que retorna o nó gerador de um determinado nó"
+  "Funï¿½ï¿½o que retorna o nï¿½ gerador de um determinado nï¿½"
   (fourth no)
 )
 
-;;; Função f(n) = g(n) + h(n)
+;;; Funï¿½ï¿½o f(n) = g(n) + h(n)
 
 ;;custo
 (defun custo (no)
-  "Implementa a função do custo de um nó, f(n)"
+  "Implementa a funï¿½ï¿½o do custo de um nï¿½, f(n)"
   (+ (get-profundidade-no no) (get-heuristica-no no))
 )
 
-;;;Funções auxiliares
-;;;Verificar se pode-se colocar a peça por exemplo
+;;;Funï¿½ï¿½es auxiliares
+;;inserir-peca-pequena-na-coluna
 (defun inserir-peca-pequena-na-coluna (coluna lista)
-  "Permite inserir a peça mais pequena numa determinada coluna da lista passada como argumento"
+  "Permite inserir a peï¿½a mais pequena numa determinada coluna da lista passada como argumento"
   (cond 
    ((null lista) nil)
 
    ((= coluna 1) (cons 1 (rest lista)))
 
-   (T (cons (first lista) (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))))
+   (t 
+    (cons 
+      (first lista) 
+      (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))
+    )
+   )
 
   )
-
-
 )
 
+(defun construir-listas (elem1 elem2 listas)
+  "Funï¿½ï¿½o auxiliar da funï¿½ï¿½o inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabeï¿½a das listas novamente com as mesmas de forma a manter a integridade das listas"
+  (list
+   (cons elem1 (first listas))
+   (cons elem2 (second listas))
+  )
+)
 
+;;inserir-peca-media-na-coluna
+(defun inserir-peca-media-na-coluna (coluna linhas)
+  "Funï¿½ï¿½o que permite inserir uma peï¿½a mï¿½dia numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da peï¿½a"
+  (let ((linha-cima (first linhas)) (linha-baixo (second linhas)))
+    (cond
+     ((null linha-cima) nil)
+
+     ((= coluna 1) 
+      (list
+       (append '(1 1) (rest (rest linha-cima))) ;;cddr
+       (append '(1 1) (rest (rest linha-baixo))) ;;cddr
+       )
+      )
+
+     (t
+      (construir-listas
+        (first linha-cima)
+        (first linha-baixo)
+        (inserir-peca-media-na-coluna 
+          (1- coluna)
+          (list
+            (rest linha-cima)
+            (rest linha-baixo)
+          )
+        )
+      )
+     )
+    )
+  )
+)
+
+; (t
+;       (append
+;        (list
+;         (first linha-cima)
+;         (first linha-baixo)
+;        )
+;        (inserir-peca-media-na-coluna 
+;         (1- coluna)
+;         (list
+;          (rest linha-cima)
+;          (rest linha-baixo)
+;         )
+;        )
+;       )
+;      )
 
 
 ;;; Operadores
 
-;;inserir a peça mais pequenina
+;;inserir a peï¿½a mais pequenina
+;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
 (defun inserir-peca-pequena (linha coluna tabuleiro)
-  "Função que permite inserir a peça mais pequena numa determinada linha e coluna. A linha e coluna são argumentos numéricos"
+  "Funï¿½ï¿½o que permite inserir a peï¿½a mais pequena numa determinada linha e coluna. A linha e coluna sï¿½o argumentos numï¿½ricos"
   (cond
    ((null tabuleiro) nil)
 
    ((= linha 1) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
 
-   (t (cons (first tabuleiro) (inserir-peca-pequena (1- linha) coluna (rest tabuleiro))))
+   (t 
+    (cons 
+     (first tabuleiro) 
+     (inserir-peca-pequena (1- linha) coluna (rest tabuleiro)))
+    )
 
   )
 )
 
 
 
-;;inserir a peça media
-;;inserir a peça que parece um mais 
-;;será que há mais operadores ?
+;;inserir a peï¿½a media
+;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
+(defun inserir-peca-media (linha coluna tabuleiro)
+  "Funï¿½ï¿½o que permite inserir a peï¿½a mï¿½dia numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sï¿½o argumentos numï¿½ricos"
+  (cond 
+   ((null tabuleiro) nil)
+
+   ((= linha 14) nil) ;;Nï¿½o pode inserir na ultima linha,sï¿½ na penultima
+
+   ((= linha 1) 
+    (append 
+     (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro))) 
+     (rest tabuleiro)
+    )
+   )
+
+   (t
+    (cons 
+     (first tabuleiro) 
+     (inserir-peca-media (1- linha) coluna (rest tabuleiro))
+    )
+   )
+
+  )
+)
+
+;;inserir a peï¿½a que parece um mais 
+;;serï¿½ que hï¿½ mais operadores ?
 
 ;;; Heuristicas
 
-;;; Solução
+;;; Soluï¿½ï¿½o
