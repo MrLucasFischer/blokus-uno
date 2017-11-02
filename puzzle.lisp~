@@ -41,7 +41,7 @@
 
 ;;get-estado-no
 (defun get-estado-no (no)
-  "Funcao que retorna o estado de um n�"
+  "Fun��o que retorna o estado de um n�"
   (first no)
 )
 
@@ -72,7 +72,7 @@
 )
 
 ;;;Fun��es auxiliares
-;;;Verificar se pode-se colocar a pe�a por exemplo
+;;inserir-peca-pequena-na-coluna
 (defun inserir-peca-pequena-na-coluna (coluna lista)
   "Permite inserir a pe�a mais pequena numa determinada coluna da lista passada como argumento"
   (cond 
@@ -80,7 +80,7 @@
 
    ((= coluna 1) (cons 1 (rest lista)))
 
-   (T 
+   (t 
     (cons 
       (first lista) 
       (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))
@@ -88,31 +88,94 @@
    )
 
   )
-
-
 )
 
+;;construir-listas
+(defun construir-listas (elem1 elem2 listas)
+  "Fun��o auxiliar da fun��o inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabe�a das listas novamente com as mesmas de forma a manter a integridade das listas"
+  (list
+   (cons elem1 (first listas))
+   (cons elem2 (second listas))
+  )
+)
 
+;;inserir-peca-media-na-coluna
+(defun inserir-peca-media-na-coluna (coluna linhas)
+  "Fun��o que permite inserir uma pe�aa m�dia numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da pe�aa"
+  (let ((linha-cima (first linhas)) (linha-baixo (second linhas)))
+    (cond
+     ((null linha-cima) nil)
 
+     ((= coluna 1) 
+      (list
+       (append '(1 1) (rest (rest linha-cima))) ;;cddr
+       (append '(1 1) (rest (rest linha-baixo))) ;;cddr
+       )
+      )
+
+     (t
+      (construir-listas
+        (first linha-cima)
+        (first linha-baixo)
+        (inserir-peca-media-na-coluna 
+          (1- coluna)
+          (list
+            (rest linha-cima)
+            (rest linha-baixo)
+          )
+        )
+      )
+     )
+    )
+  )
+)
 
 ;;; Operadores
 
-;;inserir a pe�a mais pequenina
+;;inserir-peca-pequena
+;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
 (defun inserir-peca-pequena (linha coluna tabuleiro)
-  "Fun��o que permite inserir a pe�a mais pequena numa determinada linha e coluna. A linha e coluna s�o argumentos num�ricos"
+  "Fun��o que permite inserir a pe�aa mais pequena numa determinada linha e coluna. A linha e coluna s�o argumentos num�ricos"
   (cond
    ((null tabuleiro) nil)
 
    ((= linha 1) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
 
-   (t (cons (first tabuleiro) (inserir-peca-pequena (1- linha) coluna (rest tabuleiro))))
+   (t 
+    (cons 
+     (first tabuleiro) 
+     (inserir-peca-pequena (1- linha) coluna (rest tabuleiro)))
+    )
 
   )
 )
 
+;;inserir-peca-media   
+;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
+(defun inserir-peca-media (linha coluna tabuleiro)
+  "Fun��oo que permite inserir a pe�aa m�dia numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna s�oo argumentos num�ricos"
+  (cond 
+   ((null tabuleiro) nil)
 
+   ((= linha 14) nil) ;;N�o pode inserir na ultima linha,s� na penultima
 
-;;inserir a pe�a media
+   ((= linha 1) 
+    (append 
+     (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro))) 
+     (rest tabuleiro)
+    )
+   )
+
+   (t
+    (cons 
+     (first tabuleiro) 
+     (inserir-peca-media (1- linha) coluna (rest tabuleiro))
+    )
+   )
+
+  )
+)
+
 ;;inserir a pe�a que parece um mais 
 ;;ser� que h� mais operadores ?
 

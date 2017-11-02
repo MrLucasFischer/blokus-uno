@@ -41,7 +41,7 @@
 
 ;;get-estado-no
 (defun get-estado-no (no)
-  "Funcao que retorna o estado de um n�"
+  "Fun��o que retorna o estado de um n�"
   (first no)
 )
 
@@ -67,7 +67,7 @@
 
 ;;custo
 (defun custo (no)
-  "Implementa a fun��o do custo de um n�, f(n)"
+  "Implementa a função do custo de um n�, f(n)"
   (+ (get-profundidade-no no) (get-heuristica-no no))
 )
 
@@ -90,6 +90,7 @@
   )
 )
 
+;;construir-listas
 (defun construir-listas (elem1 elem2 listas)
   "Fun��o auxiliar da fun��o inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabe�a das listas novamente com as mesmas de forma a manter a integridade das listas"
   (list
@@ -100,7 +101,7 @@
 
 ;;inserir-peca-media-na-coluna
 (defun inserir-peca-media-na-coluna (coluna linhas)
-  "Fun��o que permite inserir uma pe�a m�dia numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da pe�a"
+  "Fun��o que permite inserir uma pe�aa m�dia numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da pe�aa"
   (let ((linha-cima (first linhas)) (linha-baixo (second linhas)))
     (cond
      ((null linha-cima) nil)
@@ -129,29 +130,12 @@
   )
 )
 
-; (t
-;       (append
-;        (list
-;         (first linha-cima)
-;         (first linha-baixo)
-;        )
-;        (inserir-peca-media-na-coluna 
-;         (1- coluna)
-;         (list
-;          (rest linha-cima)
-;          (rest linha-baixo)
-;         )
-;        )
-;       )
-;      )
-
-
 ;;; Operadores
 
-;;inserir a pe�a mais pequenina
+;;inserir-peca-pequena
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
 (defun inserir-peca-pequena (linha coluna tabuleiro)
-  "Fun��o que permite inserir a pe�a mais pequena numa determinada linha e coluna. A linha e coluna s�o argumentos num�ricos"
+  "Fun��o que permite inserir a pe�aa mais pequena numa determinada linha e coluna. A linha e coluna s�o argumentos num�ricos"
   (cond
    ((null tabuleiro) nil)
 
@@ -166,12 +150,10 @@
   )
 )
 
-
-
-;;inserir a pe�a media
+;;inserir-peca-media   
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
 (defun inserir-peca-media (linha coluna tabuleiro)
-  "Fun��o que permite inserir a pe�a m�dia numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna s�o argumentos num�ricos"
+  "Fun��oo que permite inserir a pe�aa m�dia numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna s�oo argumentos num�ricos"
   (cond 
    ((null tabuleiro) nil)
 
