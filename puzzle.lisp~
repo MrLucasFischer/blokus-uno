@@ -130,6 +130,13 @@
   )
 )
 
+
+;;inserir-peca-cruz-na-coluna
+(defun inserir-peca-cruz-na-coluna (coluna linhas)
+  "Funcao auxiliar da funcao inserir-peca-cruz que permite inserir uma peca em cruz numa determinada colocando o primeiro quadrado da peca no topo da mesma"
+  
+)
+
 ;;; Operadores
 
 ;;inserir-peca-pequena
@@ -157,7 +164,7 @@
   (cond 
    ((null tabuleiro) nil)
 
-   ((= linha 14) nil) ;;Nao pode inserir na ultima linha,so na penultima
+   ((or (= linha 14) (= coluna 14)) nil) ;;Nao pode inserir na ultima linha ou coluna,so na penultima
 
    ((= linha 1) 
     (append 
@@ -180,9 +187,14 @@
 (defun inserir-peca-cruz (linha coluna tabuleiro)
   "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
-   ((null tabuleiro) nil)
+   ((or (null tabuleiro) (> linha 12) (= coluna 14) (= coluna 1)) nil)
    
-   ((= linha 1) )
+   ((= linha 1) 
+    (append
+     (inserir-peca-cruz-na-coluna coluna (list (first tabuleiro) (second tabuleiro) (third tabuleiro)))
+     (rest (rest (rest tabuleiro))) ;;cdddr
+    )
+   )
 
    (t
     (cons
