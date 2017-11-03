@@ -28,6 +28,8 @@
 )
 
 
+
+
 ;;; Construtor
 
 ;;Cria-no
@@ -45,11 +47,15 @@
   (first no)
 )
 
+
+
 ;;get-profundidade-no 
 (defun get-profundidade-no (no)
   "Funcao que retorna a profundidade de um no"
   (second no)
 )
+
+
 
 ;;get-heuristica-no
 (defun get-heuristica-no (no)
@@ -57,11 +63,15 @@
   (third no)
 )
 
+
+
 ;;get-pai-no
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
   (fourth no)
 )
+
+
 
 ;;; Funcao f(n) = g(n) + h(n)
 
@@ -70,6 +80,8 @@
   "Implementa a funcao de custo de um no, f(n)"
   (+ (get-profundidade-no no) (get-heuristica-no no))
 )
+
+
 
 ;;;Funcoes auxiliares
 ;;inserir-peca-pequena-na-coluna
@@ -90,6 +102,8 @@
   )
 )
 
+
+
 ;;construir-listas
 (defun construir-listas (elem1 elem2 listas)
   "Funcao auxiliar da funcao inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabeca das listas novamente com as mesmas de forma a manter a integridade das listas"
@@ -98,6 +112,8 @@
    (cons elem2 (second listas))
   )
 )
+
+
 
 ;;inserir-peca-media-na-coluna
 (defun inserir-peca-media-na-coluna (coluna linhas)
@@ -131,11 +147,31 @@
 )
 
 
+
+
 ;;inserir-peca-cruz-na-coluna
 (defun inserir-peca-cruz-na-coluna (coluna linhas)
-  "Funcao auxiliar da funcao inserir-peca-cruz que permite inserir uma peca em cruz numa determinada colocando o primeiro quadrado da peca no topo da mesma"
-  
+  "Funcao auxiliar da funcao inserir-peca-cruz que permite inserir uma peca em cruz numa determinada colocando o primeiro quadrado na ponta esquerda da peca"
+  (let ((linha-cima (first linhas)) 
+        (linha-meio (second linhas))
+        (linha-baixo (third linhas)))
+
+    (cond
+     ((null linha-cima) nil)
+     
+     ((= coluna 1)
+      (list
+       (cons (first linha-cima) (cons 1 (rest (rest linha-cima))))
+       (append '(1 1 1) (rest (rest (rest linha-meio))))
+       (cons (first linha-baixo) (cons 1 (rest (rest linha-baixo))))
+      )
+     )
+
+    )
+  )
 )
+
+
 
 ;;; Operadores
 
@@ -156,6 +192,8 @@
 
   )
 )
+
+
 
 ;;inserir-peca-media   
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
@@ -183,11 +221,13 @@
   )
 )
 
+
+
 ;;inserir-peca-cruz
 (defun inserir-peca-cruz (linha coluna tabuleiro)
   "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
-   ((or (null tabuleiro) (> linha 12) (= coluna 14) (= coluna 1)) nil)
+   ((or (null tabuleiro) (= linha 14) (> coluna 12) (= linha 1)) nil)
    
    ((= linha 1) 
     (append
@@ -205,6 +245,8 @@
 
   )
 )
+
+
 
 ;;; Heuristicas
 

@@ -105,12 +105,9 @@
 
 
 ;;construir-listas
-(defun construir-listas (elem1 elem2 listas)
-  "Funcao auxiliar da funcao inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabeca das listas novamente com as mesmas de forma a manter a integridade das listas"
-  (list
-   (cons elem1 (first listas))
-   (cons elem2 (second listas))
-  )
+(defun construir-listas (elems listas)
+  "Funcao auxiliar que permite juntar os elementos removidos da cabeca das listas novamente com as mesmas de forma a manter a integridade das listas"
+  (mapcar #'cons elems listas)
 )
 
 
@@ -131,8 +128,10 @@
 
      (t
       (construir-listas
+       (list
         (first linha-cima)
         (first linha-baixo)
+       )
         (inserir-peca-media-na-coluna 
           (1- coluna)
           (list
@@ -142,6 +141,7 @@
         )
       )
      )
+
     )
   )
 )
@@ -157,13 +157,31 @@
         (linha-baixo (third linhas)))
 
     (cond
-     ((null linha-cima) nil)
+     ((null linha-meio) nil)
      
      ((= coluna 1)
       (list
        (cons (first linha-cima) (cons 1 (rest (rest linha-cima))))
        (append '(1 1 1) (rest (rest (rest linha-meio))))
        (cons (first linha-baixo) (cons 1 (rest (rest linha-baixo))))
+      )
+     )
+
+     (t
+      (construir-listas
+       (list
+        (first linha-cima)
+        (first linha-meio)
+        (first linha-baixo)
+       )
+       (inserir-peca-cruz-na-coluna 
+        (1- coluna)
+        (list
+         (rest linha-cima)
+         (rest linha-meio)
+         (rest linha-baixo)
+        )
+       )
       )
      )
 
@@ -229,9 +247,16 @@
   (cond
    ((or (null tabuleiro) (= linha 14) (> coluna 12) (= linha 1)) nil)
    
-   ((= linha 1) 
+   ((= linha 2) ;;tem que ser uma linha antes para por a peca de cima
     (append
-     (inserir-peca-cruz-na-coluna coluna (list (first tabuleiro) (second tabuleiro) (third tabuleiro)))
+     (inserir-peca-cruz-na-coluna 
+      coluna 
+      (list 
+       (first tabuleiro) 
+       (second tabuleiro) 
+       (third tabuleiro)
+      )
+     )
      (rest (rest (rest tabuleiro))) ;;cdddr
     )
    )
