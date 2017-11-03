@@ -1,14 +1,14 @@
 ;;;; puzzle.lisp
 ;;;; Disciplina de IA - 2017/2018
 ;;;; Projeto 1 - Blokus Uno
-;;;; Autor: Andreia Pereira (nï¿½ 150221021) e Lucas Fischer (nï¿½ 140221004)
-;;;; Funï¿½ï¿½es do domï¿½nio do problema
+;;;; Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
+;;;; Funcoes do dominio do problema
 
 ;;;Tabuleiros
 
 ;;tabuleiro-vazio
 (defun tabuleiro-vazio ()
-  "Funï¿½ï¿½o que retorna um tabuleiro vazio"
+  "Funcao que retorna um tabuleiro vazio"
   (list 
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -32,7 +32,7 @@
 
 ;;Cria-no
 (defun cria-no (estado &optional (profundidade 0) (heuristica nil) (no-pai nil))
-  "Cria uma lista que representa um nï¿½ que tem um estado. Este nï¿½ pode tambï¿½m ter uma profunidade, heuristica e um nï¿½ que o gerou"
+  "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica e um no que o gerou"
   (list estado profundidade heuristica no-pai)
 )
 
@@ -41,40 +41,40 @@
 
 ;;get-estado-no
 (defun get-estado-no (no)
-  "Funï¿½ï¿½o que retorna o estado de um nï¿½"
+  "Funcao que retorna o estado de um no"
   (first no)
 )
 
 ;;get-profundidade-no 
 (defun get-profundidade-no (no)
-  "Funï¿½ï¿½o que retorna a profundidade de um nï¿½"
+  "Funcao que retorna a profundidade de um no"
   (second no)
 )
 
 ;;get-heuristica-no
 (defun get-heuristica-no (no)
-  "Funï¿½ï¿½o que retorna a heuristica de um nï¿½"
+  "Funcao que retorna a heuristica de um no"
   (third no)
 )
 
 ;;get-pai-no
 (defun get-pai-no (no)
-  "Funï¿½ï¿½o que retorna o nï¿½ gerador de um determinado nï¿½"
+  "Funcao que retorna o no gerador de um determinado no"
   (fourth no)
 )
 
-;;; Funï¿½ï¿½o f(n) = g(n) + h(n)
+;;; Funcao f(n) = g(n) + h(n)
 
 ;;custo
 (defun custo (no)
-  "Implementa a funï¿½ï¿½o do custo de um nï¿½, f(n)"
+  "Implementa a funcao de custo de um no, f(n)"
   (+ (get-profundidade-no no) (get-heuristica-no no))
 )
 
-;;;Funï¿½ï¿½es auxiliares
+;;;Funcoes auxiliares
 ;;inserir-peca-pequena-na-coluna
 (defun inserir-peca-pequena-na-coluna (coluna lista)
-  "Permite inserir a peï¿½a mais pequena numa determinada coluna da lista passada como argumento"
+  "Permite inserir a peca mais pequena numa determinada coluna da lista passada como argumento"
   (cond 
    ((null lista) nil)
 
@@ -92,7 +92,7 @@
 
 ;;construir-listas
 (defun construir-listas (elem1 elem2 listas)
-  "Funï¿½ï¿½o auxiliar da funï¿½ï¿½o inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabeï¿½a das listas novamente com as mesmas de forma a manter a integridade das listas"
+  "Funcao auxiliar da funcao inserir-peca-media-na-coluna que permite juntar os elementos removidos da cabeca das listas novamente com as mesmas de forma a manter a integridade das listas"
   (list
    (cons elem1 (first listas))
    (cons elem2 (second listas))
@@ -101,14 +101,14 @@
 
 ;;inserir-peca-media-na-coluna
 (defun inserir-peca-media-na-coluna (coluna linhas)
-  "Funï¿½ï¿½o que permite inserir uma peï¿½aa mï¿½dia numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da peï¿½aa"
+  "Funcao que permite inserir uma peca media numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da peca"
   (let ((linha-cima (first linhas)) (linha-baixo (second linhas)))
     (cond
      ((null linha-cima) nil)
 
      ((= coluna 1) 
       (list
-       (append '(1 1) (rest (rest linha-cima))) ;;cddr
+       (append '(1 1) (rest (rest linha-cima))) ;;cddr ou será que aqui uso o inserir-peca-pequena-na-coluna para depois quando tivermos a cena da validação ser mais facil (?)
        (append '(1 1) (rest (rest linha-baixo))) ;;cddr
        )
       )
@@ -135,7 +135,7 @@
 ;;inserir-peca-pequena
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
 (defun inserir-peca-pequena (linha coluna tabuleiro)
-  "Funï¿½ï¿½o que permite inserir a peï¿½aa mais pequena numa determinada linha e coluna. A linha e coluna sï¿½o argumentos numï¿½ricos"
+  "Funcao que permite inserir a peca mais pequena numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
    ((null tabuleiro) nil)
 
@@ -153,16 +153,16 @@
 ;;inserir-peca-media   
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
 (defun inserir-peca-media (linha coluna tabuleiro)
-  "Funï¿½ï¿½oo que permite inserir a peï¿½aa mï¿½dia numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sï¿½oo argumentos numï¿½ricos"
+  "Funcao que permite inserir a peca media numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sao argumentos numericos"
   (cond 
    ((null tabuleiro) nil)
 
-   ((= linha 14) nil) ;;Nï¿½o pode inserir na ultima linha,sï¿½ na penultima
+   ((= linha 14) nil) ;;Nao pode inserir na ultima linha,so na penultima
 
    ((= linha 1) 
     (append 
      (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro))) 
-     (rest tabuleiro)
+     (rest (rest tabuleiro)) ;;cddr
     )
    )
 
@@ -176,9 +176,24 @@
   )
 )
 
-;;inserir a peï¿½a que parece um mais 
-;;serï¿½ que hï¿½ mais operadores ?
+;;inserir-peca-cruz
+(defun inserir-peca-cruz (linha coluna tabuleiro)
+  "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
+  (cond
+   ((null tabuleiro) nil)
+   
+   ((= linha 1) )
+
+   (t
+    (cons
+     (first tabuleiro)
+     (inserir-peca-cruz (1- linha) coluna (rest tabuleiro))
+    )
+   )
+
+  )
+)
 
 ;;; Heuristicas
 
-;;; Soluï¿½ï¿½o
+;;; Solucao
