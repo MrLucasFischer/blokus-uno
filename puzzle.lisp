@@ -305,4 +305,12 @@
 
 ;;; Heuristicas
 
+;;heuristica
+;sera que passamos so um no ou sera que passamos logo diretamente os valores de qudrados por preencher e preenchidos
+(defun heuristica (no)
+  "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
+  (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
+)
+
+
 ;;; Solucao
