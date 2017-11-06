@@ -301,6 +301,11 @@
   )
 )
 
+;;operadores
+(defun operadores ()
+  "Funcao que lista todos os operadores possiveis de serem aplicados a um no"
+  (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
+)
 
 
 ;;; Heuristicas

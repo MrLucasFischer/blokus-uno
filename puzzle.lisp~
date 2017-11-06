@@ -84,22 +84,32 @@
 
 
 ;;;Funcoes auxiliares
-;;inserir-peca-pequena-na-coluna
-(defun inserir-peca-pequena-na-coluna (coluna lista)
-  "Permite inserir a peca mais pequena numa determinada coluna da lista passada como argumento"
-  (cond 
-   ((null lista) nil)
 
-   ((= coluna 1) (cons 1 (rest lista)))
-
-   (t 
-    (cons 
-      (first lista) 
-      (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))
-    )
-   )
-
+;;quadrados-por-preencher-numa-linha
+(defun quadrados-por-preencher-numa-linha (linha)
+  "Conta o numero de quadrados por preencher numa determinada linha (posicoes que estao a 0 nessa linha)"
+  (cond
+   ((null linha) 0)
+   ((zerop (first linha)) (+ 1 (quadrados-por-preencher-numa-linha (rest linha))))
+   (T (quadrados-por-preencher-numa-linha (rest linha)))
   )
+)
+
+
+;;quadrados-por-preencher
+(defun quadrados-por-preencher (tabuleiro)
+  "Conta o numero de posicoes que estao a 0 num tabuleiro, que corresponde ao numero de quadrados por preencher num tabuleiro"
+  (cond
+   ((null tabuleiro) 0)
+   (T (+ (quadrados-por-preencher-numa-linha (first tabuleiro)) (quadrados-por-preencher (rest tabuleiro))))
+  )
+)
+
+
+;;quadrados-ja-preenchidos
+(defun quadrados-ja-preenchidos (tabuleiro)
+  "Funcao que conta o numero de quadrados ja preenchidos atraves da subtracao do total pelo numero de quadrados por preencher"
+  (- 196 (quadrados-por-preencher tabuleiro))
 )
 
 
@@ -108,6 +118,26 @@
 (defun construir-listas (elems listas)
   "Funcao auxiliar que permite juntar os elementos removidos da cabeca das listas novamente com as mesmas de forma a manter a integridade das listas"
   (mapcar #'cons elems listas)
+)
+
+
+
+;;inserir-peca-pequena-na-coluna
+(defun inserir-peca-pequena-na-coluna (coluna lista)
+  "Permite inserir a peca mais pequena numa determinada coluna da lista passada como argumento"
+  (cond 
+   ((null lista) nil)
+
+   ((= coluna 1) (cons 1 (rest lista)))
+
+   (T 
+    (cons 
+      (first lista) 
+      (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))
+    )
+   )
+
+  )
 )
 
 
@@ -126,7 +156,7 @@
        )
       )
 
-     (t
+     (T
       (construir-listas
        (list
         (first linha-cima)
@@ -167,7 +197,7 @@
       )
      )
 
-     (t
+     (T
       (construir-listas
        (list
         (first linha-cima)
@@ -202,7 +232,7 @@
 
    ((= linha 1) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
 
-   (t 
+   (T 
     (cons 
      (first tabuleiro) 
      (inserir-peca-pequena (1- linha) coluna (rest tabuleiro)))
@@ -229,7 +259,7 @@
     )
    )
 
-   (t
+   (T
     (cons 
      (first tabuleiro) 
      (inserir-peca-media (1- linha) coluna (rest tabuleiro))
@@ -261,7 +291,7 @@
     )
    )
 
-   (t
+   (T
     (cons
      (first tabuleiro)
      (inserir-peca-cruz (1- linha) coluna (rest tabuleiro))
@@ -274,5 +304,13 @@
 
 
 ;;; Heuristicas
+
+;;heuristica
+;sera que passamos so um no ou sera que passamos logo diretamente os valores de qudrados por preencher e preenchidos
+(defun heuristica (no)
+  "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
+  (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
+)
+
 
 ;;; Solucao
