@@ -85,6 +85,14 @@
 
 ;;;Funcoes auxiliares
 
+;;possivel-adicionar-peca-pequena
+(defun possivel-adicionar-peca-pequena (linha coluna tabuleiro)
+  (cond
+   ((zerop (nth (1- coluna) (nth linha tabuleiro))) T)
+   (T nil)
+  )
+)
+
 ;;quadrados-por-preencher-numa-linha
 (defun quadrados-por-preencher-numa-linha (linha)
   "Conta o numero de quadrados por preencher numa determinada linha (posicoes que estao a 0 nessa linha)"
@@ -301,6 +309,10 @@
   )
 )
 
+;;operadores
+(defun operadores ()
+  (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
+)
 
 
 ;;; Heuristicas

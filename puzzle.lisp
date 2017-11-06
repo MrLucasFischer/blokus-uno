@@ -85,6 +85,29 @@
 
 ;;;Funcoes auxiliares
 
+;;possivel-adicionar-peca-pequena
+;;falta ver se estamos a por a peca no canto de outra ou se existe alguma peca nos cantos do tabuleiro
+(defun possivel-adicionar-peca-pequena (linha coluna tabuleiro)
+  "Funcao que determina se e possivel adicionar uma peca pequena numa determina posicao de um tabuleiro"
+  (cond
+   ((zerop (nth (1- coluna) (nth (1- linha) tabuleiro))) T)
+   (T nil)
+  )
+)
+
+(defun possivel-adicionar-peca-media (linha coluna tabuleiro)
+  "Funcao que determina se e possivel adicionar uma peca media numa determinada posicao do tabuleiro"
+  (cond
+   ((and 
+     (possivel-adicionar-peca-pequena linha coluna tabuleiro)
+     (possivel-adicionar-peca-pequena (1+ linha) coluna tabuleiro)
+     (possivel-adicionar-peca-pequena linha (1+ coluna) tabuleiro)
+     (possivel-adicionar-peca-pequena (1+ linha) (1+ coluna) tabuleiro)
+    ) T)
+   (T nil)
+  )
+)
+
 ;;quadrados-por-preencher-numa-linha
 (defun quadrados-por-preencher-numa-linha (linha)
   "Conta o numero de quadrados por preencher numa determinada linha (posicoes que estao a 0 nessa linha)"
@@ -230,6 +253,8 @@
   (cond
    ((null tabuleiro) nil)
 
+   ((not (possivel-adicionar-peca-pequena linha coluna tabuleiro)) nil)
+
    ((= linha 1) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
 
    (T 
@@ -251,6 +276,8 @@
    ((null tabuleiro) nil)
 
    ((or (= linha 14) (= coluna 14)) nil) ;;Nao pode inserir na ultima linha ou coluna,so na penultima
+   
+   ((not (possivel-adicionar-peca-media linha coluna tabuleiro)) nil)
 
    ((= linha 1) 
     (append 
@@ -303,7 +330,6 @@
 
 ;;operadores
 (defun operadores ()
-  "Funcao que lista todos os operadores possiveis de serem aplicados a um no"
   (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
 )
 
