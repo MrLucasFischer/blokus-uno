@@ -337,6 +337,7 @@
 
 ;;Sucessores 
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
+;;Falta fazer coisas (?)
 (defun sucessores (no operadores)
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
   (let (
@@ -354,14 +355,38 @@
   )
 )
 
-;;Temos que fazer uma funcao que dado um tabuleiro diga quais são todas as jogadas possiveis
-
 ;;aplicar-operador-no
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
 (defun aplicar-operador-no (no operador)
   (list operador (get-estado-no no)) ;Fata aqui as posicoes onde queremos por as pecas
 )
 
+;;Temos que fazer uma funcao que dado um tabuleiro diga quais são todas as jogadas possiveis
+
+;;jogadas-possiveis
+;;Falta acabar
+(defun jogadas-possiveis (no)
+  "Funcao que ve todas as jogadas possiveis para um determinado no"
+  (let (
+        (tabuleiro (get-estado-no no))
+       )
+    (cond
+     ((and 
+        (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista peças nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
+        (not (equal (nth 13 (nth 0 tabuleiro)) 1))
+        (not (equal (nth 0 (nth 13 tabuleiro)) 1))
+        (not (equal (nth 13 (nth 13 tabuleiro)) 1))
+      ) 
+      (list 
+       '(0 0) ;Linha 0 Coluna 0 , canto superior esquerdo
+       '(0 13) ;Linha 0 Coluna 13, canto superior direito
+       '(13 0) ;Linha 13 Coluna 0, canto inferior esquerdo
+       '(13 13) ;Linha 13 Coluna 13, canto inferior direito
+      )
+    )
+   )
+  )
+)
 
 ;;; Heuristicas
 
