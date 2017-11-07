@@ -333,11 +333,40 @@
   (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
 )
 
+;;;Sucessores 
+
+;;Sucessores 
+;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
+(defun sucessores (no operadores)
+  "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
+  (let (
+        (operador-atual (first operadores))
+       )
+    (cond
+     ((null operadores) nil)
+
+     (T (append 
+         (aplicar-operador-no no operador-atual) 
+         (sucessores no (rest operadores))
+        )
+     )
+    )
+  )
+)
+
+;;Temos que fazer uma funcao que dado um tabuleiro diga quais são todas as jogadas possiveis
+
+;;aplicar-operador-no
+;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
+(defun aplicar-operador-no (no operador)
+  (list operador (get-estado-no no)) ;Fata aqui as posicoes onde queremos por as pecas
+)
+
 
 ;;; Heuristicas
 
 ;;heuristica
-;sera que passamos so um no ou sera que passamos logo diretamente os valores de qudrados por preencher e preenchidos
+;sera que passamos so um no ou sera que passamos logo diretamente os valores de quadrados por preencher e preenchidos
 (defun heuristica (no)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
   (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
