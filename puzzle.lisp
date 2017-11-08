@@ -397,5 +397,4 @@
   (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
 )
 
-
 ;;; Solucao
