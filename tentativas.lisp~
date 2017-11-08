@@ -7,8 +7,8 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 1 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 1 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 1 0 0 0 0 0)
    '(0 0 0 0 0 0 0 1 1 1 0 0 0 0)
    '(0 0 0 0 0 0 0 0 1 0 1 0 0 0)
@@ -18,12 +18,12 @@
   )
 )
 
-(defun peca-pequena-contagem (linha coluna tabuleiro)
+(defun peca-pequena-contagem (tabuleiro &optional (linha 13) (coluna 13))
   (cond
    ((and (zerop linha) (zerop coluna)) 0)
-   ((= coluna -1) (progn (setf linha (1- linha)) (setf coluna 13) (peca-pequena-contagem linha coluna tabuleiro) ))
-   ((= (nth coluna (nth linha tabuleiro)) 1) (+ (peca-pequenap linha coluna tabuleiro) (peca-pequena-contagem linha (1- coluna) tabuleiro)))
-   (T (peca-pequena-contagem linha (1- coluna) tabuleiro))
+   ((= coluna -1) (peca-pequena-contagem tabuleiro (1- linha) 13 ))
+   ((= (nth coluna (nth linha tabuleiro)) 1) (+ (peca-pequenap linha coluna tabuleiro) (peca-pequena-contagem tabuleiro linha (1- coluna))))
+   (T (peca-pequena-contagem tabuleiro linha (1- coluna)))
   )
 )
 
