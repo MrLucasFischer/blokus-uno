@@ -178,7 +178,7 @@
 (defun possivel-adicionar-peca-pequena (linha coluna tabuleiro)
   "Funcao que determina se e possivel adicionar uma peca pequena numa determina posicao de um tabuleiro"
   (cond
-   ((zerop (nth (1- coluna) (nth (1- linha) tabuleiro))) T)
+   ((zerop (nth coluna (nth linha tabuleiro))) T)
    (T nil)
   )
 )
@@ -239,7 +239,7 @@
   (cond 
    ((null lista) nil)
 
-   ((= coluna 1) (cons 1 (rest lista)))
+   ((= coluna 0) (cons 1 (rest lista)))
 
    (T 
     (cons 
@@ -260,7 +260,7 @@
     (cond
      ((null linha-cima) nil)
 
-     ((= coluna 1) 
+     ((= coluna 0) 
       (list
        (append '(1 1) (rest (rest linha-cima))) ;;cddr ou será que aqui uso o inserir-peca-pequena-na-coluna para depois quando tivermos a cena da validação ser mais facil (?)
        (append '(1 1) (rest (rest linha-baixo))) ;;cddr
@@ -300,7 +300,7 @@
     (cond
      ((null linha-meio) nil)
      
-     ((= coluna 1)
+     ((= coluna 0)
       (list
        (cons (first linha-cima) (cons 1 (rest (rest linha-cima))))
        (append '(1 1 1) (rest (rest (rest linha-meio))))
@@ -343,7 +343,7 @@
 
    ((not (possivel-adicionar-peca-pequena linha coluna tabuleiro)) nil)
 
-   ((= linha 1) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
+   ((= linha 0) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
 
    (T 
     (cons 
@@ -363,11 +363,11 @@
   (cond 
    ((null tabuleiro) nil)
 
-   ((or (= linha 14) (= coluna 14)) nil) ;;Nao pode inserir na ultima linha ou coluna,so na penultima
+   ((or (>= linha 13) (>= coluna 13)) nil) ;;Nao pode inserir na ultima linha ou coluna,so na penultima
    
    ((not (possivel-adicionar-peca-media linha coluna tabuleiro)) nil)
 
-   ((= linha 1) 
+   ((= linha 0) 
     (append 
      (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro))) 
      (rest (rest tabuleiro)) ;;cddr
@@ -390,9 +390,9 @@
 (defun inserir-peca-cruz (linha coluna tabuleiro)
   "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
-   ((or (null tabuleiro) (= linha 14) (> coluna 12) (= linha 1)) nil)
+   ((or (null tabuleiro) (>= linha 13) (> coluna 11) (<= linha 0)) nil)
    
-   ((= linha 2) ;;tem que ser uma linha antes para por a peca de cima
+   ((= linha 1) ;;tem que ser uma linha antes para por a peca de cima
     (append
      (inserir-peca-cruz-na-coluna 
       coluna 
