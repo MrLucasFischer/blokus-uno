@@ -1,4 +1,4 @@
-(defun tabuleiro-vazio ()
+ (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -12,8 +12,8 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 1 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 1 1 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 1 1 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 1)
   )
 )
@@ -110,62 +110,62 @@
 )
 
 (defun jogadas-possiveis-para-peca (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
+  "Funcao que percorre a matriz a partir do seu fim e caso encontre alguma peca jogada pelo jogador ira verificar se e possivel colocar uma nova peca num dos seus cantos"
   (cond
-   ((and (zerop linha) (zerop coluna)) nil)
+   ((and (zerop linha) (zerop coluna)) 
+    (cond
+     ((eq (nth coluna (nth linha tabuleiro)) 1) (pode-colocarp 1 1 tabuleiro tipo-peca))
+     (T nil)
+    ))
 
    ((= coluna -1) (jogadas-possiveis-para-peca tabuleiro tipo-peca (1- linha) 13))
 
-   ((= (nth coluna (nth linha tabuleiro)) 1) (append (aux (1- linha) (1- coluna) tabuleiro tipo-peca linha coluna) (jogadas-possiveis-para-peca tabuleiro tipo-peca linha (1- coluna))))
+   ((= (nth coluna (nth linha tabuleiro)) 1) (append (cantos-disponiveis (1- linha) (1- coluna) tabuleiro tipo-peca linha coluna) (jogadas-possiveis-para-peca tabuleiro tipo-peca linha (1- coluna))))
 
    (t (jogadas-possiveis-para-peca tabuleiro tipo-peca linha (1- coluna)))
   )
 )
 
-;;Ver em que linha e coluna estamos e alterar isto conforme isso 
-;;SE ELE BATER LOGO NO PRIMEIRO CASO IGNORA OS OUTROS CASOS, NAO QUEREMOS ISSO
-(defun jogadas-para-peca (linha coluna tabuleiro tipo-peca)
+;;isto por enquanto parece estar a dar !!
+(defun cantos-disponiveis (linha coluna tabuleiro tipo-peca &optional linha-original coluna-original)
+  "Funcao que verifica se e possivel adicionar uma nova peca aos cantos de uma peca ja jogada pelo jogador, verificando se esta nova peca nao ficaria lateralmente com alguma ja existente"
   (cond
-   ((equal (nth (1+ coluna) (nth (1- linha) tabuleiro)) 0) (pode-colocarp (1- linha) (1+ coluna) tabuleiro tipo-peca))
-
-   ((equal (nth (1- coluna) (nth (1- linha) tabuleiro)) 0) (pode-colocarp (1- linha) (1- coluna) tabuleiro tipo-peca))
-
-   ((equal (nth (1+ coluna) (nth (1+ linha) tabuleiro)) 0) (pode-colocarp (1+ linha) (1+ coluna) tabuleiro tipo-peca))
+   ((= linha -1) (cantos-disponiveis (+ linha 2) coluna tabuleiro tipo-peca linha-original coluna-original))
    
-   ((equal (nth (1- coluna) (nth (1+ linha) tabuleiro)) 0) (pode-colocarp (1+ linha) (1- coluna) tabuleiro tipo-peca))
+   ((= coluna -1) (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original))
 
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro tipo-peca)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis (+ linha 2) (- coluna-original 1) tabuleiro tipo-peca linha-original coluna-original))
+
+   ((equal (nth coluna (nth linha tabuleiro)) 0) (append (pode-colocarp linha coluna tabuleiro tipo-peca) (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original )))
+
+   (T (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original))
+  )
+
+)
+
+(defun casa-com-ump (linha coluna tabuleiro)
+  "Funcao que determina se uma posicao tem la uma peca do jogador ou nao"
+  (cond
+   ((or (= linha -1) (= coluna -1)) NIL)
+   ((eq (nth coluna (nth linha tabuleiro)) 1) T)
    (T nil)
   )
 )
 
-;;Como e que eu crio uma funcao recursiva que veja os cantos do quadrado ?
-;;Se eu fizer como esta na funcao assim e ele bater no primeiro caso nao ve os outros
-;;isto por enquanto parece estar a dar !!
-(defun aux (linha coluna tabuleiro tipo-peca &optional linha-original coluna-original)
-  
-  (cond
-   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro tipo-peca)))
-
-   ((>= coluna (+ coluna-original 2)) (aux (+ linha 2) (- coluna-original 1) tabuleiro tipo-peca linha-original coluna-original))
-
-   ((equal (nth coluna (nth linha tabuleiro)) 0) (append (pode-colocarp linha coluna tabuleiro tipo-peca) (aux linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original )))
-
-   (T (aux linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original))
-  )
-
-)
-
 
 (defun pode-colocarp (linha coluna tabuleiro tipo-peca)
-  (progn 
-    (print coluna)
+  "Funcao que verifica se , ao colocarmos uma peca num dos cantos de uma peca ja existe, nao fica posicionada lateralmente com uma peca ja jogada pelo jogador "
   (cond
    ((and
-       (not (eq (nth (1+ coluna) (nth linha tabuleiro)) 1))
-       (not (eq (nth (1- coluna) (nth linha tabuleiro)) 1))
-       (not (eq (nth coluna (nth (1+ linha) tabuleiro)) 1))
-       (not (eq (nth coluna (nth (1- linha) tabuleiro)) 1))
-       (eq (nth coluna (nth linha tabuleiro)) 0)
-       ) (list (list linha coluna)))
-  )
-)
+     (not (casa-com-ump linha (1+ coluna) tabuleiro))
+     (not (casa-com-ump linha (1- coluna) tabuleiro))
+     (not (casa-com-ump (1+ linha) coluna tabuleiro))
+     (not (casa-com-ump (1- linha) coluna tabuleiro))
+     (eq (nth coluna (nth linha tabuleiro)) 0)
+     ) (list (list linha coluna)))
+   (T nil)
+   )
+    
 )
