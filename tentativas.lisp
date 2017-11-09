@@ -93,7 +93,7 @@
   "Funcao que ve todas as jogadas possiveis para um determinado no"
   (cond
    ((and 
-     (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista pe�as nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
+     (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista pe�as nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
      (not (equal (nth 13 (nth 0 tabuleiro)) 1))
      (not (equal (nth 0 (nth 13 tabuleiro)) 1))
      (not (equal (nth 13 (nth 13 tabuleiro)) 1))
@@ -169,3 +169,6 @@
    )
     
 )
+
+;;Quando tivermos as jogadas possiveis todas certas podemos cagar nas verificações todas que tive a fazer ate agora no puzzle.lisp e simplesmente ver se
+;; a posição que o user inserio consta na lista de posições possiveis para aquele tipo de peça
