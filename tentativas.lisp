@@ -1,7 +1,7 @@
  (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(1 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -105,9 +105,62 @@
      )
     )
 
-   (T (jogadas-possiveis-para-peca tabuleiro tipo-peca))
+   (T (cond
+        ((equal tipo-peca 'pequena) (jogadas-possiveis-para-peca tabuleiro tipo-peca))
+        ((equal tipo-peca 'media) (percorre-matriz-peca-media tabuleiro))
+        ((equal tipo-peca 'cruz) (percorre-matriz-peca-cruz tabuleiro))
+        (T nil)
+      )
    )
+  )
 )
+
+;; Para a peca media
+
+(defun percorre-matriz-peca-media (tabuleiro &optional (linha 13) (coluna 13))
+  "Por enquanto pode ser a mesma que a da pequena"
+  (cond
+  
+    ((and (zerop linha) (zerop coluna)) ;;Ja percorreu a matriz inteira e esta na posicao (0,0)
+      (cond
+        ((eq (nth coluna (nth linha tabuleiro)) 1) nil) ;;nao vai ser nil, meti so por enquanto
+        (T nil)
+      )
+    )
+
+    ((= coluna -1) (percorre-matriz-peca-media tabuleiro (1- linha) 13) ) ;;Quando chegou a coluna -1 significa que ja percorreu a linha toda
+
+    ((= (nth coluna (nth linha tabuleiro)) 1) (append (cantos-disponiveis-peca-media (1- linha) (1- coluna) tabuleiro linha coluna) (percorre-matriz-peca-media tabuleiro linha (1- coluna))))
+
+    (T (percorre-matriz-peca-media tabuleiro linha (1- coluna)))
+
+  )
+)
+
+(defun cantos-disponiveis-peca-media (linha coluna tabulerio &optional linha-original coluna-original)
+
+)
+
+
+;;Funcao auxiliar para ver se uma determinada posicao esta vazia ou nao
+(defun verifica-casas-vazias (tabuleiro casas)
+  (eval (cons 'and (mapcar #'(lambda (casa) 
+              (cond
+                ((or (< (first casa) 0) (< (second casa) 0)) nil)
+                ((eq (nth (second casa) (nth (first casa) tabuleiro)) 0) T)
+                (T nil)
+              )
+            ) casas)))
+)
+
+
+
+
+
+
+
+
+;;Para a peca pequena
 
 (defun jogadas-possiveis-para-peca (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
   "Funcao que percorre a matriz a partir do seu fim e caso encontre alguma peca jogada pelo jogador ira verificar se e possivel colocar uma nova peca num dos seus cantos"
