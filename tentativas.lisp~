@@ -138,20 +138,19 @@
 )
 
 (defun cantos-disponiveis-peca-media (linha coluna tabulerio &optional linha-original coluna-original)
-  (cond)
 
 )
 
 
 ;;Funcao auxiliar para ver se uma determinada posicao esta vazia ou nao
 (defun verifica-casas-vazias (tabuleiro casas)
-  (mapcar #'(lambda (casa) 
+  (eval (cons 'and (mapcar #'(lambda (casa) 
               (cond
                 ((or (< (first casa) 0) (< (second casa) 0)) nil)
-                ((eq (nth (second casa) (nth (first casa) tabulerio)) 0) T)
+                ((eq (nth (second casa) (nth (first casa) tabuleiro)) 0) T)
                 (T nil)
               )
-            ) casas)
+            ) casas)))
 )
 
 

@@ -1,7 +1,6 @@
  (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
-   '(1 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -9,11 +8,12 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 1 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 1 1 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 1 1 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 1)
   )
 )
@@ -115,6 +115,9 @@
   )
 )
 
+
+
+
 ;; Para a peca media
 
 (defun percorre-matriz-peca-media (tabuleiro &optional (linha 13) (coluna 13))
@@ -130,16 +133,57 @@
 
     ((= coluna -1) (percorre-matriz-peca-media tabuleiro (1- linha) 13) ) ;;Quando chegou a coluna -1 significa que ja percorreu a linha toda
 
-    ((= (nth coluna (nth linha tabuleiro)) 1) (append (cantos-disponiveis-peca-media (1- linha) (1- coluna) tabuleiro linha coluna) (percorre-matriz-peca-media tabuleiro linha (1- coluna))))
+    ((= (nth coluna (nth linha tabuleiro)) 1) (append (cantos-disponiveis-peca-media (- linha 2) (- coluna 2) tabuleiro linha coluna) (percorre-matriz-peca-media tabuleiro linha (1- coluna))))
 
     (T (percorre-matriz-peca-media tabuleiro linha (1- coluna)))
 
   )
 )
 
+
+
+
+
 (defun cantos-disponiveis-peca-media (linha coluna tabulerio &optional linha-original coluna-original)
 
+  (cond
+
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp-media linha coluna tabulerio)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-media (+ linha 3) (- coluna-original 2) tabulerio linha-original coluna-original))
+
+   ((verifica-casas-vazias tabulerio (list 
+                                      (list linha coluna) (list linha (1+ coluna))
+                                      (list (1+ linha) coluna) (list (1+ linha) (1+ coluna))
+                                      )) (append (pode-colocarp-media linha coluna tabulerio)
+                                                 (cantos-disponiveis-peca-media linha (+ coluna 3) tabulerio linha-original coluna-original)))
+
+   (T (cantos-disponiveis-peca-media linha (+ coluna 3) tabulerio linha-original coluna-original))
+
+  )
+  
 )
+
+(defun pode-colocarp-media (linha coluna tabuleiro)
+  "Funcao que verifica se as posicoes laterais a onde ficara a peca a colocar nao coincidem com uma peca ja jogada pelo jogador"
+  (cond
+   ((and 
+     (not (casa-com-ump (1- linha) coluna tabuleiro))
+     (not (casa-com-ump (1- linha) (1+ coluna) tabuleiro))
+     (not (casa-com-ump linha (1- coluna) tabuleiro))
+     (not (casa-com-ump linha (+ coluna 2) tabuleiro))
+     (not (casa-com-ump (1+ linha) (1- coluna) tabuleiro))
+     (not (casa-com-ump (1+ linha) (+ coluna 2) tabuleiro))
+     (not (casa-com-ump (+ linha 2) coluna tabuleiro))
+     (not (casa-com-ump (+ linha 2) (1+ coluna) tabuleiro))
+     ) (list (list linha coluna)))
+  )
+  
+)
+
+
+
+
 
 
 ;;Funcao auxiliar para ver se uma determinada posicao esta vazia ou nao
@@ -183,9 +227,9 @@
 (defun cantos-disponiveis (linha coluna tabuleiro tipo-peca &optional linha-original coluna-original)
   "Funcao que verifica se e possivel adicionar uma nova peca aos cantos de uma peca ja jogada pelo jogador, verificando se esta nova peca nao ficaria lateralmente com alguma ja existente"
   (cond
-   ((= linha -1) (cantos-disponiveis (+ linha 2) coluna tabuleiro tipo-peca linha-original coluna-original))
+   ((= linha -1) (cantos-disponiveis (+ linha 2) coluna tabuleiro tipo-peca linha-original coluna-original)) ;;Se os cantos superiores ja estiverem fora do tabuleiro nao vale a pena ve-los
    
-   ((= coluna -1) (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original))
+   ((= coluna -1) (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original)) ;; Se os cantos laterais esquerdos estiverem fora do tabuleiro nao vale a pena ve-los
 
    ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro tipo-peca)))
 
