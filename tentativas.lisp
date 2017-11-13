@@ -7,7 +7,7 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 1 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 1 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -123,7 +123,7 @@
   (cond
    ((and (zerop linha) (zerop coluna)) 
     (cond
-     ((casa-com-ump linha coluna tabuleiro) nil) ;;(pode-colocarp 2 0 tabuleiro 'cruz)
+     ((casa-com-ump linha coluna tabuleiro) (append (pode-colocarp 2 0 tabuleiro 'cruz) (pode-colocarp 1 1 tabuleiro 'cruz) )) 
      (T nil)
     )
    )
@@ -146,6 +146,9 @@
 
    ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3) tabuleiro linha-original coluna-original ))
 
+   ((or (<= coluna 2) (>= coluna 11)) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+   
+
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
                                       (list linha coluna) (list linha (1+ coluna)) (list linha (+ coluna 2))
@@ -164,9 +167,13 @@
 
   (cond
 
+   
    ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
    ((>= coluna (1+ coluna-original)) (cantos-disponiveis-peca-cruz-vertical (+ linha 4) (- coluna-original 2) tabuleiro linha-original coluna-original ))
+
+   ((or (<= coluna 1) (>= coluna 12)) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
+
 
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
@@ -179,6 +186,16 @@
    )
 
 )
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
@@ -251,6 +268,16 @@
               )
             ) casas)))
 )
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
