@@ -2,12 +2,12 @@
   "Funcao que retorna um tabuleiro vazio"
   (list 
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 1)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 1 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 1 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -114,6 +114,76 @@
    )
   )
 )
+
+
+
+;; Para a peca cruz
+
+(defun percorre-matriz-peca-cruz (tabuleiro &optional (linha 13) (coluna 13))
+  (cond
+   ((and (zerop linha) (zerop coluna)) 
+    (cond
+     ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 2 0 tabuleiro 'cruz))
+     (T nil)
+    )
+   )
+   
+   ((= coluna -1) (percorre-matriz-peca-cruz tabuleiro (1- linha) 13))
+
+   ((casa-com-ump linha coluna tabuleiro) (append (append (cantos-disponiveis-peca-cruz-horizontal (1- linha) (- coluna 3) tabuleiro linha coluna) (cantos-disponiveis-peca-cruz-vertical (- linha 2) (- coluna 2) tabuleiro linha coluna)) (percorre-matriz-peca-cruz tabuleiro linha (1- coluna))))
+
+   (T (percorre-matriz-peca-cruz tabuleiro linha (1- coluna)))
+
+  )
+)
+
+
+(defun cantos-disponiveis-peca-cruz-horizontal (linha coluna tabuleiro linha-original coluna-original)
+
+  (cond
+
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3)))
+
+   ((verifica-casas-vazias tabuleiro (list
+                                      (list (1- linha) (1+ coluna))
+                                      (list linha coluna) (list linha (1+ coluna)) (list linha (+ coluna 2))
+                                      (list (1+ linha) (1+ coluna))
+                                      )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original)))
+
+   (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+
+  )
+
+)
+
+
+
+(defun cantos-disponiveis-peca-cruz-vertical (linha coluna tabuleiro linha-original coluna-original)
+
+  (cond
+
+   ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3)))
+
+   ((verifica-casas-vazias tabuleiro (list
+                                      (list (1- linha) (1+ coluna))
+                                      (list linha coluna) (list linha (1+ coluna)) (list linha (+ coluna 2))
+                                      (list (1+ linha) (1+ coluna))
+                                      )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original)))
+
+   (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+
+   )
+
+)
+
+
+
+
+
 
 
 

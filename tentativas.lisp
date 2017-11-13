@@ -1,7 +1,7 @@
  (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 1)
+   '(1 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -123,7 +123,7 @@
   (cond
    ((and (zerop linha) (zerop coluna)) 
     (cond
-     ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 2 0 tabuleiro 'cruz))
+     ((casa-com-ump linha coluna tabuleiro) nil) ;;(pode-colocarp 2 0 tabuleiro 'cruz)
      (T nil)
     )
    )
@@ -144,7 +144,7 @@
 
    ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
-   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3)))
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3) tabuleiro linha-original coluna-original ))
 
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
@@ -166,15 +166,15 @@
 
    ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
-   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3)))
+   ((>= coluna (1+ coluna-original)) (cantos-disponiveis-peca-cruz-vertical (+ linha 4) (- coluna-original 2) tabuleiro linha-original coluna-original ))
 
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
                                       (list linha coluna) (list linha (1+ coluna)) (list linha (+ coluna 2))
                                       (list (1+ linha) (1+ coluna))
-                                      )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original)))
+                                      )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original)))
 
-   (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+   (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 2) tabuleiro linha-original coluna-original))
 
    )
 
@@ -310,6 +310,27 @@
 (defun pode-colocarp (linha coluna tabuleiro tipo-peca)
   "Funcao que verifica se , ao colocarmos uma peca num dos cantos de uma peca ja existe, nao fica posicionada lateralmente com uma peca ja jogada pelo jogador "
   (cond
+
+   ((equal tipo-peca 'cruz)
+    (cond
+     ((and 
+       (not (casa-com-ump linha (1- coluna) tabuleiro))
+       (not (casa-com-ump (1- linha) coluna tabuleiro))
+       (not (casa-com-ump (1+ linha) coluna tabuleiro))
+       (not (casa-com-ump (- linha 2) (1+ coluna) tabuleiro))
+       (not (casa-com-ump (+ linha 2) (1+ coluna) tabuleiro))
+       (not (casa-com-ump (1- linha) (+ coluna 2) tabuleiro))
+       (not (casa-com-ump (1+ linha) (+ coluna 2) tabuleiro))
+       (not (casa-com-ump linha (+ coluna 3) tabuleiro))
+       (eq (nth (1+ coluna) (nth (1- linha) tabuleiro)) 0)
+       (eq (nth coluna (nth linha tabuleiro)) 0)
+       (eq (nth (1+ coluna) (nth linha tabuleiro)) 0)
+       (eq (nth (+ coluna 2) (nth linha tabuleiro)) 0)
+       (eq (nth (1+ coluna) (nth (1+ linha) tabuleiro)) 0)
+       ) (list (list linha coluna)))
+     (T NIL)
+     )
+   )
 
    ((equal tipo-peca 'media)
     (cond
