@@ -3,11 +3,11 @@
   (list 
    '(1 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 1 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 1 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -142,11 +142,13 @@
   
   (cond
 
-   ((<= coluna 2) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
-
    ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
    ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (1+ linha-original) (- coluna-original 3) tabuleiro linha-original coluna-original ))
+
+   ((< coluna 0) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+
+   ((< linha 1) (cantos-disponiveis-peca-cruz-horizontal (1+ linha-original) coluna tabuleiro linha-original coluna-original))
 
 
    ((verifica-casas-vazias tabuleiro (list
@@ -159,7 +161,6 @@
    (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
 
   )
-
 )
 
 
@@ -168,12 +169,16 @@
 
   (cond
 
-
-   ((<= coluna 1) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
-
    ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
    ((>= coluna (1+ coluna-original)) (cantos-disponiveis-peca-cruz-vertical (+ linha-original 2) (- coluna-original 2) tabuleiro linha-original coluna-original ))
+
+
+   ((< coluna 0) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
+
+
+   ((< linha 1) (cantos-disponiveis-peca-cruz-vertical (+ linha-original 2) coluna tabuleiro linha-original coluna-original))
+   
 
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
