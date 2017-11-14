@@ -7,7 +7,7 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 1 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -139,15 +139,17 @@
 
 
 (defun cantos-disponiveis-peca-cruz-horizontal (linha coluna tabuleiro linha-original coluna-original)
-
+  
   (cond
 
    ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
-   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (+ linha 2) (- coluna-original 3) tabuleiro linha-original coluna-original ))
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (1+ linha-original) (- coluna-original 3) tabuleiro linha-original coluna-original ))
 
-   ((or (<= coluna 2) (>= coluna 11)) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
-   
+   ((< coluna 0) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+
+   ((< linha 1) (cantos-disponiveis-peca-cruz-horizontal (1+ linha-original) coluna tabuleiro linha-original coluna-original))
+
 
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
@@ -155,10 +157,10 @@
                                       (list (1+ linha) (1+ coluna))
                                       )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original)))
 
+
    (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
 
   )
-
 )
 
 
@@ -167,13 +169,16 @@
 
   (cond
 
-   
    ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
 
-   ((>= coluna (1+ coluna-original)) (cantos-disponiveis-peca-cruz-vertical (+ linha 4) (- coluna-original 2) tabuleiro linha-original coluna-original ))
+   ((>= coluna (1+ coluna-original)) (cantos-disponiveis-peca-cruz-vertical (+ linha-original 2) (- coluna-original 2) tabuleiro linha-original coluna-original ))
 
-   ((or (<= coluna 1) (>= coluna 12)) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
 
+   ((< coluna 0) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
+
+
+   ((< linha 1) (cantos-disponiveis-peca-cruz-vertical (+ linha-original 2) coluna tabuleiro linha-original coluna-original))
+   
 
    ((verifica-casas-vazias tabuleiro (list
                                       (list (1- linha) (1+ coluna))
@@ -181,9 +186,9 @@
                                       (list (1+ linha) (1+ coluna))
                                       )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original)))
 
-   (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 2) tabuleiro linha-original coluna-original))
+  (T (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
 
-   )
+  )
 
 )
 
