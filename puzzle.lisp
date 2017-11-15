@@ -262,7 +262,7 @@
 
      ((= coluna 0) 
       (list
-       (append '(1 1) (rest (rest linha-cima))) ;;cddr ou será que aqui uso o inserir-peca-pequena-na-coluna para depois quando tivermos a cena da validação ser mais facil (?)
+       (append '(1 1) (rest (rest linha-cima))) ;;cddr ou serï¿½ que aqui uso o inserir-peca-pequena-na-coluna para depois quando tivermos a cena da validaï¿½ï¿½o ser mais facil (?)
        (append '(1 1) (rest (rest linha-baixo))) ;;cddr
        )
       )
@@ -449,31 +449,289 @@
   (list operador (get-estado-no no)) ;Fata aqui as posicoes onde queremos por as pecas
 )
 
-;;Temos que fazer uma funcao que dado um tabuleiro diga quais são todas as jogadas possiveis
+;;; Jogadas possiveis
 
-;;jogadas-possiveis
-;;Falta acabar
-(defun jogadas-possiveis (no)
-  "Funcao que ve todas as jogadas possiveis para um determinado no"
-  (let (
-        (tabuleiro (get-estado-no no))
-       )
+;; jogadas-possives
+
+(defun jogadas-possiveis (tabuleiro tipo-peca)
+  "Funcao que determina todas as jogadas possiveis para um tipo de peca num determinado tabuleiro, devolvendo-as numa lista"
+  (cond
+   ((and 
+     (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista peï¿½as nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
+     (not (equal (nth 13 (nth 0 tabuleiro)) 1))
+     (not (equal (nth 0 (nth 13 tabuleiro)) 1))
+     (not (equal (nth 13 (nth 13 tabuleiro)) 1))
+     )
     (cond
-     ((and 
-        (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista peças nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
-        (not (equal (nth 13 (nth 0 tabuleiro)) 1))
-        (not (equal (nth 0 (nth 13 tabuleiro)) 1))
-        (not (equal (nth 13 (nth 13 tabuleiro)) 1))
-      ) 
-      (list 
-       '(0 0) ;Linha 0 Coluna 0 , canto superior esquerdo
-       '(0 13) ;Linha 0 Coluna 13, canto superior direito
-       '(13 0) ;Linha 13 Coluna 0, canto inferior esquerdo
-       '(13 13) ;Linha 13 Coluna 13, canto inferior direito
+     ((equal tipo-peca 'pequena) (list '(0 0) '(0 13)'(13 0) '(13 13)))
+     ((equal tipo-peca 'media) (list '(0 0) '(0 12)'(12 0) '(12 12)))
+     (T nil)
+     )
+    )
+
+    (T (percorre-matriz-peca tabuleiro tipo-peca))
+   )
+)
+
+
+
+;; percorre-matriz-peca
+
+(defun percorre-matriz-peca (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
+  "Funcao que percorre a matriz a partir do seu fim e caso encontre alguma peca jogada pelo jogador ira verificar se e possivel colocar uma nova peca num dos seus cantos"
+  (cond
+   ((and (zerop linha) (zerop coluna)) ;;Ja percorreu a matriz inteira e esta na posicao (0,0) 
+      (cond
+
+        ((equal tipo-peca 'pequena)
+          (cond
+            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'pequena))
+            (T nil)
+          )
+        )
+
+        ((equal tipo-peca 'media)
+          (cond
+            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'media))
+            (T nil)
+          )
+        )
+
+        ((equal tipo-peca 'cruz)
+          (cond
+            ((casa-com-ump linha coluna tabuleiro) (append (pode-colocarp 2 0 tabuleiro 'cruz) (pode-colocarp 1 1 tabuleiro 'cruz) )) 
+            (T nil)
+          )
+        )
+
       )
     )
+
+   ((= coluna -1) (percorre-matriz-peca tabuleiro tipo-peca (1- linha) 13))
+
+   ((casa-com-ump linha coluna tabuleiro)
+    (cond
+
+      ((equal tipo-peca 'pequena)
+        (append (cantos-disponiveis-peca-pequena (1- linha) (1- coluna) tabuleiro linha coluna) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))  
+      )
+
+      ((equal tipo-peca 'media)
+        (append (cantos-disponiveis-peca-media (- linha 2) (- coluna 2) tabuleiro linha coluna) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
+      )
+
+      ((equal tipo-peca 'cruz)
+        (append (append (cantos-disponiveis-peca-cruz-horizontal (1- linha) (- coluna 3) tabuleiro linha coluna) (cantos-disponiveis-peca-cruz-vertical (- linha 2) (- coluna 2) tabuleiro linha coluna)) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
+      )
+
+      (T nil)
+    )
    )
+
+   (t (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
   )
+)
+
+;;;; Cantos possiveis peca cruz ;;;;;;;;;;;
+
+;; cantos-disponiveis-peca-horizontal
+
+(defun cantos-disponiveis-peca-cruz-horizontal (linha coluna tabuleiro linha-original coluna-original)
+  "Funcao que ira percorrer todos os cantos de uma determinada peca situada na linha e coluna passada como argumentos para averiguar se e possivel colocar uma peca em cruz de modo a que as pecas laterias da peca em cruz fiquem diagonalmente colocadas com a peca em questao"
+  (cond
+
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-cruz-horizontal (1+ linha-original) (- coluna-original 3) tabuleiro linha-original coluna-original ))
+
+   ((< coluna 0) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+
+   ((< linha 1) (cantos-disponiveis-peca-cruz-horizontal (1+ linha-original) coluna tabuleiro linha-original coluna-original))
+
+
+   ((verifica-casas-vazias tabuleiro (list
+                                      (list (1- linha) (1+ coluna))
+                                      (list linha coluna) (list linha (1+ coluna)) (list linha (+ coluna 2))
+                                      (list (1+ linha) (1+ coluna))
+                                      )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original)))
+
+
+   (T (cantos-disponiveis-peca-cruz-horizontal linha (+ coluna 4) tabuleiro linha-original coluna-original))
+
+  )
+)
+
+
+;; cantos-disponiveis-peca-cruz-vertical
+
+(defun cantos-disponiveis-peca-cruz-vertical (linha coluna tabuleiro linha-original coluna-original)
+  "Funcao que ira percorrer todos os cantos de uma determinada peca situada na linha e coluna passada como argumentos para averiguar se e possivel colocar uma peca em cruz de modo a que as pecas verticais da peca em cruz fiquem diagonalmente colocadas com a peca em questao"
+  (cond
+
+   ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
+
+   ((>= coluna (1+ coluna-original)) (cantos-disponiveis-peca-cruz-vertical (+ linha-original 2) (- coluna-original 2) tabuleiro linha-original coluna-original ))
+
+
+   ((< coluna 0) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
+
+
+   ((< linha 1) (cantos-disponiveis-peca-cruz-vertical (+ linha-original 2) coluna tabuleiro linha-original coluna-original))
+   
+
+   ((verifica-casas-vazias tabuleiro (list
+                                      (list (1- linha) (1+ coluna))
+                                      (list linha coluna) (list linha (1+ coluna)) (list linha (+ coluna 2))
+                                      (list (1+ linha) (1+ coluna))
+                                      )) (append (pode-colocarp linha coluna tabuleiro 'cruz) (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original)))
+
+  (T (cantos-disponiveis-peca-cruz-vertical linha (+ coluna 2) tabuleiro linha-original coluna-original))
+
+  )
+
+)
+
+
+;;;;;; Cantos possiveis peca media ;;;;;;;;;;;;
+
+;; cantos-disponiveis-peca-media
+
+(defun cantos-disponiveis-peca-media (linha coluna tabulerio &optional linha-original coluna-original)
+  "Funcao que ira percorrer todos os cantos possiveis de uma determinada peca situada na linha e coluna passada como argumentos e averiguar se e possivel colocar uma peca media nesses cantos"
+  (cond
+
+   ((<= linha -1) (cantos-disponiveis-peca-media (+ linha 3) coluna tabulerio linha-original coluna-original))
+
+   ((<= coluna -1) (cantos-disponiveis-peca-media linha (+ coluna 3) tabulerio linha-original coluna-original))
+   
+
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabulerio 'media)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-media (+ linha 3) (- coluna-original 2) tabulerio linha-original coluna-original))
+
+   ((verifica-casas-vazias tabulerio (list 
+                                      (list linha coluna) (list linha (1+ coluna))
+                                      (list (1+ linha) coluna) (list (1+ linha) (1+ coluna))
+                                      )) (append (pode-colocarp linha coluna tabulerio 'media)
+                                                 (cantos-disponiveis-peca-media linha (+ coluna 3) tabulerio linha-original coluna-original)))
+
+   (T (cantos-disponiveis-peca-media linha (+ coluna 3) tabulerio linha-original coluna-original))
+
+  )
+)
+
+;;;;;;;;Cantos possiveis peca pequena;;;;;;;;;;;;;;;;
+
+;; cantos-disponiveis-peca-pequena
+
+(defun cantos-disponiveis-peca-pequena (linha coluna tabuleiro &optional linha-original coluna-original)
+  "Funcao que ira percorrer todos os cantos possiveis de uma determinada peca situada na linha e coluna passada como argumentos e averiguar se e possivel colocar uma peca pequna nesses cantos"
+  (cond
+   ((= linha -1) (cantos-disponiveis-peca-pequena (+ linha 2) coluna tabuleiro linha-original coluna-original)) ;;Se os cantos superiores ja estiverem fora do tabuleiro nao vale a pena ve-los
+   
+   ((= coluna -1) (cantos-disponiveis-peca-pequena linha (+ coluna 2) tabuleiro linha-original coluna-original)) ;; Se os cantos laterais esquerdos estiverem fora do tabuleiro nao vale a pena ve-los
+
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'pequena)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-pequena (+ linha 2) (- coluna-original 1) tabuleiro linha-original coluna-original))
+
+   ((equal (nth coluna (nth linha tabuleiro)) 0) (append (pode-colocarp linha coluna tabuleiro 'pequena) (cantos-disponiveis-peca-pequena linha (+ coluna 2) tabuleiro linha-original coluna-original )))
+
+   (T (cantos-disponiveis-peca-pequena linha (+ coluna 2) tabuleiro linha-original coluna-original))
+  )
+
+)
+
+
+
+;; verifica-casas-vazias
+
+(defun verifica-casas-vazias (tabuleiro casas)
+  "Funcao auxiliar para determinar se uma peca ira sobrepor alguma peca ja existente ou nao"
+  (eval (cons 'and (mapcar #'(lambda (casa) 
+              (cond
+
+                ((eq (nth (second casa) (nth (first casa) tabuleiro)) 0) T)
+                (T nil)
+              )
+            ) casas)))
+)
+
+
+;; casa-com-ump
+
+(defun casa-com-ump (linha coluna tabuleiro)
+  "Funcao que determina se uma posicao tem la uma peca do jogador ou nao"
+  (cond
+   ((or (= linha -1) (= coluna -1)) NIL)
+   ((eq (nth coluna (nth linha tabuleiro)) 1) T)
+   (T nil)
+  )
+)
+
+
+;; pode-colocarp
+
+(defun pode-colocarp (linha coluna tabuleiro tipo-peca)
+  "Funcao que verifica se , ao colocarmos uma peca num dos cantos de uma peca ja existe, nao fica posicionada lateralmente com uma peca ja jogada pelo jogador "
+  (cond
+
+   ((equal tipo-peca 'cruz)
+    (cond
+     ((and 
+       (not (casa-com-ump linha (1- coluna) tabuleiro))
+       (not (casa-com-ump (1- linha) coluna tabuleiro))
+       (not (casa-com-ump (1+ linha) coluna tabuleiro))
+       (not (casa-com-ump (- linha 2) (1+ coluna) tabuleiro))
+       (not (casa-com-ump (+ linha 2) (1+ coluna) tabuleiro))
+       (not (casa-com-ump (1- linha) (+ coluna 2) tabuleiro))
+       (not (casa-com-ump (1+ linha) (+ coluna 2) tabuleiro))
+       (not (casa-com-ump linha (+ coluna 3) tabuleiro))
+       (eq (nth (1+ coluna) (nth (1- linha) tabuleiro)) 0)
+       (eq (nth coluna (nth linha tabuleiro)) 0)
+       (eq (nth (1+ coluna) (nth linha tabuleiro)) 0)
+       (eq (nth (+ coluna 2) (nth linha tabuleiro)) 0)
+       (eq (nth (1+ coluna) (nth (1+ linha) tabuleiro)) 0)
+       ) (list (list linha coluna)))
+     (T NIL)
+     )
+   )
+
+   ((equal tipo-peca 'media)
+    (cond
+     ((and 
+       (not (casa-com-ump (1- linha) coluna tabuleiro))
+       (not (casa-com-ump (1- linha) (1+ coluna) tabuleiro))
+       (not (casa-com-ump linha (1- coluna) tabuleiro))
+       (not (casa-com-ump linha (+ coluna 2) tabuleiro))
+       (not (casa-com-ump (1+ linha) (1- coluna) tabuleiro))
+       (not (casa-com-ump (1+ linha) (+ coluna 2) tabuleiro))
+       (not (casa-com-ump (+ linha 2) coluna tabuleiro))
+       (not (casa-com-ump (+ linha 2) (1+ coluna) tabuleiro))
+       (eq (nth coluna (nth linha tabuleiro)) 0)
+       (eq (nth (1+ coluna) (nth linha tabuleiro)) 0)
+       (eq (nth coluna (nth (1+ linha) tabuleiro)) 0)
+       (eq (nth (1+ coluna) (nth (1+ linha) tabuleiro)) 0)
+       ) (list (list linha coluna)))
+     (T NIL)
+     )
+   )
+
+
+   ((equal tipo-peca 'pequena)
+    (cond
+     ((and
+       (not (casa-com-ump linha (1+ coluna) tabuleiro))
+       (not (casa-com-ump linha (1- coluna) tabuleiro))
+       (not (casa-com-ump (1+ linha) coluna tabuleiro))
+       (not (casa-com-ump (1- linha) coluna tabuleiro))
+       (eq (nth coluna (nth linha tabuleiro)) 0)
+       ) (list (list linha coluna)))
+     (T nil)
+     )
+   )
+
+  )   
 )
 
 ;;; Heuristicas

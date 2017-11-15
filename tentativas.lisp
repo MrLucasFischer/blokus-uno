@@ -41,7 +41,8 @@
 
 
 
-;;peca-contagem
+;; peca-contagem
+ 
 (defun peca-contagem (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
   "Funcao que permite contar o numero de pecas do jogador existentes no tabuleiro conforme o seu tipo"
   (cond
@@ -62,7 +63,9 @@
   )
 )
 
-;;tipo-pecap
+
+;; tipo-pecap
+
 (defun tipo-pecap (linha coluna tabuleiro tipo-peca)
   "Funcao que ao passarmos uma posicao de um tabuleiro verifica se essa peca e do tipo de peca enviado por argumento"
   (cond
@@ -112,8 +115,10 @@
   )
 )
 
+;; jogadas-possives
+
 (defun jogadas-possiveis (tabuleiro tipo-peca)
-  "Funcao que ve todas as jogadas possiveis para um determinado no"
+  "Funcao que determina todas as jogadas possiveis para um tipo de peca num determinado tabuleiro, devolvendo-as numa lista"
   (cond
    ((and 
      (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista pe�as nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
@@ -128,41 +133,75 @@
      )
     )
 
-   (T (cond
-        ((equal tipo-peca 'pequena) (jogadas-possiveis-para-peca tabuleiro tipo-peca))
-        ((equal tipo-peca 'media) (percorre-matriz-peca-media tabuleiro))
-        ((equal tipo-peca 'cruz) (percorre-matriz-peca-cruz tabuleiro))
-        (T nil)
-      )
+    (T (percorre-matriz-peca tabuleiro tipo-peca))
    )
-  )
 )
 
 
 
-;; Para a peca cruz
+;; percorre-matriz-peca
 
-(defun percorre-matriz-peca-cruz (tabuleiro &optional (linha 13) (coluna 13))
+(defun percorre-matriz-peca (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
+  "Funcao que percorre a matriz a partir do seu fim e caso encontre alguma peca jogada pelo jogador ira verificar se e possivel colocar uma nova peca num dos seus cantos"
   (cond
-   ((and (zerop linha) (zerop coluna)) 
+   ((and (zerop linha) (zerop coluna)) ;;Ja percorreu a matriz inteira e esta na posicao (0,0) 
+      (cond
+
+        ((equal tipo-peca 'pequena)
+          (cond
+            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'pequena))
+            (T nil)
+          )
+        )
+
+        ((equal tipo-peca 'media)
+          (cond
+            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'media))
+            (T nil)
+          )
+        )
+
+        ((equal tipo-peca 'cruz)
+          (cond
+            ((casa-com-ump linha coluna tabuleiro) (append (pode-colocarp 2 0 tabuleiro 'cruz) (pode-colocarp 1 1 tabuleiro 'cruz) )) 
+            (T nil)
+          )
+        )
+
+      )
+    )
+
+   ((= coluna -1) (percorre-matriz-peca tabuleiro tipo-peca (1- linha) 13))
+
+   ((casa-com-ump linha coluna tabuleiro)
     (cond
-     ((casa-com-ump linha coluna tabuleiro) (append (pode-colocarp 2 0 tabuleiro 'cruz) (pode-colocarp 1 1 tabuleiro 'cruz) )) 
-     (T nil)
+
+      ((equal tipo-peca 'pequena)
+        (append (cantos-disponiveis-peca-pequena (1- linha) (1- coluna) tabuleiro linha coluna) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))  
+      )
+
+      ((equal tipo-peca 'media)
+        (append (cantos-disponiveis-peca-media (- linha 2) (- coluna 2) tabuleiro linha coluna) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
+      )
+
+      ((equal tipo-peca 'cruz)
+        (append (append (cantos-disponiveis-peca-cruz-horizontal (1- linha) (- coluna 3) tabuleiro linha coluna) (cantos-disponiveis-peca-cruz-vertical (- linha 2) (- coluna 2) tabuleiro linha coluna)) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
+      )
+
+      (T nil)
     )
    )
-   
-   ((= coluna -1) (percorre-matriz-peca-cruz tabuleiro (1- linha) 13))
 
-   ((casa-com-ump linha coluna tabuleiro) (append (append (cantos-disponiveis-peca-cruz-horizontal (1- linha) (- coluna 3) tabuleiro linha coluna) (cantos-disponiveis-peca-cruz-vertical (- linha 2) (- coluna 2) tabuleiro linha coluna)) (percorre-matriz-peca-cruz tabuleiro linha (1- coluna))))
-
-   (T (percorre-matriz-peca-cruz tabuleiro linha (1- coluna)))
-
+   (t (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
   )
 )
 
+;;;; Cantos possiveis peca cruz ;;;;;;;;;;;
+
+;; cantos-disponiveis-peca-horizontal
 
 (defun cantos-disponiveis-peca-cruz-horizontal (linha coluna tabuleiro linha-original coluna-original)
-  
+  "Funcao que ira percorrer todos os cantos de uma determinada peca situada na linha e coluna passada como argumentos para averiguar se e possivel colocar uma peca em cruz de modo a que as pecas laterias da peca em cruz fiquem diagonalmente colocadas com a peca em questao"
   (cond
 
    ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
@@ -187,9 +226,10 @@
 )
 
 
+;; cantos-disponiveis-peca-cruz-vertical
 
 (defun cantos-disponiveis-peca-cruz-vertical (linha coluna tabuleiro linha-original coluna-original)
-
+  "Funcao que ira percorrer todos os cantos de uma determinada peca situada na linha e coluna passada como argumentos para averiguar se e possivel colocar uma peca em cruz de modo a que as pecas verticais da peca em cruz fiquem diagonalmente colocadas com a peca em questao"
   (cond
 
    ((and (= linha (+ linha-original 2)) (= coluna coluna-original)) (append (pode-colocarp linha coluna tabuleiro 'cruz)))
@@ -216,51 +256,12 @@
 )
 
 
+;;;;;; Cantos possiveis peca media ;;;;;;;;;;;;
 
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
-
-
-
-
-
-;; Para a peca media
-
-(defun percorre-matriz-peca-media (tabuleiro &optional (linha 13) (coluna 13))
-  "Por enquanto pode ser a mesma que a da pequena"
-  (cond
-  
-    ((and (zerop linha) (zerop coluna)) ;;Ja percorreu a matriz inteira e esta na posicao (0,0)
-      (cond
-       ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'media))
-       (T nil)
-      )
-    )
-
-    ((= coluna -1) (percorre-matriz-peca-media tabuleiro (1- linha) 13) ) ;;Quando chegou a coluna -1 significa que ja percorreu a linha toda
-
-    ((= (nth coluna (nth linha tabuleiro)) 1) (append (cantos-disponiveis-peca-media (- linha 2) (- coluna 2) tabuleiro linha coluna) (percorre-matriz-peca-media tabuleiro linha (1- coluna))))
-
-    (T (percorre-matriz-peca-media tabuleiro linha (1- coluna)))
-
-  )
-)
-
-
-
-
+;; cantos-disponiveis-peca-media
 
 (defun cantos-disponiveis-peca-media (linha coluna tabulerio &optional linha-original coluna-original)
-
+  "Funcao que ira percorrer todos os cantos possiveis de uma determinada peca situada na linha e coluna passada como argumentos e averiguar se e possivel colocar uma peca media nesses cantos"
   (cond
 
    ((<= linha -1) (cantos-disponiveis-peca-media (+ linha 3) coluna tabulerio linha-original coluna-original))
@@ -281,13 +282,36 @@
    (T (cantos-disponiveis-peca-media linha (+ coluna 3) tabulerio linha-original coluna-original))
 
   )
-  
+)
+
+;;;;;;;;Cantos possiveis peca pequena;;;;;;;;;;;;;;;;
+
+;; cantos-disponiveis-peca-pequena
+
+(defun cantos-disponiveis-peca-pequena (linha coluna tabuleiro &optional linha-original coluna-original)
+  "Funcao que ira percorrer todos os cantos possiveis de uma determinada peca situada na linha e coluna passada como argumentos e averiguar se e possivel colocar uma peca pequna nesses cantos"
+  (cond
+   ((= linha -1) (cantos-disponiveis-peca-pequena (+ linha 2) coluna tabuleiro linha-original coluna-original)) ;;Se os cantos superiores ja estiverem fora do tabuleiro nao vale a pena ve-los
+   
+   ((= coluna -1) (cantos-disponiveis-peca-pequena linha (+ coluna 2) tabuleiro linha-original coluna-original)) ;; Se os cantos laterais esquerdos estiverem fora do tabuleiro nao vale a pena ve-los
+
+   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'pequena)))
+
+   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis-peca-pequena (+ linha 2) (- coluna-original 1) tabuleiro linha-original coluna-original))
+
+   ((equal (nth coluna (nth linha tabuleiro)) 0) (append (pode-colocarp linha coluna tabuleiro 'pequena) (cantos-disponiveis-peca-pequena linha (+ coluna 2) tabuleiro linha-original coluna-original )))
+
+   (T (cantos-disponiveis-peca-pequena linha (+ coluna 2) tabuleiro linha-original coluna-original))
+  )
+
 )
 
 
 
-;;Funcao auxiliar para ver se uma determinada posicao esta vazia ou nao
+;; verifica-casas-vazias
+
 (defun verifica-casas-vazias (tabuleiro casas)
+  "Funcao auxiliar para determinar se uma peca ira sobrepor alguma peca ja existente ou nao"
   (eval (cons 'and (mapcar #'(lambda (casa) 
               (cond
 
@@ -298,59 +322,7 @@
 )
 
 
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
-
-
-;;Para a peca pequena
-
-(defun jogadas-possiveis-para-peca (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
-  "Funcao que percorre a matriz a partir do seu fim e caso encontre alguma peca jogada pelo jogador ira verificar se e possivel colocar uma nova peca num dos seus cantos"
-  (cond
-   ((and (zerop linha) (zerop coluna)) 
-    (cond
-     ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro tipo-peca))
-     (T nil)
-    ))
-
-   ((= coluna -1) (jogadas-possiveis-para-peca tabuleiro tipo-peca (1- linha) 13))
-
-   ((= (nth coluna (nth linha tabuleiro)) 1) (append (cantos-disponiveis (1- linha) (1- coluna) tabuleiro tipo-peca linha coluna) (jogadas-possiveis-para-peca tabuleiro tipo-peca linha (1- coluna))))
-
-   (t (jogadas-possiveis-para-peca tabuleiro tipo-peca linha (1- coluna)))
-  )
-)
-
-
-
-
-(defun cantos-disponiveis (linha coluna tabuleiro tipo-peca &optional linha-original coluna-original)
-  "Funcao que verifica se e possivel adicionar uma nova peca aos cantos de uma peca ja jogada pelo jogador, verificando se esta nova peca nao ficaria lateralmente com alguma ja existente"
-  (cond
-   ((= linha -1) (cantos-disponiveis (+ linha 2) coluna tabuleiro tipo-peca linha-original coluna-original)) ;;Se os cantos superiores ja estiverem fora do tabuleiro nao vale a pena ve-los
-   
-   ((= coluna -1) (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original)) ;; Se os cantos laterais esquerdos estiverem fora do tabuleiro nao vale a pena ve-los
-
-   ((and (= linha (1+ linha-original)) (= coluna (1+ coluna-original))) (append (pode-colocarp linha coluna tabuleiro 'pequena)))
-
-   ((>= coluna (+ coluna-original 2)) (cantos-disponiveis (+ linha 2) (- coluna-original 1) tabuleiro tipo-peca linha-original coluna-original))
-
-   ((equal (nth coluna (nth linha tabuleiro)) 0) (append (pode-colocarp linha coluna tabuleiro 'pequena) (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original )))
-
-   (T (cantos-disponiveis linha (+ coluna 2) tabuleiro tipo-peca linha-original coluna-original))
-  )
-
-)
+;; casa-com-ump
 
 (defun casa-com-ump (linha coluna tabuleiro)
   "Funcao que determina se uma posicao tem la uma peca do jogador ou nao"
@@ -361,6 +333,8 @@
   )
 )
 
+
+;; pode-colocarp
 
 (defun pode-colocarp (linha coluna tabuleiro tipo-peca)
   "Funcao que verifica se , ao colocarmos uma peca num dos cantos de uma peca ja existe, nao fica posicionada lateralmente com uma peca ja jogada pelo jogador "
@@ -423,6 +397,3 @@
 
   )   
 )
-
-;;Quando tivermos as jogadas possiveis todas certas podemos cagar nas verificações todas que tive a fazer ate agora no puzzle.lisp e simplesmente ver se
-;; a posição que o user inserio consta na lista de posições possiveis para aquele tipo de peça
