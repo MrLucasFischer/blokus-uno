@@ -173,26 +173,17 @@
   )
 )
 
-;;possivel-adicionar-peca-pequena
-;;falta ver se estamos a por a peca no canto de outra ou se existe alguma peca nos cantos do tabuleiro
-(defun possivel-adicionar-peca-pequena (linha coluna tabuleiro)
-  "Funcao que determina se e possivel adicionar uma peca pequena numa determina posicao de um tabuleiro"
-  (cond
-   ((zerop (nth coluna (nth linha tabuleiro))) T)
-   (T nil)
-  )
-)
-
-(defun possivel-adicionar-peca-media (linha coluna tabuleiro)
-  "Funcao que determina se e possivel adicionar uma peca media numa determinada posicao do tabuleiro"
-  (cond
-   ((and 
-     (possivel-adicionar-peca-pequena linha coluna tabuleiro)
-     (possivel-adicionar-peca-pequena (1+ linha) coluna tabuleiro)
-     (possivel-adicionar-peca-pequena linha (1+ coluna) tabuleiro)
-     (possivel-adicionar-peca-pequena (1+ linha) (1+ coluna) tabuleiro)
-    ) T)
-   (T nil)
+;; jogada-in-jogadas-possiveis-p 
+(defun jogada-in-jogadas-possiveis-p (jogada tabuleiro tipo-peca)
+  (let (
+        (jogadas-possiveis (funcall #'jogadas-possiveis tabuleiro tipo-peca))
+       )
+    (eval (cons 'or (mapcar #'(lambda (jogada-possivel) 
+                                (cond
+                                 ((equal jogada-possivel jogada) T)
+                                 (T nil)
+                                 )
+                                ) jogadas-possiveis))) 
   )
 )
 
@@ -336,19 +327,19 @@
 
 ;;inserir-peca-pequena
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
-(defun inserir-peca-pequena (linha coluna tabuleiro)
+(defun inserir-peca-pequena (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca mais pequena numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
    ((null tabuleiro) nil)
 
-   ((not (possivel-adicionar-peca-pequena linha coluna tabuleiro)) nil)
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'pequena)) nil)
 
    ((= linha 0) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
 
    (T 
     (cons 
      (first tabuleiro) 
-     (inserir-peca-pequena (1- linha) coluna (rest tabuleiro)))
+     (inserir-peca-pequena (1- linha) coluna (rest tabuleiro) linha-original coluna-original tabuleiro-original))
     )
 
   )
@@ -358,14 +349,12 @@
 
 ;;inserir-peca-media   
 ;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
-(defun inserir-peca-media (linha coluna tabuleiro)
+(defun inserir-peca-media (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca media numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sao argumentos numericos"
   (cond 
    ((null tabuleiro) nil)
 
-   ((or (>= linha 13) (>= coluna 13)) nil) ;;Nao pode inserir na ultima linha ou coluna,so na penultima
-   
-   ((not (possivel-adicionar-peca-media linha coluna tabuleiro)) nil)
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'media)) nil)
 
    ((= linha 0) 
     (append 
@@ -377,7 +366,7 @@
    (T
     (cons 
      (first tabuleiro) 
-     (inserir-peca-media (1- linha) coluna (rest tabuleiro))
+     (inserir-peca-media (1- linha) coluna (rest tabuleiro) linha-original coluna-original tabuleiro-original)
     )
    )
 
@@ -387,10 +376,12 @@
 
 
 ;;inserir-peca-cruz
-(defun inserir-peca-cruz (linha coluna tabuleiro)
+(defun inserir-peca-cruz (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro) )
   "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
-   ((or (null tabuleiro) (>= linha 13) (> coluna 11) (<= linha 0)) nil)
+   ((null tabuleiro) nil)
+
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'cruz)) nil)
    
    ((= linha 1) ;;tem que ser uma linha antes para por a peca de cima
     (append
@@ -409,7 +400,7 @@
    (T
     (cons
      (first tabuleiro)
-     (inserir-peca-cruz (1- linha) coluna (rest tabuleiro))
+     (inserir-peca-cruz (1- linha) coluna (rest tabuleiro) linha-original coluna-original tabuleiro-original)
     )
    )
 
@@ -426,6 +417,8 @@
 ;;Sucessores 
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
 ;;Falta fazer coisas (?)
+
+;;;;;;;;;;;;MUDAR PARA A QUE FIZEMOS NO LAB;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun sucessores (no operadores)
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
   (let (
