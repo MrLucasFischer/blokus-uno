@@ -420,20 +420,23 @@
 ;;Falta fazer coisas (?)
 
 ;;;;;;;;;;;;MUDAR PARA A QUE FIZEMOS NO LAB;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun sucessores (no operadores)
+(defun sucessores (no operadores algoritmo &optional (profundidade nil))
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
-  (let (
-        (operador-atual (first operadores))
-       )
-    (cond
-     ((null operadores) nil)
 
-     (T (append 
-         (aplicar-operador-no no operador-atual) 
-         (sucessores no (rest operadores))
-        )
+  (cond
+
+   ((equal algoritmo 'dfs)
+    (cond
+     ((> (get-profundidade-no no) profundidade) nil)
+     (T (apply #'append (mapcar #'(lambda(operador)
+                                    (aplicar-operador-no no operador)
+                                  ) operadores)))
      )
-    )
+   )
+
+   (T (apply #'append (mapcar #'(lambda(operador)
+                                  (aplicar-operador-no no operador)
+                                ) operadores)))
   )
 )
 
