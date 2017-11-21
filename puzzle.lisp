@@ -47,6 +47,10 @@
   )
 )
 
+(defun no-teste ()
+  (cria-no (tabuleiro-teste) 0 nil nil)
+)
+
 ;;; Construtor
 
 ;;Cria-no
@@ -73,7 +77,6 @@
 )
 
 
-
 ;;get-heuristica-no
 (defun get-heuristica-no (no)
   "Funcao que retorna a heuristica de um no"
@@ -81,13 +84,11 @@
 )
 
 
-
 ;;get-pai-no
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
   (fourth no)
 )
-
 
 
 ;;; Funcao f(n) = g(n) + h(n)
@@ -439,7 +440,24 @@
 ;;aplicar-operador-no
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
 (defun aplicar-operador-no (no operador)
-  (list operador (get-estado-no no)) ;Fata aqui as posicoes onde queremos por as pecas
+  (let
+    (
+     (jogadas-possiveis (cond
+                         ((equal operador 'inserir-peca-pequena)
+                          (jogadas-possiveis (get-estado-no no) 'pequena))
+
+                         ((equal operador 'inserir-peca-media)
+                          (jogadas-possiveis (get-estado-no no) 'media))
+
+                         ((equal operador 'inserir-peca-cruz)
+                          (jogadas-possiveis (get-estado-no no) 'cruz))
+                         )
+                        )
+    )
+    (mapcar #'(lambda (jogada)
+                (cria-no (funcall operador (first jogada) (second jogada) (get-estado-no no)) (1+ (get-profundidade-no no)) (get-heuristica-no no) no) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
+                ) jogadas-possiveis)
+  )
 )
 
 ;;; Jogadas possiveis
