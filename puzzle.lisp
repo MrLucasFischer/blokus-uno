@@ -48,6 +48,7 @@
 )
 
 (defun no-teste ()
+  "Funcao que cria um no teste"
   (cria-no (tabuleiro-teste) 0 nil nil)
 )
 
@@ -410,6 +411,7 @@
 
 ;;operadores
 (defun operadores ()
+  "Funcao que lista todos os operadores existentes no dominio do problema"
   (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
 )
 
@@ -417,9 +419,7 @@
 
 ;;Sucessores 
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
-;;Falta fazer coisas (?)
 
-;;;;;;;;;;;;MUDAR PARA A QUE FIZEMOS NO LAB;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun sucessores (no operadores algoritmo &optional (profundidade nil))
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
 
@@ -443,6 +443,7 @@
 ;;aplicar-operador-no
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
 (defun aplicar-operador-no (no operador)
+  "Funcao que aplica apenas um operador a um determinado no. Consoante o operador passado por argumento esta funcao ira determinar as jogadas possiveis para esse operador e ira criar um no (um sucessor) para cada uma dessas jogadas possives"
   (let
     (
      (jogadas-possiveis (cond
