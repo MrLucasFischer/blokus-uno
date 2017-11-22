@@ -869,22 +869,12 @@
     (cond
 
      ((or
+       (and (not (null (jogadas-possiveis tabuleiro 'pequena))) (> (first pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'media))) (> (second pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'cruz))) (> (third pecas-no) 0))
+      ) nil)
 
-       (and 
-        (null (jogadas-possiveis tabuleiro 'pequena))
-        (null (jogadas-possiveis tabuleiro 'media))
-        (null (jogadas-possiveis tabuleiro 'cruz))
-       )
-
-       (and 
-        (zerop (first pecas-no))
-        (zerop (second pecas-no))
-        (zerop (third pecas-no))
-       )
-
-      ) T)
-
-     (T nil)
+     (T T)
 
     )
   )
@@ -915,7 +905,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;; TESTE DOS ALGORITMOS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bfs
-(defun bfs (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+(defun bfs (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em largura"
   (progn
     (print (length abertos))
@@ -928,7 +918,7 @@
 
            (no-atual (first abertos))
 
-           (abertos-sem-no-inicial (remover-no no-atual abertos))
+           (abertos-sem-no-inicial (rest abertos))
 
            (fechados-com-no-inicial (cons no-atual fechados))
 
@@ -945,7 +935,7 @@
 
        ((existe-solucaop sucessores) (procura-no-objetivo sucessores))
 
-       (T (bfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial))
+       (T (bfs (first abertos-com-sucessores) funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial))
 
       )
 
@@ -970,7 +960,7 @@
 
            (no-atual (first abertos))
 
-           (abertos-sem-no-inicial (remover-no no-atual abertos))
+           (abertos-sem-no-inicial (rest abertos))
 
            (fechados-com-no-inicial (cons no-atual fechados))
 
