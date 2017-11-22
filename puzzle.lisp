@@ -20,32 +20,33 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 1 0 1 0 0 0 0 0 0 0 0)
+   '(1 0 0 0 1 0 0 0 0 0 0 0 0 0)
+   '(0 1 0 1 0 0 0 0 0 0 0 0 0 0)
+   '(1 0 1 0 0 0 0 0 0 0 0 0 0 0)
   )
 )
 
 (defun tabuleiro-teste ()
   "Funcao que retorna um tabuleiro de teste para a contagem de pecas"
   (list 
-   '(1 0 1 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 1 1 1 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 1 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 1 1 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 1 1 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 2 2 0 0 2 0 2 0 2 0)
+   '(0 0 0 0 2 2 0 2 2 2 0 2 2 2)
+   '(0 0 0 2 0 0 2 0 2 0 2 0 2 0)
+   '(0 2 2 0 0 2 2 2 0 2 2 2 0 2)
+   '(0 2 2 0 2 0 2 0 2 0 2 0 2 0)
+   '(0 0 0 2 2 2 0 2 2 2 0 2 2 2)
+   '(0 2 2 0 2 0 2 0 2 0 2 0 2 0)
+   '(0 2 2 0 0 2 2 2 0 2 2 2 0 2)
+   '(0 0 0 0 2 0 2 0 2 0 2 0 2 0)
+   '(0 0 0 2 2 2 0 2 2 2 0 2 2 2)
+   '(0 0 2 1 2 1 2 0 2 0 2 0 2 0)
+   '(1 2 2 2 1 2 2 2 0 2 2 2 0 0)
+   '(0 1 2 1 2 0 2 0 2 0 2 0 2 2)
+   '(1 0 1 2 1 2 0 2 0 2 0 0 2 2)
   )
 )
+
 
 (defun no-teste ()
   "Funcao que cria um no teste"
@@ -495,19 +496,18 @@
                        )
 
     )
+    
+    (cond
+     
+     ((or (< numero-peca-pequena 0) (< numero-peca-media 0) (< numero-peca-cruz 0)) nil)
+     
+     (T 
+      (progn
+        (print jogadas-possiveis)
 
-    ;;Aqui verificar se para o operador passado ainda tenho pecas suficientes para gerar sucessores
-
-    (mapcar #'(lambda (jogada)
-                (cria-no 
-                 (funcall operador (first jogada) (second jogada) (get-estado-no no))
-                 (list numero-peca-pequena numero-peca-media numero-peca-cruz)
-                 (1+ (get-profundidade-no no)) 
-                 (get-heuristica-no no) 
-                 no
-                ) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
-                ) jogadas-possiveis)
-
+)
+        )
+    )
   )
 )
 
@@ -800,9 +800,229 @@
 
 ;;heuristica
 ;sera que passamos so um no ou sera que passamos logo diretamente os valores de quadrados por preencher e preenchidos
+
 (defun heuristica (no)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
   (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
 )
 
+
+
 ;;; Solucao
+
+;;no-objetivo-p
+
+(defun no-objetivo-p (no)
+  "Funcao que determina se um no e no objetivo ou nao, ou seja, se um no ja nao tem mais pecas para jogar ou se um no ja nao tem jogadas possiveis"
+  (let
+      (
+       (tabuleiro (get-estado-no no))
+       (pecas-no (get-pecas-no no))
+      )
+
+    (cond
+
+     ((or
+
+       (and 
+        (null (jogadas-possiveis tabuleiro 'pequena))
+        (null (jogadas-possiveis tabuleiro 'media))
+        (null (jogadas-possiveis tabuleiro 'cruz))
+       )
+
+       (and 
+        (zerop (first pecas-no))
+        (zerop (second pecas-no))
+        (zerop (third pecas-no))
+       )
+
+      ) T)
+
+     (T nil)
+
+    )
+  )
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;; TESTE DOS ALGORITMOS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; bfs
+(defun bfs (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+  "Funcao que implementa o algoritmo de procura em largura"
+  (cond
+
+   ((null abertos) nil)
+
+   (T 
+    (let* (
+
+           (no-atual (first abertos))
+
+           (abertos-sem-no-inicial (remover-no no-atual abertos))
+
+           (fechados-com-no-inicial (cons no-atual fechados))
+
+           (sucessores (remover-nos-repetidos (funcall funcao-sucessores no-atual operadores 'bfs) abertos-sem-no-inicial fechados-com-no-inicial))
+
+           (abertos-com-sucessores 
+            (abertos-bfs abertos-sem-no-inicial sucessores)
+           )
+
+          )
+
+      (cond
+
+       ((existe-solucaop sucessores) (procura-no-objetivo sucessores))
+
+       (T (bfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial))
+
+      )
+
+     )  
+    )
+  )
+)
+
+
+;; dfs
+
+(defun dfs (no-inicial funcao-solucao funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil))
+  "Funcao que implementa o algoritmo de procura em profundidade"
+   (cond
+
+   ((null abertos) nil)
+
+   (T 
+    (let* (
+
+           (no-atual (first abertos))
+
+           (abertos-sem-no-inicial (remover-no no-atual abertos))
+
+           (fechados-com-no-inicial (cons no-atual fechados))
+
+          )
+
+      (cond
+
+       ((> (get-profundidade-no no-atual) profundidade) (dfs (first abertos-sem-no-inicial) funcao-solucao funcao-sucessores operadores profundidade abertos-sem-no-inicial fechados-com-no-inicial))
+
+       (T 
+        (let* (
+
+               (sucessores (remover-nos-repetidos (funcall funcao-sucessores no-atual operadores 'dfs profundidade) abertos-sem-no-inicial fechados-com-no-inicial))
+
+               (abertos-com-sucessores 
+                (abertos-dfs abertos-sem-no-inicial sucessores)
+               )
+
+              )
+              
+          (cond
+
+           ((existe-solucaop sucessores) (procura-no-objetivo sucessores))
+           
+           (T (dfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores profundidade abertos-com-sucessores fechados-com-no-inicial))
+          )
+
+         )
+        )
+         
+      )
+     )
+    )
+  )
+)
+
+;;; Funcoes auxiliares para os algoritmos
+;; abertos-bfs
+
+(defun abertos-bfs (abertos sucessores)
+  "Funcao que constroi a lista de abertos segundo o algoritmo bfs"
+  (append abertos sucessores)
+)
+
+
+;; abertos-dfs
+
+(defun abertos-dfs (abertos sucessores)
+  "Funcao que constroi a lista de abertos segundo o algoritmo dfs"
+  (append sucessores abertos)
+)
+
+
+(defun remover-no (no lista)
+  "Funcao que remove um no de uma determinada lista"
+  (cond
+   ((null lista) nil)
+   ((equal no (first lista)) (remover-no no (rest lista)) )
+   (T (cons (first lista) (remover-no no (rest lista))))
+  )
+)
+
+(defun remover-nos-repetidos (sucessores abertos fechados)
+  "Funcao que retira sucessores que ja existam em abertos ou fechados"
+  (apply #'append (mapcar #'(lambda (no)
+                              (cond
+                               ((or (no-existep no abertos) (no-existep no fechados)) nil)
+                               (T (list no))
+                               )
+                              ) sucessores))
+)
+
+
+;; no-existep
+
+(defun no-existep (no lista)
+  "Funcao que verifica se um determinado no ja existe numa lista ou nao"
+  (cond
+
+   ((null lista) nil)
+
+   ((and 
+     (equal (get-estado-no no) (get-estado-no (first lista))) 
+     (equal (get-pecas-no no) (get-pecas-no (first lista)))) T)
+
+   (T (no-existep no (rest lista)))
+
+   )
+)
+
+;; existe-solucaop
+
+(defun existe-solucaop (sucessores)
+  (eval (cons 'or (mapcar #'no-objetivo-p sucessores)))
+)
+
+;; procura-no-objetivo
+
+(defun procura-no-objetivo (sucessores)
+  (cond
+   ((null sucessores) nil)
+   ((no-objetivo-p (first sucessores)) (first sucessores))
+   (T (procura-no-objetivo (rest sucessores)))
+  )
+)
+
