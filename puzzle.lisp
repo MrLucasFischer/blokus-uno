@@ -10,20 +10,20 @@
 (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
-   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 1 0 1 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 1 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 1 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 1 0 0 0 0 0 0 0 0 0 0 0)
-   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
   )
 )
 
@@ -48,9 +48,50 @@
 )
 
 
+(defun tabuleiro-c ()
+  "Funcao que retorna um tabuleiro de teste para a contagem de pecas"
+  (list 
+   '(0 0 0 0 2 2 0 0 2 0 2 0 2 0)
+   '(0 0 0 0 2 2 0 2 2 2 0 2 2 2)
+   '(0 0 0 2 0 0 2 0 2 0 2 0 2 0)
+   '(0 2 2 0 0 2 2 2 0 2 2 2 0 2)
+   '(0 2 2 0 0 0 2 0 2 0 2 0 2 0)
+   '(0 0 0 0 0 0 0 2 2 2 0 2 2 2)
+   '(0 0 0 0 0 0 2 0 2 0 2 0 2 0)
+   '(0 0 0 0 0 2 2 2 0 2 2 2 0 2)
+   '(0 0 0 0 2 0 2 0 2 0 2 0 2 0)
+   '(0 0 0 2 2 2 0 2 2 2 0 2 2 2)
+   '(0 0 2 1 2 1 2 0 2 0 2 0 2 0)
+   '(1 2 2 2 1 2 2 2 0 2 2 2 0 0)
+   '(0 1 2 1 2 0 2 0 2 0 2 0 2 2)
+   '(1 0 1 2 1 2 0 2 0 2 0 0 2 2)
+  )
+)
+
+(defun tabuleiro-f ()
+  "Funcao que retorna um tabuleiro vazio"
+  (list 
+   '(0 0 0 0 0 0 0 0 0 0 0 0 2 2)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 2 2)
+   '(0 0 0 0 0 0 0 0 0 0 2 2 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 2 2 0 0)
+   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
+   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
+   '(0 0 0 0 0 0 2 2 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 2 2 0 0 0 0 0 0)
+   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
+   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
+   '(0 0 2 2 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 2 2 0 0 0 0 0 0 0 0 0 0)
+   '(2 2 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(2 2 0 0 0 0 0 0 0 0 0 0 0 0)
+  )
+)
+
+
 (defun no-teste ()
   "Funcao que cria um no teste"
-  (cria-no (tabuleiro-teste)
+  (cria-no (tabuleiro-f)
            (list 
             (- 10 (peca-contagem (tabuleiro-teste) 'pequena))
             (- 10 (peca-contagem (tabuleiro-teste) 'media))
@@ -495,8 +536,10 @@
     )
     
     (cond
-     
-     ((or (< numero-peca-pequena 0) (< numero-peca-media 0) (< numero-peca-cruz 0)) nil)
+     ((and (equal operador 'inserir-peca-pequena) (< numero-peca-pequena 0)) nil)
+     ((and (equal operador 'inserir-peca-media) (< numero-peca-media 0)) nil)
+     ((and (equal operador 'inserir-peca-cruz) (< numero-peca-cruz 0)) nil)
+;     ((or (< numero-peca-pequena 0) (< numero-peca-media 0) (< numero-peca-cruz 0)) nil)
      
      (T 
       (mapcar #'(lambda (jogada)
@@ -520,11 +563,12 @@
 (defun jogadas-possiveis (tabuleiro tipo-peca)
   "Funcao que determina todas as jogadas possiveis para um tipo de peca num determinado tabuleiro, devolvendo-as numa lista"
   (cond
-   ((and 
-     (not (equal (nth 0 (nth 0 tabuleiro)) 1)) ;Caso ainda nao exista pe�as nossas em nenhum dos cantos do tabuleiro entao as jogadas possiveis sao os cantos do tabuleiro
-     (not (equal (nth 13 (nth 0 tabuleiro)) 1))
-     (not (equal (nth 0 (nth 13 tabuleiro)) 1))
-     (not (equal (nth 13 (nth 13 tabuleiro)) 1))
+   ((and
+
+     (zerop (nth 0 (nth 0 tabuleiro)))
+     (zerop (nth 13 (nth 0 tabuleiro)))
+     (zerop (nth 0 (nth 13 tabuleiro)))
+     (zerop (nth 13 (nth 13 tabuleiro))) ;caso ainda nao haja pecas nossas nos cantos ainda
      )
     (cond
      ((equal tipo-peca 'pequena) (list '(0 0) '(0 13)'(13 0) '(13 13)))
@@ -873,6 +917,8 @@
 ;; bfs
 (defun bfs (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em largura"
+  (progn
+    (print (length abertos))
   (cond
 
    ((null abertos) nil)
@@ -894,6 +940,7 @@
 
           )
 
+
       (cond
 
        ((existe-solucaop sucessores) (procura-no-objetivo sucessores))
@@ -902,9 +949,11 @@
 
       )
 
+
      )  
     )
   )
+)
 )
 
 
