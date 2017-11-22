@@ -49,15 +49,21 @@
 
 (defun no-teste ()
   "Funcao que cria um no teste"
-  (cria-no (tabuleiro-teste) 0 nil nil)
+  (cria-no (tabuleiro-teste)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-teste) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-teste) 'media))
+            (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
+           )
+           0 nil nil)
 )
 
 ;;; Construtor
 
 ;;Cria-no
-(defun cria-no (estado &optional (profundidade 0) (heuristica nil) (no-pai nil))
+(defun cria-no (estado pecas &optional (profundidade 0) (heuristica nil) (no-pai nil))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica e um no que o gerou"
-  (list estado profundidade heuristica no-pai)
+  (list estado pecas profundidade heuristica no-pai)
 )
 
 
@@ -70,25 +76,31 @@
 )
 
 
+;;get-pecas-no
+(defun get-pecas-no (no)
+  "Funcao que retorna uma lista com 3 elementos que identificam o numero de pecas pequenas, o numero de pecas medias e o numero de pecas em cruz respetivamente"
+  (second no)
+)
+
 
 ;;get-profundidade-no 
 (defun get-profundidade-no (no)
   "Funcao que retorna a profundidade de um no"
-  (second no)
+  (third no)
 )
 
 
 ;;get-heuristica-no
 (defun get-heuristica-no (no)
   "Funcao que retorna a heuristica de um no"
-  (third no)
+  (fourth no)
 )
 
 
 ;;get-pai-no
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
-  (fourth no)
+  (fifth no)
 )
 
 
@@ -457,10 +469,45 @@
                           (jogadas-possiveis (get-estado-no no) 'cruz))
                          )
                         )
+
+     (numero-peca-pequena (cond
+                           ((equal operador 'inserir-peca-pequena)
+                            (1- (first (get-pecas-no no)))
+                           )
+                           (T (first (get-pecas-no no)))
+                           )
+                          )
+
+     (numero-peca-media (cond
+                           ((equal operador 'inserir-peca-media)
+                            (1- (second (get-pecas-no no)))
+                           )
+                           (T (second (get-pecas-no no)))
+                          )
+                        )
+
+     (numero-peca-cruz (cond
+                           ((equal operador 'inserir-peca-cruz)
+                            (1- (third (get-pecas-no no)))
+                           )
+                           (T (third (get-pecas-no no)))
+                          )
+                       )
+
     )
+
+    ;;Aqui verificar se para o operador passado ainda tenho pecas suficientes para gerar sucessores
+
     (mapcar #'(lambda (jogada)
-                (cria-no (funcall operador (first jogada) (second jogada) (get-estado-no no)) (1+ (get-profundidade-no no)) (get-heuristica-no no) no) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
+                (cria-no 
+                 (funcall operador (first jogada) (second jogada) (get-estado-no no))
+                 (list numero-peca-pequena numero-peca-media numero-peca-cruz)
+                 (1+ (get-profundidade-no no)) 
+                 (get-heuristica-no no) 
+                 no
+                ) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
                 ) jogadas-possiveis)
+
   )
 )
 

@@ -47,10 +47,15 @@
   )
 )
 
+(defun no-teste ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-teste) 0 nil nil)
+)
+
 ;;; Construtor
 
 ;;Cria-no
-(defun cria-no (estado &optional (profundidade 0) (no-pai nil) (heuristica nil))
+(defun cria-no (estado &optional (profundidade 0) (heuristica nil) (no-pai nil))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica e um no que o gerou"
   (list estado profundidade heuristica no-pai)
 )
@@ -73,17 +78,16 @@
 )
 
 
-
-;;get-pai-no
-(defun get-pai-no (no)
-  "Funcao que retorna o no gerador de um determinado no"
+;;get-heuristica-no
+(defun get-heuristica-no (no)
+  "Funcao que retorna a heuristica de um no"
   (third no)
 )
 
 
-;;get-heuristica-no
-(defun get-heuristica-no (no)
-  "Funcao que retorna a heuristica de um no"
+;;get-pai-no
+(defun get-pai-no (no)
+  "Funcao que retorna o no gerador de um determinado no"
   (fourth no)
 )
 
@@ -407,6 +411,7 @@
 
 ;;operadores
 (defun operadores ()
+  "Funcao que lista todos os operadores existentes no dominio do problema"
   (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
 )
 
@@ -414,35 +419,48 @@
 
 ;;Sucessores 
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
-;;Falta fazer coisas (?)
 
-;;;;;;;;;;;;MUDAR PARA A QUE FIZEMOS NO LAB;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun sucessores (no operadores)
+(defun sucessores (no operadores algoritmo &optional (profundidade nil))
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
-  (let (
-        (operador-atual (first operadores))
-       )
-    (cond
-     ((null operadores) nil)
 
-     (T (append 
-         (aplicar-operador-no no operador-atual) 
-         (sucessores no (rest operadores))
-        )
+  (cond
+
+   ((equal algoritmo 'dfs)
+    (cond
+     ((> (get-profundidade-no no) profundidade) nil)
+     (T (apply #'append (mapcar #'(lambda(operador)
+                                    (aplicar-operador-no no operador)
+                                  ) operadores)))
      )
-    )
+   )
+
+   (T (apply #'append (mapcar #'(lambda(operador)
+                                  (aplicar-operador-no no operador)
+                                ) operadores)))
   )
 )
 
 ;;aplicar-operador-no
 ;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
 (defun aplicar-operador-no (no operador)
+  "Funcao que aplica apenas um operador a um determinado no. Consoante o operador passado por argumento esta funcao ira determinar as jogadas possiveis para esse operador e ira criar um no (um sucessor) para cada uma dessas jogadas possives"
   (let
     (
-      (jogadas-possiveis )
-    )
+     (jogadas-possiveis (cond
+                         ((equal operador 'inserir-peca-pequena)
+                          (jogadas-possiveis (get-estado-no no) 'pequena))
 
-    (cria-no (funcall operador ) (1+ (get-profundidade-no no)) (get-pai-no no) (get-heuristica-no no))
+                         ((equal operador 'inserir-peca-media)
+                          (jogadas-possiveis (get-estado-no no) 'media))
+
+                         ((equal operador 'inserir-peca-cruz)
+                          (jogadas-possiveis (get-estado-no no) 'cruz))
+                         )
+                        )
+    )
+    (mapcar #'(lambda (jogada)
+                (cria-no (funcall operador (first jogada) (second jogada) (get-estado-no no)) (1+ (get-profundidade-no no)) (get-heuristica-no no) no) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
+                ) jogadas-possiveis)
   )
 )
 
