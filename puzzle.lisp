@@ -10,10 +10,8 @@
 (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -21,9 +19,11 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 1 0 1 0 0 0 0 0 0 0 0)
-   '(1 0 0 0 1 0 0 0 0 0 0 0 0 0)
-   '(0 1 0 1 0 0 0 0 0 0 0 0 0 0)
-   '(1 0 1 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 1 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 1 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 1 0 0 0 0 0 0 0 0 0 0 0)
+   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(1 1 0 0 0 0 0 0 0 0 0 0 0 0)
   )
 )
 
@@ -123,18 +123,17 @@
   (cond
    ((and (zerop linha) (zerop coluna)) 
     (cond
-     ((and 
-       (equal tipo-peca 'pequena)
-       (eq (nth 0 (nth 0 tabuleiro)) 1)
-       (not (eq (nth 1 (nth 0 tabuleiro)) 1))
-       (not (eq (nth 0 (nth 1 tabuleiro)) 1))
-      ) 1)
+     ((eq (nth 0 (nth 0 tabuleiro)) 1) (tipo-pecap linha coluna tabuleiro tipo-peca))
      (T 0)
     )
    )
+   
    ((= coluna -1) (peca-contagem tabuleiro tipo-peca (1- linha) 13 ))
+
    ((= (nth coluna (nth linha tabuleiro)) 1) (+ (tipo-pecap linha coluna tabuleiro tipo-peca) (peca-contagem tabuleiro tipo-peca linha (1- coluna))))
+
    (T (peca-contagem tabuleiro tipo-peca linha (1- coluna)))
+
   )
 )
 
@@ -146,10 +145,10 @@
    ((equal tipo-peca 'pequena)
     (cond
      ((or
-       (eq (nth (1+ coluna) (nth linha tabuleiro)) 1)
-       (eq (nth (1- coluna) (nth linha tabuleiro)) 1)
-       (eq (nth coluna (nth (1+ linha) tabuleiro)) 1)
-       (eq (nth coluna (nth (1- linha) tabuleiro)) 1)
+       (casa-com-ump linha (1+ coluna) tabuleiro)
+       (casa-com-ump linha (1- coluna) tabuleiro)
+       (casa-com-ump (1+ linha) coluna tabuleiro)
+       (casa-com-ump (1- linha) coluna tabuleiro)
        ) 0)
      (T 1)
      )
@@ -158,11 +157,9 @@
    ((equal tipo-peca 'media)
     (cond
      ((and
-       (not (= coluna 0 ))
-       (not (= linha 0 ))
-       (eq (nth (1- coluna) (nth linha tabuleiro)) 1)
-       (eq (nth coluna (nth (1- linha) tabuleiro)) 1)
-       (eq (nth (1- coluna) (nth (1- linha) tabuleiro)) 1)
+       (casa-com-ump linha (1- coluna) tabuleiro)
+       (casa-com-ump (1- linha) coluna tabuleiro)
+       (casa-com-ump (1- linha) (1- coluna) tabuleiro)
        ) 1)
      (T 0)
     )
@@ -174,10 +171,10 @@
        (not (= coluna 13))
        (not (= coluna 0))
        (not (< linha 2))
-       (eq (nth coluna (nth (1- linha) tabuleiro)) 1)
-       (eq (nth (1- coluna) (nth (1- linha) tabuleiro)) 1)
-       (eq (nth (1+ coluna) (nth (1- linha) tabuleiro)) 1)
-       (eq (nth coluna (nth (- linha 2) tabuleiro)) 1)
+       (casa-com-ump (1- linha) coluna tabuleiro)
+       (casa-com-ump (1- linha) (1- coluna) tabuleiro)
+       (casa-com-ump (1- linha) (1+ coluna) tabuleiro)
+       (casa-com-ump (- linha 2) coluna tabuleiro)
       ) 1)
      (T 0)
     )
@@ -502,11 +499,16 @@
      ((or (< numero-peca-pequena 0) (< numero-peca-media 0) (< numero-peca-cruz 0)) nil)
      
      (T 
-      (progn
-        (print jogadas-possiveis)
-
-)
-        )
+      (mapcar #'(lambda (jogada)
+                  (cria-no 
+                   (funcall operador (first jogada) (second jogada) (get-estado-no no))
+                   (list numero-peca-pequena numero-peca-media numero-peca-cruz)
+                   (1+ (get-profundidade-no no)) 
+                   (get-heuristica-no no) 
+                   no
+                  ) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
+                 ) jogadas-possiveis)
+      )
     )
   )
 )
