@@ -91,11 +91,11 @@
 
 (defun no-teste ()
   "Funcao que cria um no teste"
-  (cria-no (tabuleiro-c)
+  (cria-no (tabuleiro-f)
            (list 
-            (- 10 (peca-contagem (tabuleiro-teste) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-teste) 'media))
-            (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
            )
            0 nil nil)
 )
@@ -564,20 +564,78 @@
   "Funcao que determina todas as jogadas possiveis para um tipo de peca num determinado tabuleiro, devolvendo-as numa lista"
   (cond
    ((and
-
-     (zerop (nth 0 (nth 0 tabuleiro)))
-     (zerop (nth 13 (nth 0 tabuleiro)))
-     (zerop (nth 0 (nth 13 tabuleiro)))
-     (zerop (nth 13 (nth 13 tabuleiro))) ;caso ainda nao haja pecas nossas nos cantos ainda
-     )
-    (cond
-     ((equal tipo-peca 'pequena) (list '(0 0) '(0 13)'(13 0) '(13 13)))
-     ((equal tipo-peca 'media) (list '(0 0) '(0 12)'(12 0) '(12 12)))
-     (T nil)
-     )
+     (not (casa-com-ump 0 0 tabuleiro))
+     (not (casa-com-ump 0 13 tabuleiro))
+     (not (casa-com-ump 13 0 tabuleiro))
+     (not (casa-com-ump 13 13 tabuleiro))
+     ) (cond
+        ((or (equal tipo-peca 'pequena) (equal tipo-peca 'media))
+         (jogada-inicial-p tabuleiro tipo-peca)
+        )
+        (T nil)
+       )
     )
 
     (T (percorre-matriz-peca tabuleiro tipo-peca))
+   )
+)
+
+(defun jogada-inicial-p (tabuleiro tipo-peca &optional (linha 0) (coluna 0))
+  "Funcao que caso o jogador ainda nao tenha lancado nenhuma peca ira determinar quais as jogadas iniciais possiveis"
+  (cond
+   ((and (= linha 13) (= coluna 13)) 
+    (cond
+     ((and (not (casa-com-ump 13 13 tabuleiro)) (zerop (nth 13 (nth 13 tabuleiro))) (equal tipo-peca 'pequena)) 
+      '((13 13))
+     )
+     ((and (not (casa-com-ump 13 13 tabuleiro)) (zerop (nth 13 (nth 13 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 12 12 tabuleiro 'media)) 
+      '((12 12))
+      )
+     (T nil)
+    )
+  )
+
+   ((and (zerop linha) (zerop coluna))
+    (cond
+     ((and (not (casa-com-ump 0 0 tabuleiro)) (zerop (nth 0 (nth 0 tabuleiro))) (equal tipo-peca 'pequena) )
+      (append '((0 0)) (jogada-inicial-p tabuleiro tipo-peca 0 13))
+     )
+
+     ((and (not (casa-com-ump 0 0 tabuleiro)) (zerop (nth 0 (nth 0 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 0 0 tabuleiro 'media) )
+      (append '((0 0)) (jogada-inicial-p tabuleiro tipo-peca 0 13))
+      )
+     (T (jogada-inicial-p tabuleiro tipo-peca 0 13))
+    )
+   )
+
+   ((and (zerop linha) (= coluna 13))
+    (cond
+     ((and (not (casa-com-ump 0 13 tabuleiro)) (zerop (nth 13 (nth 0 tabuleiro))) (equal tipo-peca 'pequena))
+      (append '((0 13)) (jogada-inicial-p tabuleiro tipo-peca 13 0))
+      )
+
+     ((and (not (casa-com-ump 0 13 tabuleiro)) (zerop (nth 13 (nth 0 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 0 12 tabuleiro 'media))
+      (append '((0 12)) (jogada-inicial-p tabuleiro tipo-peca 13 0))
+     )
+     (T (jogada-inicial-p tabuleiro tipo-peca 13 0))
+     )
+    )
+
+   ((and (= linha 13) (zerop coluna))
+    (cond
+     ((and (not (casa-com-ump 13 0 tabuleiro)) (zerop (nth 0 (nth 13 tabuleiro))) (equal tipo-peca 'pequena))
+      (append '((13 0)) (jogada-inicial-p tabuleiro tipo-peca 13 13))
+      )
+
+     ((and (not (casa-com-ump 13 0 tabuleiro)) (zerop (nth 0 (nth 13 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 12 0 tabuleiro 'media))
+      (append '((12 0)) (jogada-inicial-p tabuleiro tipo-peca 13 13))
+      )
+     (T (jogada-inicial-p tabuleiro tipo-peca 13 13))
+     )
+    )
+
+   (T nil)
+
    )
 )
 
@@ -907,6 +965,8 @@
 ;; bfs
 (defun bfs (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em largura"
+(progn
+  (print (length abertos))
   
   (cond
 
@@ -943,12 +1003,15 @@
     )
   )
 )
+)
 
 
 ;; dfs
 
 (defun dfs (no-inicial funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em profundidade"
+  (progn
+    (print (length abertos))
    (cond
 
    ((null abertos) nil)
@@ -993,6 +1056,7 @@
      )
     )
   )
+)
 )
 
 ;;; Funcoes auxiliares para os algoritmos
