@@ -91,11 +91,11 @@
 
 (defun no-teste ()
   "Funcao que cria um no teste"
-  (cria-no (tabuleiro-f)
+  (cria-no (tabuleiro-teste)
            (list 
-            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-f) 'media))
-            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+            (- 10 (peca-contagem (tabuleiro-teste) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-teste) 'media))
+            (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
            )
            0 0 0 nil)
 )
@@ -512,7 +512,7 @@
 ;;operadores
 (defun operadores ()
   "Funcao que lista todos os operadores existentes no dominio do problema"
-  (list 'inserir-peca-pequena 'inserir-peca-media 'inserir-peca-cruz)
+  (list 'inserir-peca-cruz 'inserir-peca-pequena 'inserir-peca-media )
 )
 
 ;;;Sucessores 
