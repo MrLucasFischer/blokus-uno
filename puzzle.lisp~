@@ -1144,42 +1144,44 @@
   (append sucessores abertos)
 )
 
+
+
 ;; abertos-a*
 
 (defun abertos-a* (abertos sucessores)
   "Funcao que constroi a lista de abertos segundo o algoritmo A*. Esta funcao ira percorrer toda a lista de sucessores a procura de sucessores que nao existam na lista de abertos ou que ja existam mas que tenham um f menor"
-;  (sort (append abertos sucessores) #'< :key #'get-f-no)
-  (apply #'append (mapcar #'(lambda (no)
-                              (procura-nos-existentes-a* no abertos)
-                            ) sucessores))
+  (cond
+   ((null sucessores) (sort abertos #'< :key #'get-f-no))
+
+   ((not (no-existep (first sucessores) abertos)) (abertos-a* (append abertos (list (first sucessores))) (rest sucessores)))
+
+   (T (abertos-a* (substituir-no-abertos-a* (first sucessores) abertos) (rest sucessores)))
+   
+  )
 )
 
-(defun procura-nos-existentes-a* (no abertos)
+
+
+;; substituir-no-abertos-a*
+
+(defun substituir-no-abertos-a* (no abertos)
   "Funcao que recebe como argumento um no proveniente da lista de sucessores. Com esse no esta funcao vai percorrer a lista de abertos a procura de um no igual ao passado por argumento, se encontrar e se o no passado por argumento possuir um f menor entao substitui-se o que esta na lista de abertos pelo no passado por argumento"
   (cond
-   ((not (no-existep no abertos)) (append abertos no))
-   (T (apply #'append (mapcar #'(lambda (no-abertos)
-                              (cond
+   ((null abertos) nil)
+   
+   ((and
+     (equal (get-estado-no no) (get-estado-no (first abertos)))
+     (equal (get-pecas-no no) (get-pecas-no (first abertos)))
+    )(cond
+      ((< (get-f-no no) (get-f-no (first abertos))) (cons no (rest abertos)))
+      (T (rest abertos))
+     ))
 
-                               ((and
-                                 (equal (get-estado-no no) (get-estado-no no-abertos))
-                                 (equal (get-pecas-no no) (get-pecas-no no-abertos))
-                                )(cond
-                                   ((< (get-f-no no) (get-f-no no-abertos)) (list no))
-                                   (T (list no-abertos))
-                                 )
-                               )
-
-                               (T (list no-abertos))
-                              )
-                             )abertos)))
+   (T (cons (first abertos) (substituir-no-abertos-a* no (rest abertos))))
   )
-  
 )
 
-(defun abertos-a** (abertos sucessores)
-  ;;ISTO NAO ESTA TOTALMENTE BEM PENSAR NISTO OUTRA VEZ
-)
+
 
 ;; remover-no
 

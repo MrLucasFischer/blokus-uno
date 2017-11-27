@@ -97,7 +97,7 @@
             (- 10 (peca-contagem (tabuleiro-f) 'media))
             (- 15 (peca-contagem (tabuleiro-f) 'cruz))
            )
-           0 0 1 nil)
+           0 0 0 nil)
 )
 
 (defun no-teste1 ()
@@ -119,7 +119,7 @@
             (- 10 (peca-contagem (tabuleiro-f) 'media))
             (- 15 (peca-contagem (tabuleiro-f) 'cruz))
            )
-           0 0 0 nil)
+           0 0 1 nil)
 )
 
 (defun no-teste3 ()
@@ -131,6 +131,17 @@
             (- 15 (peca-contagem (tabuleiro-f) 'cruz))
            )
            0 0 5 nil)
+)
+
+(defun no-teste4 ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-vazio)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 20 nil)
 )
 
 ;;; Construtor
@@ -1117,11 +1128,24 @@
            (abertos-sem-no-inicial (rest abertos))
 
            (fechados-com-no-inicial (cons no-atual fechados))
-           
-           (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
-
-           (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores))
           )
+
+      (cond
+       ((no-objetivo-p no-atual) no-atual)
+       (T
+        (let* (
+               (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
+
+               (fechados-atualizados (remover-nos-com-menor-f-fechados sucessores fechados-com-no-inicial))
+
+               (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados))
+              )
+
+          (a* (first abertos-com-sucessores) funcao-sucessores operadores abertos-com-sucessores fechados-atualizados)
+
+        )
+       )
+      )
       
     )
    )
@@ -1132,7 +1156,7 @@
 ;; abertos-bfs
 
 (defun abertos-bfs (abertos sucessores)
-  "Funcao que constroi a lista de abertos segundo o algoritmo bfs"
+  "Funcao que constroi a lista de ABERTOS segundo o algoritmo bfs"
   (append abertos sucessores)
 )
 
@@ -1140,7 +1164,7 @@
 ;; abertos-dfs
 
 (defun abertos-dfs (abertos sucessores)
-  "Funcao que constroi a lista de abertos segundo o algoritmo dfs"
+  "Funcao que constroi a lista de ABERTOS segundo o algoritmo dfs"
   (append sucessores abertos)
 )
 
@@ -1148,14 +1172,17 @@
 
 ;; abertos-a*
 
-(defun abertos-a* (abertos sucessores)
-  "Funcao que constroi a lista de abertos segundo o algoritmo A*. Esta funcao ira percorrer toda a lista de sucessores a procura de sucessores que nao existam na lista de abertos ou que ja existam mas que tenham um f menor"
+(defun abertos-a* (abertos sucessores fechados)
+  "Funcao que constroi a lista de ABERTOS segundo o algoritmo A*. Esta funcao ira percorrer toda a lista de sucessores a procura de sucessores que nao existam na lista de ABERTOS ou que ja existam mas que tenham um f menor"
   (cond
    ((null sucessores) (sort abertos #'< :key #'get-f-no))
 
-   ((not (no-existep (first sucessores) abertos)) (abertos-a* (append abertos (list (first sucessores))) (rest sucessores)))
+   ((and
+     (not (no-existep (first sucessores) abertos))
+     (not (no-existep (first sucessores) fechados))
+    )(abertos-a* (append abertos (list (first sucessores))) (rest sucessores) fechados))
 
-   (T (abertos-a* (substituir-no-abertos-a* (first sucessores) abertos) (rest sucessores)))
+   (T (abertos-a* (substituir-no-abertos-a* (first sucessores) abertos) (rest sucessores) fechados))
    
   )
 )
@@ -1165,7 +1192,7 @@
 ;; substituir-no-abertos-a*
 
 (defun substituir-no-abertos-a* (no abertos)
-  "Funcao que recebe como argumento um no proveniente da lista de sucessores. Com esse no esta funcao vai percorrer a lista de abertos a procura de um no igual ao passado por argumento, se encontrar e se o no passado por argumento possuir um f menor entao substitui-se o que esta na lista de abertos pelo no passado por argumento"
+  "Funcao que recebe como argumento um no proveniente da lista de sucessores. Com esse no esta funcao vai percorrer a lista de ABERTOS a procura de um no igual ao passado por argumento, se encontrar e se o no passado por argumento possuir um f menor entao substitui-se o que esta na lista de ABERTOS pelo no passado por argumento"
   (cond
    ((null abertos) nil)
    
@@ -1174,11 +1201,42 @@
      (equal (get-pecas-no no) (get-pecas-no (first abertos)))
     )(cond
       ((< (get-f-no no) (get-f-no (first abertos))) (cons no (rest abertos)))
-      (T (rest abertos))
+      (T abertos)
      ))
 
    (T (cons (first abertos) (substituir-no-abertos-a* no (rest abertos))))
   )
+)
+
+
+
+;; remover-nos-com-menor-f-fechados
+
+(defun remover-nos-com-menor-f-fechados (sucessores fechados)
+  "Funcao que percorre a lista de sucessores enquato verifica se existe algum no identico na lista de FECHADOS, caso existe e caso o f do no-sucessor seja menor do que o no em FECHADOS entao retira-se o no de FECHADOS"
+  (cond
+   ((null sucessores) fechados)
+   
+   ((not (no-existep (first sucessores) fechados)) (remover-nos-com-menor-f-fechados (rest sucessores) fechados))
+
+   (T (remover-nos-com-menor-f-fechados (rest sucessores) (atualizar-fechados-a* (first sucessores) fechados)))
+  )
+)
+
+(defun atualizar-fechados-a* (no fechados)
+  "Funcao que percorre a lista de FECHADOS verificando para cada no se o seu f e superiror ao f do no passado por argumento, caso seja retira-se o no da lista de FECHADOS"
+  (apply #'append (mapcar #'(lambda (no-fechado)
+              (cond
+               ((and
+                 (equal (get-estado-no no) (get-estado-no no-fechado))
+                 (equal (get-pecas-no no) (get-pecas-no no-fechado))
+                )(cond
+                  ((< (get-f-no no) (get-f-no no-fechado)) nil)
+                  (T (list no-fechado))
+                 ))
+               (T (list no-fechado))
+              )
+            ) fechados))
 )
 
 
