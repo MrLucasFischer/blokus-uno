@@ -97,15 +97,48 @@
             (- 10 (peca-contagem (tabuleiro-f) 'media))
             (- 15 (peca-contagem (tabuleiro-f) 'cruz))
            )
-           0 nil nil)
+           0 0 1 nil)
+)
+
+(defun no-teste1 ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-c)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 10 nil)
+)
+
+(defun no-teste2 ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-f)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 0 nil)
+)
+
+(defun no-teste3 ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-teste)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 5 nil)
 )
 
 ;;; Construtor
 
 ;;Cria-no
-(defun cria-no (estado pecas &optional (profundidade 0) (heuristica nil) (no-pai nil))
-  "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica e um no que o gerou"
-  (list estado pecas profundidade heuristica no-pai)
+(defun cria-no (estado pecas &optional (profundidade 0) (heuristica 0) (f 0) (no-pai nil))
+  "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
+  (list estado pecas profundidade heuristica f no-pai)
 )
 
 
@@ -132,17 +165,22 @@
 )
 
 
-;;get-heuristica-no
+;;get-fa-no
 (defun get-heuristica-no (no)
   "Funcao que retorna a heuristica de um no"
   (fourth no)
 )
 
+;;get-pai-no
+(defun get-f-no (no)
+  "Funcao que retorna o f de um no"
+  (fifth no)
+)
 
 ;;get-pai-no
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
-  (fifth no)
+  (sixth no)
 )
 
 
@@ -543,13 +581,21 @@
      
      (T 
       (mapcar #'(lambda (jogada)
-                  (cria-no 
-                   (funcall operador (first jogada) (second jogada) (get-estado-no no))
-                   (list numero-peca-pequena numero-peca-media numero-peca-cruz)
-                   (1+ (get-profundidade-no no)) 
-                   (get-heuristica-no no) 
-                   no
-                  ) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
+                  (let* (
+                        (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
+                        (heuristica-novo-no (heuristica estado))
+                        (profundidade-novo-no (1+ (get-profundidade-no no)))
+                        (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
+                       )
+                    (cria-no 
+                     estado
+                     (list numero-peca-pequena numero-peca-media numero-peca-cruz)
+                     profundidade-novo-no 
+                     heuristica-novo-no
+                     custo-novo-no
+                     no
+                    )
+                  )
                  ) jogadas-possiveis)
       )
     )
@@ -903,11 +949,10 @@
 ;;; Heuristicas
 
 ;;heuristica
-;sera que passamos so um no ou sera que passamos logo diretamente os valores de quadrados por preencher e preenchidos
 
-(defun heuristica (no)
+(defun heuristica (tabuleiro)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
-  (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
+  (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
 )
 
 
@@ -1059,6 +1104,30 @@
 )
 )
 
+;; a*
+(defun a* (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+  "Funcao que implementa o algoritmo de procura A*"
+  (cond
+   ((null abertos) nil)
+
+   (T
+    (let* (
+           (no-atual (first abertos))
+
+           (abertos-sem-no-inicial (rest abertos))
+
+           (fechados-com-no-inicial (cons no-atual fechados))
+           
+           (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
+
+           (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores))
+          )
+      
+    )
+   )
+  )
+)
+
 ;;; Funcoes auxiliares para os algoritmos
 ;; abertos-bfs
 
@@ -1076,6 +1145,46 @@
 )
 
 
+
+;; abertos-a*
+
+(defun abertos-a* (abertos sucessores)
+  "Funcao que constroi a lista de abertos segundo o algoritmo A*. Esta funcao ira percorrer toda a lista de sucessores a procura de sucessores que nao existam na lista de abertos ou que ja existam mas que tenham um f menor"
+  (cond
+   ((null sucessores) (sort abertos #'< :key #'get-f-no))
+
+   ((not (no-existep (first sucessores) abertos)) (abertos-a* (append abertos (list (first sucessores))) (rest sucessores)))
+
+   (T (abertos-a* (substituir-no-abertos-a* (first sucessores) abertos) (rest sucessores)))
+   
+  )
+)
+
+
+
+;; substituir-no-abertos-a*
+
+(defun substituir-no-abertos-a* (no abertos)
+  "Funcao que recebe como argumento um no proveniente da lista de sucessores. Com esse no esta funcao vai percorrer a lista de abertos a procura de um no igual ao passado por argumento, se encontrar e se o no passado por argumento possuir um f menor entao substitui-se o que esta na lista de abertos pelo no passado por argumento"
+  (cond
+   ((null abertos) nil)
+   
+   ((and
+     (equal (get-estado-no no) (get-estado-no (first abertos)))
+     (equal (get-pecas-no no) (get-pecas-no (first abertos)))
+    )(cond
+      ((< (get-f-no no) (get-f-no (first abertos))) (cons no (rest abertos)))
+      (T (rest abertos))
+     ))
+
+   (T (cons (first abertos) (substituir-no-abertos-a* no (rest abertos))))
+  )
+)
+
+
+
+;; remover-no
+
 (defun remover-no (no lista)
   "Funcao que remove um no de uma determinada lista"
   (cond
@@ -1084,6 +1193,8 @@
    (T (cons (first lista) (remover-no no (rest lista))))
   )
 )
+
+;; remover-nos-repetidos
 
 (defun remover-nos-repetidos (sucessores abertos fechados)
   "Funcao que retira sucessores que ja existam em abertos ou fechados"
@@ -1094,7 +1205,6 @@
                                )
                               ) sucessores))
 )
-
 
 ;; no-existep
 

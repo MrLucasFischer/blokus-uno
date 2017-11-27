@@ -91,21 +91,54 @@
 
 (defun no-teste ()
   "Funcao que cria um no teste"
+  (cria-no (tabuleiro-f)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 1 nil)
+)
+
+(defun no-teste1 ()
+  "Funcao que cria um no teste"
   (cria-no (tabuleiro-c)
            (list 
-            (- 10 (peca-contagem (tabuleiro-teste) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-teste) 'media))
-            (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
            )
-           0 nil nil)
+           0 0 10 nil)
+)
+
+(defun no-teste2 ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-f)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 0 nil)
+)
+
+(defun no-teste3 ()
+  "Funcao que cria um no teste"
+  (cria-no (tabuleiro-teste)
+           (list 
+            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-f) 'media))
+            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+           )
+           0 0 5 nil)
 )
 
 ;;; Construtor
 
 ;;Cria-no
-(defun cria-no (estado pecas &optional (profundidade 0) (heuristica nil) (no-pai nil))
-  "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica e um no que o gerou"
-  (list estado pecas profundidade heuristica no-pai)
+(defun cria-no (estado pecas &optional (profundidade 0) (heuristica 0) (f 0) (no-pai nil))
+  "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
+  (list estado pecas profundidade heuristica f no-pai)
 )
 
 
@@ -132,17 +165,22 @@
 )
 
 
-;;get-heuristica-no
+;;get-fa-no
 (defun get-heuristica-no (no)
   "Funcao que retorna a heuristica de um no"
   (fourth no)
 )
 
+;;get-pai-no
+(defun get-f-no (no)
+  "Funcao que retorna o f de um no"
+  (fifth no)
+)
 
 ;;get-pai-no
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
-  (fifth no)
+  (sixth no)
 )
 
 
@@ -543,13 +581,21 @@
      
      (T 
       (mapcar #'(lambda (jogada)
-                  (cria-no 
-                   (funcall operador (first jogada) (second jogada) (get-estado-no no))
-                   (list numero-peca-pequena numero-peca-media numero-peca-cruz)
-                   (1+ (get-profundidade-no no)) 
-                   (get-heuristica-no no) 
-                   no
-                  ) ;; a heuristica ha de mudar i guess, ha de ter que ser calculada
+                  (let* (
+                        (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
+                        (heuristica-novo-no (heuristica estado))
+                        (profundidade-novo-no (1+ (get-profundidade-no no)))
+                        (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
+                       )
+                    (cria-no 
+                     estado
+                     (list numero-peca-pequena numero-peca-media numero-peca-cruz)
+                     profundidade-novo-no 
+                     heuristica-novo-no
+                     custo-novo-no
+                     no
+                    )
+                  )
                  ) jogadas-possiveis)
       )
     )
@@ -564,20 +610,78 @@
   "Funcao que determina todas as jogadas possiveis para um tipo de peca num determinado tabuleiro, devolvendo-as numa lista"
   (cond
    ((and
-
-     (zerop (nth 0 (nth 0 tabuleiro)))
-     (zerop (nth 13 (nth 0 tabuleiro)))
-     (zerop (nth 0 (nth 13 tabuleiro)))
-     (zerop (nth 13 (nth 13 tabuleiro))) ;caso ainda nao haja pecas nossas nos cantos ainda
-     )
-    (cond
-     ((equal tipo-peca 'pequena) (list '(0 0) '(0 13)'(13 0) '(13 13)))
-     ((equal tipo-peca 'media) (list '(0 0) '(0 12)'(12 0) '(12 12)))
-     (T nil)
-     )
+     (not (casa-com-ump 0 0 tabuleiro))
+     (not (casa-com-ump 0 13 tabuleiro))
+     (not (casa-com-ump 13 0 tabuleiro))
+     (not (casa-com-ump 13 13 tabuleiro))
+     ) (cond
+        ((or (equal tipo-peca 'pequena) (equal tipo-peca 'media))
+         (jogada-inicial-p tabuleiro tipo-peca)
+        )
+        (T nil)
+       )
     )
 
     (T (percorre-matriz-peca tabuleiro tipo-peca))
+   )
+)
+
+(defun jogada-inicial-p (tabuleiro tipo-peca &optional (linha 0) (coluna 0))
+  "Funcao que caso o jogador ainda nao tenha lancado nenhuma peca ira determinar quais as jogadas iniciais possiveis"
+  (cond
+   ((and (= linha 13) (= coluna 13)) 
+    (cond
+     ((and (not (casa-com-ump 13 13 tabuleiro)) (zerop (nth 13 (nth 13 tabuleiro))) (equal tipo-peca 'pequena)) 
+      '((13 13))
+     )
+     ((and (not (casa-com-ump 13 13 tabuleiro)) (zerop (nth 13 (nth 13 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 12 12 tabuleiro 'media)) 
+      '((12 12))
+      )
+     (T nil)
+    )
+  )
+
+   ((and (zerop linha) (zerop coluna))
+    (cond
+     ((and (not (casa-com-ump 0 0 tabuleiro)) (zerop (nth 0 (nth 0 tabuleiro))) (equal tipo-peca 'pequena) )
+      (append '((0 0)) (jogada-inicial-p tabuleiro tipo-peca 0 13))
+     )
+
+     ((and (not (casa-com-ump 0 0 tabuleiro)) (zerop (nth 0 (nth 0 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 0 0 tabuleiro 'media) )
+      (append '((0 0)) (jogada-inicial-p tabuleiro tipo-peca 0 13))
+      )
+     (T (jogada-inicial-p tabuleiro tipo-peca 0 13))
+    )
+   )
+
+   ((and (zerop linha) (= coluna 13))
+    (cond
+     ((and (not (casa-com-ump 0 13 tabuleiro)) (zerop (nth 13 (nth 0 tabuleiro))) (equal tipo-peca 'pequena))
+      (append '((0 13)) (jogada-inicial-p tabuleiro tipo-peca 13 0))
+      )
+
+     ((and (not (casa-com-ump 0 13 tabuleiro)) (zerop (nth 13 (nth 0 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 0 12 tabuleiro 'media))
+      (append '((0 12)) (jogada-inicial-p tabuleiro tipo-peca 13 0))
+     )
+     (T (jogada-inicial-p tabuleiro tipo-peca 13 0))
+     )
+    )
+
+   ((and (= linha 13) (zerop coluna))
+    (cond
+     ((and (not (casa-com-ump 13 0 tabuleiro)) (zerop (nth 0 (nth 13 tabuleiro))) (equal tipo-peca 'pequena))
+      (append '((13 0)) (jogada-inicial-p tabuleiro tipo-peca 13 13))
+      )
+
+     ((and (not (casa-com-ump 13 0 tabuleiro)) (zerop (nth 0 (nth 13 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 12 0 tabuleiro 'media))
+      (append '((12 0)) (jogada-inicial-p tabuleiro tipo-peca 13 13))
+      )
+     (T (jogada-inicial-p tabuleiro tipo-peca 13 13))
+     )
+    )
+
+   (T nil)
+
    )
 )
 
@@ -845,11 +949,10 @@
 ;;; Heuristicas
 
 ;;heuristica
-;sera que passamos so um no ou sera que passamos logo diretamente os valores de quadrados por preencher e preenchidos
 
-(defun heuristica (no)
+(defun heuristica (tabuleiro)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
-  (- (quadrados-por-preencher (get-estado-no no)) (quadrados-ja-preenchidos (get-estado-no no)))
+  (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
 )
 
 
@@ -907,6 +1010,8 @@
 ;; bfs
 (defun bfs (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em largura"
+(progn
+  (print (length abertos))
   
   (cond
 
@@ -943,12 +1048,15 @@
     )
   )
 )
+)
 
 
 ;; dfs
 
 (defun dfs (no-inicial funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em profundidade"
+  (progn
+    (print (length abertos))
    (cond
 
    ((null abertos) nil)
@@ -994,6 +1102,31 @@
     )
   )
 )
+)
+
+;; a*
+(defun a* (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+  "Funcao que implementa o algoritmo de procura A*"
+  (cond
+   ((null abertos) nil)
+
+   (T
+    (let* (
+           (no-atual (first abertos))
+
+           (abertos-sem-no-inicial (rest abertos))
+
+           (fechados-com-no-inicial (cons no-atual fechados))
+           
+           (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
+
+           (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores))
+          )
+      
+    )
+   )
+  )
+)
 
 ;;; Funcoes auxiliares para os algoritmos
 ;; abertos-bfs
@@ -1011,6 +1144,44 @@
   (append sucessores abertos)
 )
 
+;; abertos-a*
+
+(defun abertos-a* (abertos sucessores)
+  "Funcao que constroi a lista de abertos segundo o algoritmo A*. Esta funcao ira percorrer toda a lista de sucessores a procura de sucessores que nao existam na lista de abertos ou que ja existam mas que tenham um f menor"
+;  (sort (append abertos sucessores) #'< :key #'get-f-no)
+  (apply #'append (mapcar #'(lambda (no)
+                              (procura-nos-existentes-a* no abertos)
+                            ) sucessores))
+)
+
+(defun procura-nos-existentes-a* (no abertos)
+  "Funcao que recebe como argumento um no proveniente da lista de sucessores. Com esse no esta funcao vai percorrer a lista de abertos a procura de um no igual ao passado por argumento, se encontrar e se o no passado por argumento possuir um f menor entao substitui-se o que esta na lista de abertos pelo no passado por argumento"
+  (cond
+   ((not (no-existep no abertos)) (append abertos no))
+   (T (apply #'append (mapcar #'(lambda (no-abertos)
+                              (cond
+
+                               ((and
+                                 (equal (get-estado-no no) (get-estado-no no-abertos))
+                                 (equal (get-pecas-no no) (get-pecas-no no-abertos))
+                                )(cond
+                                   ((< (get-f-no no) (get-f-no no-abertos)) (list no))
+                                   (T (list no-abertos))
+                                 )
+                               )
+
+                               (T (list no-abertos))
+                              )
+                             )abertos)))
+  )
+  
+)
+
+(defun abertos-a** (abertos sucessores)
+  ;;ISTO NAO ESTA TOTALMENTE BEM PENSAR NISTO OUTRA VEZ
+)
+
+;; remover-no
 
 (defun remover-no (no lista)
   "Funcao que remove um no de uma determinada lista"
@@ -1021,6 +1192,8 @@
   )
 )
 
+;; remover-nos-repetidos
+
 (defun remover-nos-repetidos (sucessores abertos fechados)
   "Funcao que retira sucessores que ja existam em abertos ou fechados"
   (apply #'append (mapcar #'(lambda (no)
@@ -1030,7 +1203,6 @@
                                )
                               ) sucessores))
 )
-
 
 ;; no-existep
 
