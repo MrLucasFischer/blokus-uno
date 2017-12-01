@@ -77,36 +77,6 @@
   )
 )
 
-(defun menu-principal-2 (caminho)
-  "Funcao que ira mostrar ao utilizador o menu principal da aplicacao blokus-uno dando-lhe a escolher qual a acao desejada"
-  (progn
-    (format T "~% |---------------------------------------------------|")
-    (format T "~% |                                                   |")
-    (format T "~% |                       B                           |")
-    (format T "~% |                        L                          |")
-    (format T "~% |                         O                         |")
-    (format T "~% |                          K                        |")
-    (format T "~% |                        U  U                       |")
-    (format T "~% |                         N  S                      |")
-    (format T "~% |                          O                        |")
-    (format T "~% |                                                   |")
-    (format T "~% |                   1 - Iniciar                     |")
-    (format T "~% |                   2 - Sair                        |")
-    (format T "~% |                                                   |")
-    (format T "~% |---------------------------------------------------|~%")
-
-    (let* (
-           (resposta (read))
-          )
-      (cond
-       ((= resposta 1 ) 'iniciar)
-       ((= resposta 2) (format T "Adeus!") nil)
-       (T (menu-principal))
-      )
-    )
-  )
-)
-
 
 ;;Pedir ao utilizador qual o tabuleiro que quer para criar o no
 ;;Pedir ao utilizador qual e o algoritmo que quer usar 
