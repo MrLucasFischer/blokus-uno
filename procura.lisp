@@ -109,7 +109,7 @@
 ;;; Algoritmos
 
 ;; bfs
-(defun bfs (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+(defun bfs (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em largura"
 (progn
   (print (length abertos))
@@ -135,9 +135,9 @@
 
       (cond
 
-       ((existe-solucaop sucessores) (procura-no-objetivo sucessores))
+       ((existe-solucaop sucessores funcao-solucao) (procura-no-objetivo sucessores funcao-solucao))
 
-       (T (bfs (first abertos-com-sucessores) funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial))
+       (T (bfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial))
 
       )
 
@@ -153,7 +153,7 @@
 
 ;; dfs
 
-(defun dfs (no-inicial funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil))
+(defun dfs (no-inicial funcao-solucao funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em profundidade"
   (progn
     (print (length abertos))
@@ -174,7 +174,7 @@
 
       (cond
 
-       ((> (get-profundidade-no no-atual) profundidade) (dfs (first abertos-sem-no-inicial) funcao-sucessores operadores profundidade abertos-sem-no-inicial fechados-com-no-inicial))
+       ((> (get-profundidade-no no-atual) profundidade) (dfs (first abertos-sem-no-inicial) funcao-solucao funcao-sucessores operadores profundidade abertos-sem-no-inicial fechados-com-no-inicial))
 
        (T 
         (let* (
@@ -189,9 +189,9 @@
               
           (cond
 
-           ((existe-solucaop sucessores) (procura-no-objetivo sucessores))
+           ((existe-solucaop sucessores funcao-solucao) (procura-no-objetivo sucessores funcao-solucao))
            
-           (T (dfs (first abertos-com-sucessores) funcao-sucessores operadores profundidade abertos-com-sucessores fechados-com-no-inicial))
+           (T (dfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores profundidade abertos-com-sucessores fechados-com-no-inicial))
           )
 
          )
@@ -207,7 +207,7 @@
 
 
 ;; a*
-(defun a* (no-inicial funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+(defun a* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura A*"
   (cond
    ((null abertos) nil)
@@ -222,7 +222,7 @@
           )
 
       (cond
-       ((no-objetivo-p no-atual) no-atual)
+       ((funcall funcao-solucao no-atual) no-atual)
        (T
         (let* (
                (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
@@ -232,7 +232,7 @@
                (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados))
               )
 
-          (a* (first abertos-com-sucessores) funcao-sucessores operadores abertos-com-sucessores fechados-atualizados)
+          (a* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-atualizados)
 
         )
        )
@@ -403,8 +403,8 @@
 
 ;; existe-solucaop
 
-(defun existe-solucaop (sucessores)
-  (eval (cons 'or (mapcar #'no-objetivo-p sucessores)))
+(defun existe-solucaop (sucessores funcao-solucao)
+  (eval (cons 'or (mapcar funcao-solucao sucessores)))
 )
 
 
@@ -413,10 +413,10 @@
 
 ;; procura-no-objetivo
 
-(defun procura-no-objetivo (sucessores)
+(defun procura-no-objetivo (sucessores funcao-solucao)
   (cond
    ((null sucessores) nil)
-   ((no-objetivo-p (first sucessores)) (first sucessores))
-   (T (procura-no-objetivo (rest sucessores)))
+   ((funcall funcao-solucao (first sucessores)) (first sucessores))
+   (T (procura-no-objetivo (rest sucessores) funcao-solucao))
   )
 )

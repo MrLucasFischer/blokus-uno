@@ -1,6 +1,6 @@
 ;;;;Disciplina de IA - 2017/2018
 ;;;;Projeto 1 - Blokus Uno
-;;;;Autor: Andreia Pereira (nï¿½ 150221021) e Lucas Fischer (nï¿½ 140221004)
+;;;;Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
 
 ;;;;Funcoes de interacao com o utilizador e de escrita e leitura de ficheiros
 
@@ -13,14 +13,14 @@
        )
     ;Para Ubuntu, no meu caso:
     ;/home/lucas-fischer/Dropbox/Faculdade/IA/2018/Projeto/blokus-uno
-    ;C:/Users/Andreia Pereira/Google Drive/3º Ano - 1º Semestre/IA/Projeto/blokus-uno
+    ;C:/Users/Andreia Pereira/Google Drive/3ï¿½ Ano - 1ï¿½ Semestre/IA/Projeto/blokus-uno
     (progn
       (compile-file (concatenate 'string caminho "/puzzle.lisp"))
       (compile-file (concatenate 'string caminho "/procura.lisp"))
-      ;(load (concatenate 'string caminho "/puzzle.ufasl"));ufasl para Unix
-      ;(load (concatenate 'string caminho "/procura.ufasl"))
-      (load (concatenate 'string caminho "/puzzle.ofasl"));ofasl para windows
-      (load (concatenate 'string caminho "/procura.ofasl"))
+      (load (concatenate 'string caminho "/puzzle.ufasl"));ufasl para Unix
+      (load (concatenate 'string caminho "/procura.ufasl"))
+      ;(load (concatenate 'string caminho "/puzzle.ofasl"));ofasl para windows
+      ;(load (concatenate 'string caminho "/procura.ofasl"))
       (menu-principal caminho)
     )
   )
@@ -71,10 +71,10 @@
            (resposta (read))
           )
       (cond
-       ((not (numberp resposta)) (format T "~% -> Precisa de Inserir um número (1 ou 2)") (menu-principal caminho))
+       ((not (numberp resposta)) (format T "~% -> Precisa de Inserir um nï¿½mero (1 ou 2)") (menu-principal caminho))
        ((= resposta 1 ) (iniciar caminho))
        ((= resposta 2) (format T "~% -> Adeus!"))
-       (T (format T "~% -> Precisa de Inserir um número (1 ou 2)") (menu-principal caminho))
+       (T (format T "~% -> Precisa de Inserir um nï¿½mero (1 ou 2)") (menu-principal caminho))
       )
     )
   )
