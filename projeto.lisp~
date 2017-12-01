@@ -16,6 +16,8 @@
     (progn
       (compile-file (concatenate 'string caminho "/puzzle.lisp"))
       (compile-file (concatenate 'string caminho "/procura.lisp"))
+      (load (concatenate 'string caminho "/puzzle.ufasl"));ofasl para windows (?)
+      (load (concatenate 'string caminho "/procura.ufasl"))
       (menu-principal caminho)
     )
   )
@@ -28,7 +30,7 @@
 (defun ler-caminho (&optional (caminho nil))
   "Funcao que questiona o utilizador pelo caminho onde se encontra os ficheiros do projeto, devolvendo a sua resposta"
   (cond
-   ((null caminho) (format T "Introduza o caminho atï¿½ ao diretorio do projeto~%") (ler-caminho (read-line)))
+   ((null caminho) (format T "Introduza o caminho ate ao diretorio do projeto~%") (ler-caminho (read-line)))
    (T caminho)
   )
 )
@@ -43,29 +45,34 @@
 
   ;;Ao Correr ficara com a formatacao correta
   (progn
-    (format T "~% |---------------------------------------------------|")
-    (format T "~% |                  ______                 _____     |")
-    (format T "~% |    |---   |     /      \\ | /  |    |   |     \\    |")
-    (format T "~% |    |   |  |     |      | |/   |    |   \\_____     |")
-    (format T "~% |    |---   |     |      | |\\   |    |         \\    |")
-    (format T "~% |    |   |  |     |      | | \\  |    |   \\     |    |")
-    (format T "~% |    |---   |____  \\____/  |  \\  \\__/     \\___/     |")
-    (format T "~% |                               ____                |")
-    (format T "~% |               |     | |\\   | /    \\               |")
-    (format T "~% |               |     | | \\  | |    |               |")
-    (format T "~% |               |     | |  \\ | |    |               |")
-    (format T "~% |                \\___/  |   \\|  \\___/               |")
-    (format T "~% |                                                   |")
-    (format T "~% |                                                   |")
-    (format T "~% |                   1 - Iniciar                     |")
-    (format T "~% |                   2 - Sair                        |")
-    (format T "~% |                                                   |")
-    (format T "~% |---------------------------------------------------|")
+    (format T "~%                                                      ")
+    (format T "~%                    ______               _____        ")
+    (format T "~%      |---   |     /      \\ | /  |    | |     \\       ")
+    (format T "~%      |   |  |     |      | |/   |    | \\_____        ")
+    (format T "~%      |---   |     |      | |\\   |    |       \\       ")
+    (format T "~%      |   |  |     |      | | \\  |    | \\     |       ")
+    (format T "~%      |---   |____  \\____/  |  \\  \\__/   \\___/        ")
+    (format T "~%                                 ____                 ")
+    (format T "~%                 |     | |\\   | /    \\                ")
+    (format T "~%                 |     | | \\  | |    |                ")
+    (format T "~%                 |     | |  \\ | |    |                ")
+    (format T "~%                  \\___/  |   \\|  \\___/                ")
+    (format T "~%                                                      ")
+    (format T "~%                                                      ")
+    (format T "~%                     1 - Iniciar                      ")
+    (format T "~%                     2 - Sair                         ")
+    (format T "~%                                                      ")
+    (format T "~%                                                      ~%")
 
     (let* (
-            
+           (resposta (read))
           )
-
+      (cond
+       ((not (numberp resposta)) (format T "~% -> Precisa de Inserir um número (1 ou 2)") (menu-principal caminho))
+       ((= resposta 1 ) (iniciar caminho))
+       ((= resposta 2) (format T "~% -> Adeus!"))
+       (T (format T "~% -> Precisa de Inserir um número (1 ou 2)") (menu-principal caminho))
+      )
     )
   )
 )
@@ -86,12 +93,68 @@
     (format T "~% |                   1 - Iniciar                     |")
     (format T "~% |                   2 - Sair                        |")
     (format T "~% |                                                   |")
-    (format T "~% |---------------------------------------------------|")
+    (format T "~% |---------------------------------------------------|~%")
 
     (let* (
-            
+           (resposta (read))
           )
-
+      (cond
+       ((= resposta 1 ) 'iniciar)
+       ((= resposta 2) (format T "Adeus!") nil)
+       (T (menu-principal))
+      )
     )
   )
 )
+
+
+;;Pedir ao utilizador qual o tabuleiro que quer para criar o no
+;;Pedir ao utilizador qual e o algoritmo que quer usar 
+;; perguntar ao utilizaro qual e a profundidade que quer, caso seja dfs leio a profundidade, caso seja outro qualquer fazemos o most-positive-fixnum
+
+;; iniciar
+
+(defun iniciar (caminho)
+  "Funcao que ira iniciar a aplicacao, pedindo ao utilizador para que escolha o tabuleiro que pretenda que seja o no inicial, o algoritmo que pretende utilizar e a profundidade maxima que pretende para o algoritmo dfs"
+  (let* (
+         (tabuleiro-escolhido (ler-tabuleiro caminho))
+        )
+    tabuleiro-escolhido
+  )
+)
+
+
+
+
+;; ler-tabuleiro
+
+(defun ler-tabuleiro (caminho)
+  "Funcao que ira questionar o utilizador sobre qual o tabuleiro que pretende utilizar como estado do no inicial, lendo esse tabuleiro do ficheiro problemas.dat"
+  (progn
+    (format T "~% -> Escolha um tabuleiro que pretende utilizar como estado do no inicial")
+    (format T "~% -> 1 - Tabuleiro a)")
+    (format T "~% -> 2 - Tabuleiro b)")
+    (format T "~% -> 3 - Tabuleiro c)")
+    (format T "~% -> 4 - Tabuleiro d)")
+    (format T "~% -> 5 - Tabuleiro e)")
+    (format T "~% -> 6 - Tabuleiro f)~%")
+
+    (let (
+          (resposta (read))
+         )
+
+      (cond
+       ((not (numberp resposta)) (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
+       ((= resposta 1) 'a)
+       ((= resposta 2) 'b)
+       ((= resposta 3) 'c)
+       ((= resposta 4) 'd)
+       ((= resposta 5) 'e)
+       ((= resposta 6) 'f)
+       (T (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
+      )
+    )
+
+  )
+)
+

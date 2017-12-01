@@ -13,11 +13,14 @@
        )
     ;Para Ubuntu, no meu caso:
     ;/home/lucas-fischer/Dropbox/Faculdade/IA/2018/Projeto/blokus-uno
+    ;C:/Users/Andreia Pereira/Google Drive/3º Ano - 1º Semestre/IA/Projeto/blokus-uno
     (progn
       (compile-file (concatenate 'string caminho "/puzzle.lisp"))
       (compile-file (concatenate 'string caminho "/procura.lisp"))
-      (load (concatenate 'string caminho "/puzzle.ufasl"));ofasl para windows (?)
-      (load (concatenate 'string caminho "/procura.ufasl"))
+      ;(load (concatenate 'string caminho "/puzzle.ufasl"));ufasl para Unix
+      ;(load (concatenate 'string caminho "/procura.ufasl"))
+      (load (concatenate 'string caminho "/puzzle.ofasl"));ofasl para windows
+      (load (concatenate 'string caminho "/procura.ofasl"))
       (menu-principal caminho)
     )
   )
