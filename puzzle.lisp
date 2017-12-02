@@ -116,7 +116,7 @@
             (- 10 (peca-contagem (tabuleiro-teste) 'media))
             (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
            )
-           0 0 0 nil)
+           0 0 -100 nil)
 )
 
 (defun no-teste1 ()
