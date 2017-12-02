@@ -245,6 +245,15 @@
 
 
 
+;; ida*
+
+(defun ida* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+  "Funcao que imlementa o algoritmo IDA*"
+
+)
+
+
+
 ;;; Funcoes auxiliares para os algoritmos
 ;; abertos-bfs
 
@@ -359,7 +368,6 @@
    (T (cons (first lista) (remover-no no (rest lista))))
   )
 )
-
 
 
 
