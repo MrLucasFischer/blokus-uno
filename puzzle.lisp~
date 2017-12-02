@@ -68,6 +68,25 @@
   )
 )
 
+(defun tabuleiro-e ()
+  '(
+    (0 2 0 0 2 2 0 0 2 0 0 0 2 2)
+    (2 2 2 0 2 2 0 2 2 2 0 0 2 2)
+    (0 2 0 2 0 0 2 0 2 0 2 2 0 0)
+    (0 0 2 2 2 0 0 0 0 0 2 2 0 0)
+    (2 2 0 2 0 2 0 0 0 0 0 0 0 0)
+    (2 2 0 0 2 2 2 0 0 0 0 0 0 0)
+    (0 0 2 0 0 2 0 0 0 0 0 0 0 0)
+    (0 2 2 2 0 0 2 0 2 0 0 0 2 0)
+    (0 0 2 0 0 0 0 2 2 2 0 2 2 2)
+    (0 2 0 2 0 0 0 0 2 0 2 0 2 0)
+    (0 0 2 2 2 0 0 0 0 2 2 2 0 0)
+    (0 2 0 2 0 2 0 0 0 0 2 0 0 0)
+    (2 2 2 0 2 2 2 0 0 0 0 0 0 0)
+    (0 2 0 0 0 2 0 0 0 0 0 0 0 0)
+   )
+)
+
 (defun tabuleiro-f ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
@@ -102,13 +121,13 @@
 
 (defun no-teste1 ()
   "Funcao que cria um no teste"
-  (cria-no (tabuleiro-c)
+  (cria-no (tabuleiro-e)
            (list 
-            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-f) 'media))
-            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+            (- 10 (peca-contagem (tabuleiro-e) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-e) 'media))
+            (- 15 (peca-contagem (tabuleiro-e) 'cruz))
            )
-           0 0 10 nil)
+           0 0 0 nil)
 )
 
 (defun no-teste2 ()

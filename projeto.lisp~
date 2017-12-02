@@ -103,6 +103,7 @@
 
 (defun ler-tabuleiro (caminho)
   "Funcao que ira questionar o utilizador sobre qual o tabuleiro que pretende utilizar como estado do no inicial, lendo esse tabuleiro do ficheiro problemas.dat"
+
   (progn
     (format T "~% -> Escolha um tabuleiro que pretende utilizar como estado do no inicial")
     (format T "~% -> 1 - Tabuleiro a)")
@@ -115,19 +116,52 @@
     (let (
           (resposta (read))
          )
+      (with-open-file (ficheiro (concatenate 'string caminho "/problemas.dat") :direction :input)
+        (let* (
+               (tabuleiro-a (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-b (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-c (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-d (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-e (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-f (ler-tabuleiro-ficheiro ficheiro))
+               ;(tabuleiro-g (ler-tabuleiro-ficheiro ficheiro)) ;Problema G da avaliacao oral
+              )
 
-      (cond
-       ((not (numberp resposta)) (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
-       ((= resposta 1) 'a)
-       ((= resposta 2) 'b)
-       ((= resposta 3) 'c)
-       ((= resposta 4) 'd)
-       ((= resposta 5) 'e)
-       ((= resposta 6) 'f)
-       (T (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
+        (cond
+         ((not (numberp resposta)) (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
+         ((= resposta 1) tabuleiro-a)
+         ((= resposta 2) tabuleiro-b)
+         ((= resposta 3) tabuleiro-c)
+         ((= resposta 4) tabuleiro-d)
+         ((= resposta 5) tabuleiro-e)
+         ((= resposta 6) tabuleiro-f)
+         (T (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
+       )
       )
+
+     )
     )
 
+  )
+)
+
+
+
+
+;; ler-tabuleiro-ficheiro
+
+(defun ler-tabuleiro-ficheiro (ficheiro)
+  "Funcao que permite ler um tabuleiro de um ficheiro"
+  (let (
+        (linha (read ficheiro nil :fim))
+       )
+
+    (cond
+     ((equal linha 'end) (close ficheiro) nil)
+     ((not (equal linha 'break)) (cons linha (ler-tabuleiro-ficheiro ficheiro)))
+     ((equal linha 'break) nil)
+    )
+    
   )
 )
 

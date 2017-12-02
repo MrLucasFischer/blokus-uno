@@ -74,16 +74,13 @@
        ((not (numberp resposta)) (format T "~% -> Precisa de Inserir um n�mero (1 ou 2)") (menu-principal caminho))
        ((= resposta 1 ) (iniciar caminho))
        ((= resposta 2) (format T "~% -> Adeus!"))
-       (T (format T "~% -> Precisa de Inserir um n�mero (1 ou 2)") (menu-principal caminho))
+       (T (format T "~% -> Precisa de Inserir um numero (1 ou 2)") (menu-principal caminho))
       )
     )
   )
 )
 
 
-;;Pedir ao utilizador qual o tabuleiro que quer para criar o no
-;;Pedir ao utilizador qual e o algoritmo que quer usar 
-;; perguntar ao utilizaro qual e a profundidade que quer, caso seja dfs leio a profundidade, caso seja outro qualquer fazemos o most-positive-fixnum
 
 ;; iniciar
 
@@ -91,8 +88,33 @@
   "Funcao que ira iniciar a aplicacao, pedindo ao utilizador para que escolha o tabuleiro que pretenda que seja o no inicial, o algoritmo que pretende utilizar e a profundidade maxima que pretende para o algoritmo dfs"
   (let* (
          (tabuleiro-escolhido (ler-tabuleiro caminho))
+         (algoritmo-escolhido (ler-algoritmo))
+         (profundidade-escolhida (cond
+                                  ((equal algoritmo-escolhido 'dfs) (ler-profundidade))
+                                  (T nil)
+                                 ))
+         ;falta por aqui a escolha da heuristica
+         (no (cria-no tabuleiro-escolhido 
+                      (list 
+                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena))
+                       (- 10 (peca-contagem tabuleiro-escolhido 'media))
+                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz))
+                      )
+                      0 ;profundidade do no raiz
+                      0 ;chamar aqui a funcao heuristica escolhida
+                      0 ;f do no raiz, que vai ser igual a heuristica porque g=0
+                      nil ;no pai
+             ))
         )
-    tabuleiro-escolhido
+
+    (cond
+     ((equal algoritmo-escolhido 'dfs)
+      (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida))
+
+     (T (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores)))
+    )
+    
+    
   )
 )
 
@@ -163,5 +185,57 @@
     )
     
   )
+)
+
+
+
+
+;; ler-algoritmo
+
+(defun ler-algoritmo ()
+  "Funcao que questiona o utilizador sobre qual o algoritmo de procura em espaco de estados que pretende utilizar"
+  (progn
+    (format T "~% -> Escolha o algoritmo de procura em espaco de estados que pretende")
+    (format T "~% -> 1 - Breadth-First (bfs)")
+    (format T "~% -> 2 - Depth-First (dfs)")
+    (format T "~% -> 3 - A*")
+    (format T "~% -> 4 - IDA*~%")
+
+    (let (
+          (resposta (read))
+         )
+
+      (cond
+       ((not (numberp resposta)) (format T "~% > Precisa de inserir um numero entre 1 e 4~%") (ler-algoritmo))
+       ((= resposta 1) 'bfs)
+       ((= resposta 2) 'dfs)
+       ((= resposta 3) 'a*)
+       ((= resposta 4) 'ida*)
+       (T (format T "~% -> Precisa de inserir um numero entre 1 e 4~%") (ler-algoritmo))
+      )
+
+    )
+
+  )
+)
+
+
+
+
+;; ler-profundidade
+
+(defun ler-profundidade (&optional (resposta nil))
+  "Funcao que ira questionar o utilizador sobre qual a profundidade maxima que pretende para o algortimo Depth-First"
+  (cond
+
+   ((null resposta) (format T "~% -> Insira a profundidade maxima que deseja para o algoritmo~%") (ler-profundidade (read)))
+
+   ((not (numberp resposta)) (format T "~% -> Por favor insira um numero maior do que 0~%") (ler-profundidade))
+
+   ((<= resposta 0) (format T "~% -> Por favor insira um numero maior do que 0~%") (ler-profundidade))
+
+   (T resposta)
+  )
+
 )
 
