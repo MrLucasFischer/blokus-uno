@@ -5,8 +5,7 @@
 
 ;;;;;;;; Sucessores ;;;;;;;;
 
-;;Sucessores 
-;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
+;; sucessores 
 
 (defun sucessores (no operadores algoritmo &optional (profundidade nil))
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
@@ -33,7 +32,7 @@
 
 
 ;;aplicar-operador-no
-;;;Esta funcao ha de ir para o ficheiro procura.lisp por enquanto esta aqui para teste
+
 (defun aplicar-operador-no (no operador)
   "Funcao que aplica apenas um operador a um determinado no. Consoante o operador passado por argumento esta funcao ira determinar as jogadas possiveis para esse operador e ira criar um no (um sucessor) para cada uma dessas jogadas possives"
   (let
@@ -247,9 +246,68 @@
 
 ;; ida*
 
-(defun ida* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
+(defun ida* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (limiar (get-f-no no-inicial)))
   "Funcao que imlementa o algoritmo IDA*"
+  (progn
+    (print limiar)
+  (cond
+   ((null abertos) nil)
+   
+   (T
+    (let* (
+           (no-atual (first abertos))
 
+           (abertos-sem-no-inicial (rest abertos))
+
+           (fechados-com-no-inicial (cons no-atual fechados))
+          )
+
+      (cond
+
+       ((> (get-f-no no-atual) limiar)
+
+        (cond
+         ;Se existir um em abertos cujo seu f seja menor que o limiar, passa a ser esse o no atual
+         ((existe-no-menor-limiar-p abertos-sem-no-inicial limiar) 
+          (let* (
+                 (novo-no-atual (procura-no-menor-limiar abertos-sem-no-inicial limiar))
+
+                 (sucessores (funcall funcao-sucessores novo-no-atual operadores 'bfs))
+
+                 (fechados-atualizados (remover-nos-com-menor-f-fechados sucessores fechados-com-no-inicial))
+
+                 (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados))
+               )
+            (ida* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-atualizados limiar)
+          )
+         )
+
+         ;Se nao existir nenhum no em abertos cujo f seja menor que o limiar, entao muda-se o limiar para o minimo dos f's em abertos e comeca-se tudo outra vez
+         (T (ida* no-inicial funcao-solucao funcao-sucessores operadores abertos fechados (novo-limiar abertos)))
+        )
+
+       )
+
+       ((funcall funcao-solucao no-atual) no-atual) ;se o f do no-atual for menor que o limiar e no-atual for um no objetivo entao devolve-se o no atual
+
+       (T 
+        (let* (
+               (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
+
+               (fechados-atualizados (remover-nos-com-menor-f-fechados sucessores fechados-com-no-inicial))
+
+               (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados))
+               )
+          (ida* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-atualizados limiar)
+          )
+       )
+       
+      )
+
+    )
+   )
+  )
+)
 )
 
 
@@ -358,6 +416,47 @@
 
 
 
+;; existe-no-menor-limiar-p
+
+(defun existe-no-menor-limiar-p (abertos limiar)
+  "Funcao que verifica se existe algum no na lista de abertos cujo o seu f seja menor que o atual limiar utilizado pelo algoritmo ida*"
+  (eval (cons 'or (mapcar #'(lambda (no)
+              (cond
+               ((<= (get-f-no no) limiar) T)
+               (T nil)
+              )
+            ) abertos)))
+)
+
+
+
+
+;; procura-no-menor-limiar
+
+(defun procura-no-menor-limiar (abertos limiar)
+  "Funcao que obtem o primeiro no cujo seu f seja menor que o atual limiar utilizado pelo algoritmo ida*"
+  (cond
+   ((null abertos) nil)
+   ((<= (get-f-no (first abertos)) limiar) (first abertos))
+   (T (procura-no-menor-limiar (rest abertos) limiar))
+  )
+)
+
+
+
+
+
+;; novo-limiar
+
+(defun novo-limiar (abertos)
+  "Funcao que ira obter o novo limiar a ser utilizado para o algoritmo ida* sendo este o menor dos valores de f dos nos presentes em abertos"
+  (apply #'min (mapcar #'get-f-no abertos))
+)
+
+
+
+
+
 ;; remover-no
 
 (defun remover-no (no lista)
@@ -412,6 +511,7 @@
 ;; existe-solucaop
 
 (defun existe-solucaop (sucessores funcao-solucao)
+  "Funcao que verifica se existe algum no objetivo numa determinada lista de sucessores"
   (eval (cons 'or (mapcar funcao-solucao sucessores)))
 )
 
@@ -422,6 +522,7 @@
 ;; procura-no-objetivo
 
 (defun procura-no-objetivo (sucessores funcao-solucao)
+  "Funcao que procura o primeiro no objetivo de uma lista de sucessores"
   (cond
    ((null sucessores) nil)
    ((funcall funcao-solucao (first sucessores)) (first sucessores))

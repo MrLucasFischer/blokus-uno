@@ -110,9 +110,6 @@
 ;; bfs
 (defun bfs (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em largura"
-(progn
-  (print (length abertos))
-  
   (cond
 
    ((null abertos) nil)
@@ -145,7 +142,6 @@
     )
   )
 )
-)
 
 
 
@@ -154,8 +150,6 @@
 
 (defun dfs (no-inicial funcao-solucao funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil))
   "Funcao que implementa o algoritmo de procura em profundidade"
-  (progn
-    (print (length abertos))
    (cond
 
    ((null abertos) nil)
@@ -200,7 +194,6 @@
      )
     )
   )
-)
 )
 
 
@@ -248,8 +241,6 @@
 
 (defun ida* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (limiar (get-f-no no-inicial)))
   "Funcao que imlementa o algoritmo IDA*"
-  (progn
-    (print limiar)
   (cond
    ((null abertos) nil)
    
@@ -307,7 +298,6 @@
     )
    )
   )
-)
 )
 
 
@@ -511,6 +501,7 @@
 ;; existe-solucaop
 
 (defun existe-solucaop (sucessores funcao-solucao)
+  "Funcao que verifica se existe algum no objetivo numa determinada lista de sucessores"
   (eval (cons 'or (mapcar funcao-solucao sucessores)))
 )
 
@@ -521,6 +512,7 @@
 ;; procura-no-objetivo
 
 (defun procura-no-objetivo (sucessores funcao-solucao)
+  "Funcao que procura o primeiro no objetivo de uma lista de sucessores"
   (cond
    ((null sucessores) nil)
    ((funcall funcao-solucao (first sucessores)) (first sucessores))

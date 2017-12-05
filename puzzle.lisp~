@@ -10,7 +10,6 @@
 (defun tabuleiro-vazio ()
   "Funcao que retorna um tabuleiro vazio"
   (list 
-   '(2 0 0 0 0 0 0 0 0 0 0 0 0 2)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -23,7 +22,8 @@
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
    '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 2)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
   )
 )
 
@@ -116,7 +116,7 @@
             (- 10 (peca-contagem (tabuleiro-teste) 'media))
             (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
            )
-           0 0 0 nil)
+           0 0 -100 nil)
 )
 
 (defun no-teste1 ()
@@ -132,13 +132,13 @@
 
 (defun no-teste2 ()
   "Funcao que cria um no teste"
-  (cria-no (tabuleiro-f)
+  (cria-no (tabuleiro-vazio)
            (list 
-            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-f) 'media))
-            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
+            (- 10 (peca-contagem (tabuleiro-vazio) 'pequena))
+            (- 10 (peca-contagem (tabuleiro-vazio) 'media))
+            (- 15 (peca-contagem (tabuleiro-vazio) 'cruz))
            )
-           0 0 1 nil)
+           0 196 196 nil)
 )
 
 (defun no-teste3 ()
