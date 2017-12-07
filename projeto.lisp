@@ -111,7 +111,7 @@
      ((equal algoritmo-escolhido 'dfs)
       (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida)))
 
-     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores))))
+     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores)) caminho))
     )
     
     
@@ -245,7 +245,7 @@
 
 ;; escrever-resultados
 
-(defun escrever-resultados (resultado)
+(defun escrever-resultados (resultado caminho)
   "Funcao que ira imprimir o resultado para o ecra de uma forma mais clara bem como escrever as estatisticas num ficheiro estatisticas.dat"
   (cond
    ((not (null resultado))
@@ -279,6 +279,8 @@
         (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
 
         (format T "~%~%  -No pai: ~A" no-pai-resultado)
+
+        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado no-pai-resultado abertos fechados tempo-inicial nos-gerados)
       )
     ))
    (T nil)
@@ -291,11 +293,29 @@
 
 ;; formatar-tabuleiro
 
-(defun formatar-tabuleiro (tabuleiro)
+(defun formatar-tabuleiro (tabuleiro &optional (ficheiro T))
   "Funcao que recebe um tabuleiro e formata-o de forma a ser mais apresentavel ao utilizador"
   (cond
    ((null tabuleiro) nil)
-   (T (format T "~%  ~A" (first tabuleiro)) (formatar-tabuleiro (rest tabuleiro)))
+   (T (format ficheiro "~%  ~A" (first tabuleiro)) (formatar-tabuleiro (rest tabuleiro)))
   )
 )
 
+
+
+
+
+;; escrever-estatisticas-ficheiro
+
+(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado no-pai-resultado abertos fechados tempo-inicial nos-gerados)
+  "Funcao que permite a escrita das estatisticas para um ficheiro estatisticas.dat"
+
+  (with-open-file (ficheiro-estatisticas 
+                   (concatenate 'string caminho "/estatisticas.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+    (format ficheiro-estatisticas "Worked")
+  )
+)
