@@ -247,26 +247,37 @@
 
 (defun escrever-resultados (resultado)
   "Funcao que ira imprimir o resultado para o ecra de uma forma mais clara bem como escrever as estatisticas num ficheiro estatisticas.dat"
-  (let* (
-         (no-objetivo (first resultado))
-         (tabuleiro (first no-objetivo))
-         (pecas (second no-objetivo))
-         (profundidade (third no-objetivo))
-         (heuristica-resultado (fourth no-objetivo))
-         (custo-resultado (fifth no-objetivo))
-         (no-pai-resultado (sixth no-objetivo))
-        )
-    (progn
-      (formatar-tabuleiro tabuleiro)
-      (format T "~%~%  Custo do no-objetivo: ~A" custo-resultado)
-      (format T "~%  Pecas pequenas: ~A" (first pecas))
-      (format T "~%  Pecas medias: ~A" (second pecas))
-      (format T "~%  Pecas em cruz: ~A" (third pecas))
-      (format T "~%~%  Profundidade da solucao: ~A" profundidade)
-      (format T "~%  Heuristica do no objetivo: ~A" heuristica-resultado)
-      (format T "~%~%  No pai: ~A" no-pai-resultado)
-    )
+  (cond
+   ((not (null resultado))
+    (let* (
+           (no-objetivo (first resultado))
+           (tabuleiro (first no-objetivo))
+           (pecas (second no-objetivo))
+           (profundidade (third no-objetivo))
+           (heuristica-resultado (fourth no-objetivo))
+           (custo-resultado (fifth no-objetivo))
+           (no-pai-resultado (sixth no-objetivo))
+         
+           (abertos (second resultado))
+           (fechados (third resultado))
+           (tempo-inicial (fourth resultado))
+          )
+      (progn
+        (formatar-tabuleiro tabuleiro)
+        (format T "~%~%  -Pecas pequenas: ~A" (first pecas))
+        (format T "~%  -Pecas medias: ~A" (second pecas))
+        (format T "~%  -Pecas em cruz: ~A" (third pecas))
+        (format T "~%~%  -Profundidade da solucao: ~A" profundidade)
+        (format T "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
+        (format T "~%  -Custo do no-objetivo: ~A" custo-resultado)
+        (format T "~%~%  -Nos gerados: ~A" (1- (+ (length abertos) (length fechados)))) ; para o IDA nao pode ser isto
+        (format T "~%  -Tempo de Execucao: ~A" (- (get-universal-time) tempo-inicial))
+        (format T "~%~%  -No pai: ~A" no-pai-resultado)
+      )
+    ))
+   (T nil)
   )
+  
 )
 
 

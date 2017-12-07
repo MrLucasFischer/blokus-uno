@@ -251,27 +251,33 @@
    ((not (null resultado))
     (let* (
            (no-objetivo (first resultado))
-           (tabuleiro (first no-objetivo))
-           (pecas (second no-objetivo))
-           (profundidade (third no-objetivo))
-           (heuristica-resultado (fourth no-objetivo))
-           (custo-resultado (fifth no-objetivo))
-           (no-pai-resultado (sixth no-objetivo))
+           (tabuleiro (get-estado-no no-objetivo))
+           (pecas (get-pecas-no no-objetivo))
+           (profundidade (get-profundidade-no no-objetivo))
+           (heuristica-resultado (get-heuristica-no no-objetivo))
+           (custo-resultado (get-f-no no-objetivo))
+           (no-pai-resultado (get-pai-no no-objetivo))
          
            (abertos (second resultado))
            (fechados (third resultado))
            (tempo-inicial (fourth resultado))
+
+           (nos-gerados (1- (+ (length abertos) (length fechados))))
           )
       (progn
         (formatar-tabuleiro tabuleiro)
+
         (format T "~%~%  -Pecas pequenas: ~A" (first pecas))
         (format T "~%  -Pecas medias: ~A" (second pecas))
         (format T "~%  -Pecas em cruz: ~A" (third pecas))
         (format T "~%~%  -Profundidade da solucao: ~A" profundidade)
         (format T "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
         (format T "~%  -Custo do no-objetivo: ~A" custo-resultado)
-        (format T "~%~%  -Nos gerados: ~A" (1- (+ (length abertos) (length fechados)))) ; para o IDA nao pode ser isto
-        (format T "~%  -Tempo de Execucao: ~A" (- (get-universal-time) tempo-inicial))
+
+        (format T "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
+        (format T "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
+        (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
+
         (format T "~%~%  -No pai: ~A" no-pai-resultado)
       )
     ))

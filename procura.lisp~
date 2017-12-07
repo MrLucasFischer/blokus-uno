@@ -132,7 +132,7 @@
       (cond
 
        ((existe-solucaop sucessores funcao-solucao) 
-        (list (procura-no-objetivo sucessores funcao-solucao) abertos-com-sucessores fechados-com-no-inicial))
+        (list (procura-no-objetivo sucessores funcao-solucao) abertos-com-sucessores fechados-com-no-inicial tempo-inicial))
 
        (T (bfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial tempo-inicial))
 
@@ -184,7 +184,7 @@
           (cond
 
            ((existe-solucaop sucessores funcao-solucao) 
-            (list (procura-no-objetivo sucessores funcao-solucao) abertos-com-sucessores fechados-com-no-inicial))
+            (list (procura-no-objetivo sucessores funcao-solucao) abertos-com-sucessores fechados-com-no-inicial tempo-inicial))
            
            (T (dfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores profundidade abertos-com-sucessores fechados-com-no-inicial tempo-inicial))
           )
@@ -203,6 +203,8 @@
 ;; a*
 (defun a* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)))
   "Funcao que implementa o algoritmo de procura A*"
+  
+   
   (cond
    ((null abertos) nil)
 
@@ -216,7 +218,7 @@
           )
 
       (cond
-       ((funcall funcao-solucao no-atual) (list no-atual abertos-sem-no-inicial fechados-com-no-inicial))
+       ((funcall funcao-solucao no-atual) (list no-atual abertos-sem-no-inicial fechados-com-no-inicial tempo-inicial))
        (T
         (let* (
                (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
@@ -281,7 +283,7 @@
 
        )
 
-       ((funcall funcao-solucao no-atual) (list no-atual abertos-sem-no-inicial fechados-com-no-inicial)) ;se o f do no-atual for menor que o limiar e no-atual for um no objetivo entao devolve-se o no atual
+       ((funcall funcao-solucao no-atual) (list no-atual abertos-sem-no-inicial fechados-com-no-inicial tempo-inicial)) ;se o f do no-atual for menor que o limiar e no-atual for um no objetivo entao devolve-se o no atual
 
        (T 
         (let* (

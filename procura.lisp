@@ -203,6 +203,8 @@
 ;; a*
 (defun a* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)))
   "Funcao que implementa o algoritmo de procura A*"
+  
+   
   (cond
    ((null abertos) nil)
 
@@ -520,4 +522,27 @@
    ((funcall funcao-solucao (first sucessores)) (first sucessores))
    (T (procura-no-objetivo (rest sucessores) funcao-solucao))
   )
+)
+
+
+
+;;;;;;;; Funcoes de Avaliacao da eficiencia ;;;;;;;;
+
+;; penetrancia
+
+(defun penetrancia (L nos-gerados)
+  "Funcao que permite calcular a penetrancia de um algoritmo, passando como argumentos a profundidade da solucao encontrada e o numero total de nos gerados"
+  (cond
+   ((not (zerop L)) (float (/ L nos-gerados)))
+   (T 0)
+  )
+)
+
+
+;; fator-ramificacao
+
+(defun fator-ramificacao(L nos-gerados &optional (limite-inferior 1) (limite-superior most-positive-fixnum) (margem-erro 0.1))
+  "Funcao que permite calcular o fator de ramificacao para um no"
+  
+
 )

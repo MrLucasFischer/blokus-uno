@@ -201,7 +201,7 @@
   (fourth no)
 )
 
-;;get-pai-no
+;;get-f-no
 (defun get-f-no (no)
   "Funcao que retorna o f de um no"
   (fifth no)
