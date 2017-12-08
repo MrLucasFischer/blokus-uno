@@ -6,7 +6,7 @@
 
 ;;;;;;;;;; Construtor ;;;;;;;;;;
 
-;;Cria-no
+;; cria-no
 
 (defun cria-no (estado pecas &optional (profundidade 0) (heuristica 0) (f 0) (no-pai nil))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
@@ -16,7 +16,7 @@
 
 ;;;;;;;;;; Getters ;;;;;;;;;;
 
-;;get-estado-no
+;; get-estado-no
 
 (defun get-estado-no (no)
   "Funcao que retorna o estado de um no"
@@ -25,7 +25,7 @@
 
 
 
-;;get-pecas-no
+;; get-pecas-no
 
 (defun get-pecas-no (no)
   "Funcao que retorna uma lista com 3 elementos que identificam o numero de pecas pequenas, o numero de pecas medias e o numero de pecas em cruz respetivamente"
@@ -34,7 +34,7 @@
 
 
 
-;;get-profundidade-no
+;; get-profundidade-no
 
 (defun get-profundidade-no (no)
   "Funcao que retorna a profundidade de um no"
@@ -43,7 +43,7 @@
 
 
 
-;;get-heuristica-no
+;; get-heuristica-no
 
 (defun get-heuristica-no (no)
   "Funcao que retorna a heuristica de um no"
@@ -52,7 +52,8 @@
 
 
 
-;;get-f-no
+;; get-f-no
+
 (defun get-f-no (no)
   "Funcao que retorna o f de um no"
   (fifth no)
@@ -60,7 +61,8 @@
 
 
 
-;;get-pai-no
+;; get-pai-no
+
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
   (sixth no)
@@ -68,9 +70,10 @@
 
 
 
-;;;Funcoes auxiliares
+;;;;;;;;;; Funcoes auxiliares ;;;;;;;;;;
 
-;;peca-contagem
+;; peca-contagem
+
 (defun peca-contagem (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
   "Funcao que permite contar o numero de pecas do jogador existentes no tabuleiro conforme o seu tipo. Percore o tabuleiro das posicoes 13,13 ate a posicao 0,0"
   (cond
@@ -94,7 +97,8 @@
 
 
 
-;;tipo-pecap
+;; tipo-pecap
+
 (defun tipo-pecap (linha coluna tabuleiro tipo-peca)
   "Funcao que ao passarmos uma posicao de um tabuleiro verifica se essa peca e do tipo de peca enviado por argumento"
   (cond
@@ -146,8 +150,10 @@
 
 
 
-;; jogada-in-jogadas-possiveis-p 
+;; jogada-in-jogadas-possiveis-p
+
 (defun jogada-in-jogadas-possiveis-p (jogada tabuleiro tipo-peca)
+  "Funcao que verifica se uma determinada jogada existe na lista de jogadas possiveis para a peca passada por argumento"
   (let (
         (jogadas-possiveis (funcall #'jogadas-possiveis tabuleiro tipo-peca))
        )
@@ -164,7 +170,8 @@
 
 
 
-;;quadrados-por-preencher-numa-linha
+;; quadrados-por-preencher-numa-linha
+
 (defun quadrados-por-preencher-numa-linha (linha)
   "Conta o numero de quadrados por preencher numa determinada linha (posicoes que estao a 0 nessa linha)"
   (cond
@@ -181,7 +188,8 @@
 
 
 
-;;quadrados-por-preencher
+;; quadrados-por-preencher
+
 (defun quadrados-por-preencher (tabuleiro)
   "Conta o numero de posicoes que estao a 0 num tabuleiro, que corresponde ao numero de quadrados por preencher num tabuleiro"
   (cond
@@ -196,7 +204,8 @@
 
 
 
-;;quadrados-ja-preenchidos
+;; quadrados-ja-preenchidos
+
 (defun quadrados-ja-preenchidos (tabuleiro)
   "Funcao que conta o numero de quadrados ja preenchidos atraves da subtracao do total pelo numero de quadrados por preencher"
   (- 196 (quadrados-por-preencher tabuleiro))
@@ -208,7 +217,8 @@
 
 
 
-;;construir-listas
+;; construir-listas
+
 (defun construir-listas (elems listas)
   "Funcao auxiliar que permite juntar os elementos removidos da cabeca das listas novamente com as mesmas de forma a manter a integridade das listas"
   (mapcar #'cons elems listas)
@@ -220,7 +230,8 @@
 
 
 
-;;inserir-peca-pequena-na-coluna
+;; inserir-peca-pequena-na-coluna
+
 (defun inserir-peca-pequena-na-coluna (coluna lista)
   "Permite inserir a peca mais pequena numa determinada coluna da lista passada como argumento"
   (cond 
@@ -239,7 +250,8 @@
 
 
 
-;;inserir-peca-media-na-coluna
+;; inserir-peca-media-na-coluna
+
 (defun inserir-peca-media-na-coluna (coluna linhas)
   "Funcao que permite inserir uma peca media numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da peca"
   (let (
@@ -275,7 +287,8 @@
 
 
 
-;;inserir-peca-cruz-na-coluna
+;; inserir-peca-cruz-na-coluna
+
 (defun inserir-peca-cruz-na-coluna (coluna linhas)
   "Funcao auxiliar da funcao inserir-peca-cruz que permite inserir uma peca em cruz numa determinada colocando o primeiro quadrado na ponta esquerda da peca"
   (let (
@@ -312,9 +325,9 @@
 
 
 
-;;;;;;;; Operadores ;;;;;;;;
+;;;;;;;;;; Operadores ;;;;;;;;;;
 
-;;inserir-peca-pequena
+;; inserir-peca-pequena
 
 (defun inserir-peca-pequena (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca mais pequena numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
@@ -340,7 +353,7 @@
 
 
 
-;;inserir-peca-media   
+;; inserir-peca-media   
 
 (defun inserir-peca-media (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca media numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sao argumentos numericos"
@@ -372,7 +385,8 @@
 
 
 
-;;inserir-peca-cruz
+;; inserir-peca-cruz
+
 (defun inserir-peca-cruz (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro) )
   "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
@@ -401,7 +415,8 @@
 
 
 
-;;operadores
+;; operadores
+
 (defun operadores ()
   "Funcao que lista todos os operadores existentes no dominio do problema"
   (list 'inserir-peca-cruz 'inserir-peca-pequena 'inserir-peca-media )
@@ -412,7 +427,7 @@
 
 
 
-;;;;;;;; Jogadas possiveis ;;;;;;;;
+;;;;;;;;;; Jogadas possiveis ;;;;;;;;;;
 
 ;; jogadas-possives
 
@@ -435,6 +450,11 @@
     (T (percorre-matriz-peca tabuleiro tipo-peca))  ;Caso ja exista pelo menos um 1 num dos cantos do tabuleiro
    )
 )
+
+
+
+
+;jogada-inicial-p
 
 (defun jogada-inicial-p (tabuleiro tipo-peca &optional (linha 0) (coluna 0))
   "Funcao que caso o jogador ainda nao tenha lancado nenhuma peca ira determinar quais as jogadas iniciais possiveis"
@@ -565,7 +585,7 @@
 
 
 
-;;;; Cantos possiveis peca cruz ;;;;;;;;;;;
+;;;;;;;;;; Cantos possiveis peca cruz ;;;;;;;;;;
 
 ;; cantos-disponiveis-peca-horizontal
 
@@ -633,7 +653,7 @@
 
 
 
-;;;;;; Cantos possiveis peca media ;;;;;;;;;;;;
+;;;;;;;;;; Cantos possiveis peca media ;;;;;;;;;;
 
 ;; cantos-disponiveis-peca-media
 
@@ -665,7 +685,7 @@
 
 
 
-;;;;;;;;Cantos possiveis peca pequena;;;;;;;;;;;;;;;;
+;;;;;;;;;; Cantos possiveis peca pequena ;;;;;;;;;;
 
 ;; cantos-disponiveis-peca-pequena
 
@@ -794,7 +814,7 @@
 
 
 
-;;; Heuristicas
+;;;;;;;;;; Heuristicas ;;;;;;;;;;
 
 ;;heuristica
 
@@ -809,7 +829,7 @@
 
 
 
-;;; Solucao
+;;;;;;;;;; Solucao ;;;;;;;;;;
 
 ;;no-objetivo-p
 

@@ -4,208 +4,61 @@
 ;;;; Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
 ;;;; Funcoes do dominio do problema
 
-;;;Tabuleiros
-
-;;tabuleiro-vazio
-(defun tabuleiro-vazio ()
-  "Funcao que retorna um tabuleiro vazio"
-  (list 
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-  )
-)
-
-(defun tabuleiro-teste ()
-  "Funcao que retorna um tabuleiro de teste para a contagem de pecas"
-  (list 
-   '(0 0 0 0 2 2 0 0 2 0 2 0 2 0)
-   '(0 0 0 0 2 2 0 2 2 2 0 2 2 2)
-   '(0 0 0 2 0 0 2 0 2 0 2 0 2 0)
-   '(0 2 2 0 0 2 2 2 0 2 2 2 0 2)
-   '(0 2 2 0 2 0 2 0 2 0 2 0 2 0)
-   '(0 0 0 0 2 2 0 2 2 2 0 2 2 2)
-   '(0 0 0 0 2 0 2 0 2 0 2 0 2 0)
-   '(0 0 0 0 0 2 2 2 0 2 2 2 0 2)
-   '(0 0 0 0 2 0 2 0 2 0 2 0 2 0)
-   '(0 0 0 2 2 2 0 2 2 2 0 2 2 2)
-   '(0 0 2 1 2 1 2 0 2 0 2 0 2 0)
-   '(1 2 2 2 1 2 2 2 0 2 2 2 0 0)
-   '(0 1 2 1 2 0 2 0 2 0 2 0 2 2)
-   '(1 0 1 2 1 2 0 2 0 2 0 0 2 2)
-  )
-)
-
-
-(defun tabuleiro-c ()
-  "Funcao que retorna um tabuleiro de teste para a contagem de pecas"
-  (list 
-   '(0 0 0 0 2 2 0 0 2 0 2 0 2 0)
-   '(0 0 0 0 2 2 0 2 2 2 0 2 2 2)
-   '(0 0 0 2 0 0 2 0 2 0 2 0 2 0)
-   '(0 2 2 0 0 2 2 2 0 2 2 2 0 2)
-   '(0 2 2 0 0 0 2 0 2 0 2 0 2 0)
-   '(0 0 0 0 0 0 0 2 2 2 0 2 2 2)
-   '(0 0 0 0 0 0 2 0 2 0 2 0 2 0)
-   '(0 0 0 0 0 2 2 2 0 2 2 2 0 2)
-   '(0 0 0 0 2 0 2 0 2 0 2 0 2 0)
-   '(0 0 0 2 2 2 0 2 2 2 0 2 2 2)
-   '(0 0 2 1 2 1 2 0 2 0 2 0 2 0)
-   '(1 2 2 2 1 2 2 2 0 2 2 2 0 0)
-   '(0 1 2 1 2 0 2 0 2 0 2 0 2 2)
-   '(1 0 1 2 1 2 0 2 0 2 0 0 2 2)
-  )
-)
-
-(defun tabuleiro-e ()
-  '(
-    (0 2 0 0 2 2 0 0 2 0 0 0 2 2)
-    (2 2 2 0 2 2 0 2 2 2 0 0 2 2)
-    (0 2 0 2 0 0 2 0 2 0 2 2 0 0)
-    (0 0 2 2 2 0 0 0 0 0 2 2 0 0)
-    (2 2 0 2 0 2 0 0 0 0 0 0 0 0)
-    (2 2 0 0 2 2 2 0 0 0 0 0 0 0)
-    (0 0 2 0 0 2 0 0 0 0 0 0 0 0)
-    (0 2 2 2 0 0 2 0 2 0 0 0 2 0)
-    (0 0 2 0 0 0 0 2 2 2 0 2 2 2)
-    (0 2 0 2 0 0 0 0 2 0 2 0 2 0)
-    (0 0 2 2 2 0 0 0 0 2 2 2 0 0)
-    (0 2 0 2 0 2 0 0 0 0 2 0 0 0)
-    (2 2 2 0 2 2 2 0 0 0 0 0 0 0)
-    (0 2 0 0 0 2 0 0 0 0 0 0 0 0)
-   )
-)
-
-(defun tabuleiro-f ()
-  "Funcao que retorna um tabuleiro vazio"
-  (list 
-   '(0 0 0 0 0 0 0 0 0 0 0 0 2 2)
-   '(0 0 0 0 0 0 0 0 0 0 0 0 2 2)
-   '(0 0 0 0 0 0 0 0 0 0 2 2 0 0)
-   '(0 0 0 0 0 0 0 0 0 0 2 2 0 0)
-   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
-   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
-   '(0 0 0 0 0 0 2 2 0 0 0 0 0 0)
-   '(0 0 0 0 0 0 2 2 0 0 0 0 0 0)
-   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
-   '(0 0 0 0 2 2 0 0 2 2 0 0 0 0)
-   '(0 0 2 2 0 0 0 0 0 0 0 0 0 0)
-   '(0 0 2 2 0 0 0 0 0 0 0 0 0 0)
-   '(2 2 0 0 0 0 0 0 0 0 0 0 0 0)
-   '(2 2 0 0 0 0 0 0 0 0 0 0 0 0)
-  )
-)
-
-
-(defun no-teste ()
-  "Funcao que cria um no teste"
-  (cria-no (tabuleiro-teste)
-           (list 
-            (- 10 (peca-contagem (tabuleiro-teste) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-teste) 'media))
-            (- 15 (peca-contagem (tabuleiro-teste) 'cruz))
-           )
-           0 0 -100 nil)
-)
-
-(defun no-teste1 ()
-  "Funcao que cria um no teste"
-  (cria-no (tabuleiro-e)
-           (list 
-            (- 10 (peca-contagem (tabuleiro-e) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-e) 'media))
-            (- 15 (peca-contagem (tabuleiro-e) 'cruz))
-           )
-           0 0 0 nil)
-)
-
-(defun no-teste2 ()
-  "Funcao que cria um no teste"
-  (cria-no (tabuleiro-vazio)
-           (list 
-            (- 10 (peca-contagem (tabuleiro-vazio) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-vazio) 'media))
-            (- 15 (peca-contagem (tabuleiro-vazio) 'cruz))
-           )
-           0 196 196 nil)
-)
-
-(defun no-teste3 ()
-  "Funcao que cria um no teste"
-  (cria-no (tabuleiro-teste)
-           (list 
-            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-f) 'media))
-            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
-           )
-           0 0 5 nil)
-)
-
-(defun no-teste4 ()
-  "Funcao que cria um no teste"
-  (cria-no (tabuleiro-vazio)
-           (list 
-            (- 10 (peca-contagem (tabuleiro-f) 'pequena))
-            (- 10 (peca-contagem (tabuleiro-f) 'media))
-            (- 15 (peca-contagem (tabuleiro-f) 'cruz))
-           )
-           0 0 20 nil)
-)
-
-;;; Construtor
+;;;;;;;;;; Construtor ;;;;;;;;;;
 
 ;;Cria-no
+
 (defun cria-no (estado pecas &optional (profundidade 0) (heuristica 0) (f 0) (no-pai nil))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
   (list estado pecas profundidade heuristica f no-pai)
 )
 
 
-;;; Getters
+;;;;;;;;;; Getters ;;;;;;;;;;
 
 ;;get-estado-no
+
 (defun get-estado-no (no)
   "Funcao que retorna o estado de um no"
   (first no)
 )
 
 
+
 ;;get-pecas-no
+
 (defun get-pecas-no (no)
   "Funcao que retorna uma lista com 3 elementos que identificam o numero de pecas pequenas, o numero de pecas medias e o numero de pecas em cruz respetivamente"
   (second no)
 )
 
 
-;;get-profundidade-no 
+
+;;get-profundidade-no
+
 (defun get-profundidade-no (no)
   "Funcao que retorna a profundidade de um no"
   (third no)
 )
 
 
-;;get-fa-no
+
+;;get-heuristica-no
+
 (defun get-heuristica-no (no)
   "Funcao que retorna a heuristica de um no"
   (fourth no)
 )
+
+
 
 ;;get-f-no
 (defun get-f-no (no)
   "Funcao que retorna o f de um no"
   (fifth no)
 )
+
+
 
 ;;get-pai-no
 (defun get-pai-no (no)
@@ -214,30 +67,21 @@
 )
 
 
-;;; Funcao f(n) = g(n) + h(n)
-
-;;custo
-(defun custo (no)
-  "Implementa a funcao de custo de um no, f(n)"
-  (+ (get-profundidade-no no) (get-heuristica-no no))
-)
-
-
 
 ;;;Funcoes auxiliares
 
 ;;peca-contagem
 (defun peca-contagem (tabuleiro tipo-peca &optional (linha 13) (coluna 13))
-  "Funcao que permite contar o numero de pecas do jogador existentes no tabuleiro conforme o seu tipo"
+  "Funcao que permite contar o numero de pecas do jogador existentes no tabuleiro conforme o seu tipo. Percore o tabuleiro das posicoes 13,13 ate a posicao 0,0"
   (cond
-   ((and (zerop linha) (zerop coluna)) 
+   ((and (zerop linha) (zerop coluna)) ;Se tivermos na posicao 0,0
     (cond
-     ((eq (nth 0 (nth 0 tabuleiro)) 1) (tipo-pecap linha coluna tabuleiro tipo-peca))
+     ((eq (nth 0 (nth 0 tabuleiro)) 1) (tipo-pecap linha coluna tabuleiro tipo-peca)) ;Se existir um 1 na posicao 0,0 vamos ver qual e o tipo dessa peca
      (T 0)
     )
    )
    
-   ((= coluna -1) (peca-contagem tabuleiro tipo-peca (1- linha) 13 ))
+   ((= coluna -1) (peca-contagem tabuleiro tipo-peca (1- linha) 13 )) ;;Quando a coluna e igual a -1 vamos para a linha de cima e voltamos a coluna 13
 
    ((= (nth coluna (nth linha tabuleiro)) 1) (+ (tipo-pecap linha coluna tabuleiro tipo-peca) (peca-contagem tabuleiro tipo-peca linha (1- coluna))))
 
@@ -257,7 +101,7 @@
 
    ((equal tipo-peca 'pequena)
     (cond
-     ((or
+     ((or ;Se em algumas das casas vizinhas estiver la um 1 entao devolvemos 0
        (casa-com-ump linha (1+ coluna) tabuleiro)
        (casa-com-ump linha (1- coluna) tabuleiro)
        (casa-com-ump (1+ linha) coluna tabuleiro)
@@ -269,7 +113,7 @@
 
    ((equal tipo-peca 'media)
     (cond
-     ((and
+     ((and ;Se tiver 1 nestas posicoes entao e porque e uma peca media
        (casa-com-ump linha (1- coluna) tabuleiro)
        (casa-com-ump (1- linha) coluna tabuleiro)
        (casa-com-ump (1- linha) (1- coluna) tabuleiro)
@@ -280,7 +124,7 @@
 
    ((equal tipo-peca 'cruz)
     (cond
-     ((and
+     ((and  ;Se tiver 1 nestas posicoes entao e porque e uma peca em cruz
        (not (= coluna 13))
        (not (= coluna 0))
        (not (< linha 2))
@@ -325,7 +169,9 @@
   "Conta o numero de quadrados por preencher numa determinada linha (posicoes que estao a 0 nessa linha)"
   (cond
    ((null linha) 0)
+
    ((zerop (first linha)) (+ 1 (quadrados-por-preencher-numa-linha (rest linha))))
+
    (T (quadrados-por-preencher-numa-linha (rest linha)))
   )
 )
@@ -340,6 +186,7 @@
   "Conta o numero de posicoes que estao a 0 num tabuleiro, que corresponde ao numero de quadrados por preencher num tabuleiro"
   (cond
    ((null tabuleiro) 0)
+
    (T (+ (quadrados-por-preencher-numa-linha (first tabuleiro)) (quadrados-por-preencher (rest tabuleiro))))
   )
 )
@@ -381,12 +228,7 @@
 
    ((= coluna 0) (cons 1 (rest lista)))
 
-   (T 
-    (cons 
-      (first lista) 
-      (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))
-    )
-   )
+   (T (cons (first lista) (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))))
 
   )
 )
@@ -400,30 +242,25 @@
 ;;inserir-peca-media-na-coluna
 (defun inserir-peca-media-na-coluna (coluna linhas)
   "Funcao que permite inserir uma peca media numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da peca"
-  (let ((linha-cima (first linhas)) (linha-baixo (second linhas)))
+  (let (
+        (linha-cima (first linhas)) 
+        (linha-baixo (second linhas))
+       )
+
     (cond
      ((null linha-cima) nil)
 
      ((= coluna 0) 
       (list
-       (append '(1 1) (rest (rest linha-cima))) ;;cddr ou ser� que aqui uso o inserir-peca-pequena-na-coluna para depois quando tivermos a cena da valida��o ser mais facil (?)
+       (append '(1 1) (rest (rest linha-cima))) ;;cddr 
        (append '(1 1) (rest (rest linha-baixo))) ;;cddr
        )
       )
 
      (T
-      (construir-listas
-       (list
-        (first linha-cima)
-        (first linha-baixo)
-       )
-        (inserir-peca-media-na-coluna 
-          (1- coluna)
-          (list
-            (rest linha-cima)
-            (rest linha-baixo)
-          )
-        )
+      (construir-listas 
+        (list (first linha-cima) (first linha-baixo))
+        (inserir-peca-media-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-baixo)))
       )
      )
 
@@ -441,9 +278,11 @@
 ;;inserir-peca-cruz-na-coluna
 (defun inserir-peca-cruz-na-coluna (coluna linhas)
   "Funcao auxiliar da funcao inserir-peca-cruz que permite inserir uma peca em cruz numa determinada colocando o primeiro quadrado na ponta esquerda da peca"
-  (let ((linha-cima (first linhas)) 
+  (let (
+        (linha-cima (first linhas)) 
         (linha-meio (second linhas))
-        (linha-baixo (third linhas)))
+        (linha-baixo (third linhas))
+       )
 
     (cond
      ((null linha-meio) nil)
@@ -458,19 +297,8 @@
 
      (T
       (construir-listas
-       (list
-        (first linha-cima)
-        (first linha-meio)
-        (first linha-baixo)
-       )
-       (inserir-peca-cruz-na-coluna 
-        (1- coluna)
-        (list
-         (rest linha-cima)
-         (rest linha-meio)
-         (rest linha-baixo)
-        )
-       )
+       (list (first linha-cima) (first linha-meio) (first linha-baixo))
+       (inserir-peca-cruz-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-meio) (rest linha-baixo)))
       )
      )
 
@@ -487,15 +315,15 @@
 ;;;;;;;; Operadores ;;;;;;;;
 
 ;;inserir-peca-pequena
-;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
+
 (defun inserir-peca-pequena (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca mais pequena numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
    ((null tabuleiro) nil)
 
-   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'pequena)) nil)
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'pequena)) nil)  ;Se nao for uma jogada possivel nao pode jogar
 
-   ((= linha 0) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro)))
+   ((= linha 0) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro))) ;Retiramos a linha onde vamos colocar a peca media e juntamos-a com o resto do tabuleiro
 
    (T 
     (cons 
@@ -513,19 +341,19 @@
 
 
 ;;inserir-peca-media   
-;;;;;;;Falta fazer a verificacao se pode ou nao inserir nesta casa
+
 (defun inserir-peca-media (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca media numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sao argumentos numericos"
   (cond 
    ((null tabuleiro) nil)
 
-   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'media)) nil)
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'media)) nil)  ;Se nao for uma jogada possivel nao pode jogar
 
    ((= linha 0) 
     (append 
      (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro))) 
      (rest (rest tabuleiro)) ;;cddr
-    )
+    ) ;Retira-se as 2 linhas onde vamos colocar os 1's para construir a peca media e juntamos-as com o resto do tabuleiro
    )
 
    (T
@@ -550,20 +378,13 @@
   (cond
    ((null tabuleiro) nil)
 
-   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'cruz)) nil)
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'cruz)) nil) ;Se nao for uma jogada possivel nao pode jogar
    
    ((= linha 1) ;;tem que ser uma linha antes para por a peca de cima
     (append
-     (inserir-peca-cruz-na-coluna 
-      coluna 
-      (list 
-       (first tabuleiro) 
-       (second tabuleiro) 
-       (third tabuleiro)
-      )
-     )
+     (inserir-peca-cruz-na-coluna coluna (list (first tabuleiro) (second tabuleiro) (third tabuleiro)))
      (rest (rest (rest tabuleiro))) ;;cdddr
-    )
+    ) ;Retira-se as 3 linhas onde vamos colocar os 1's para construir a peca em cruz e juntamos-as com o resto do tabuleiro
    )
 
    (T
@@ -598,7 +419,7 @@
 (defun jogadas-possiveis (tabuleiro tipo-peca)
   "Funcao que determina todas as jogadas possiveis para um tipo de peca num determinado tabuleiro, devolvendo-as numa lista"
   (cond
-   ((and
+   ((and  ;Se ainda nao existir nenhum 1 nas posicoes dos cantos do tabuleiro
      (not (casa-com-ump 0 0 tabuleiro))
      (not (casa-com-ump 0 13 tabuleiro))
      (not (casa-com-ump 13 0 tabuleiro))
@@ -611,7 +432,7 @@
        )
     )
 
-    (T (percorre-matriz-peca tabuleiro tipo-peca))
+    (T (percorre-matriz-peca tabuleiro tipo-peca))  ;Caso ja exista pelo menos um 1 num dos cantos do tabuleiro
    )
 )
 
@@ -634,12 +455,13 @@
     (cond
      ((and (not (casa-com-ump 0 0 tabuleiro)) (zerop (nth 0 (nth 0 tabuleiro))) (equal tipo-peca 'pequena) )
       (append '((0 0)) (jogada-inicial-p tabuleiro tipo-peca 0 13))
-     )
+     )  ;Caso seja uma peca pequena e na posicao 0,0 esteja um zero entao e uma jogada possivel, passamos a verificar a posicao 0,13
 
      ((and (not (casa-com-ump 0 0 tabuleiro)) (zerop (nth 0 (nth 0 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 0 0 tabuleiro 'media) )
       (append '((0 0)) (jogada-inicial-p tabuleiro tipo-peca 0 13))
-      )
-     (T (jogada-inicial-p tabuleiro tipo-peca 0 13))
+      ) ;Caso seja uma peca media e na posicao 0,0 esteja um zero entao e uma jogada possivel, passamos a verificar a posicao 0,13
+
+     (T (jogada-inicial-p tabuleiro tipo-peca 0 13))  ;Passamos a verificar a posicao 0,13
     )
    )
 
@@ -647,12 +469,13 @@
     (cond
      ((and (not (casa-com-ump 0 13 tabuleiro)) (zerop (nth 13 (nth 0 tabuleiro))) (equal tipo-peca 'pequena))
       (append '((0 13)) (jogada-inicial-p tabuleiro tipo-peca 13 0))
-      )
+      ) ;Caso seja uma peca pequena e na posicao 0,13 esteja um zero entao e uma jogada possivel, passamos a verificar a posicao 13,0
 
      ((and (not (casa-com-ump 0 13 tabuleiro)) (zerop (nth 13 (nth 0 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 0 12 tabuleiro 'media))
       (append '((0 12)) (jogada-inicial-p tabuleiro tipo-peca 13 0))
-     )
-     (T (jogada-inicial-p tabuleiro tipo-peca 13 0))
+     )  ;Caso seja uma peca media e na posicao 0,13 esteja um zero entao e uma jogada possivel, passamos a verificar a posicao 13,0
+
+     (T (jogada-inicial-p tabuleiro tipo-peca 13 0))  ;Passamos a verificar a posicao 13,0
      )
     )
 
@@ -660,12 +483,13 @@
     (cond
      ((and (not (casa-com-ump 13 0 tabuleiro)) (zerop (nth 0 (nth 13 tabuleiro))) (equal tipo-peca 'pequena))
       (append '((13 0)) (jogada-inicial-p tabuleiro tipo-peca 13 13))
-      )
+     ) ;Caso seja uma peca pequena e na posicao 13,0 esteja um zero entao e uma jogada possivel, passamos a verificar a posicao 13,13
 
      ((and (not (casa-com-ump 13 0 tabuleiro)) (zerop (nth 0 (nth 13 tabuleiro))) (equal tipo-peca 'media) (pode-colocarp 12 0 tabuleiro 'media))
       (append '((12 0)) (jogada-inicial-p tabuleiro tipo-peca 13 13))
-      )
-     (T (jogada-inicial-p tabuleiro tipo-peca 13 13))
+     )  ;Caso seja uma peca media e na posicao 13,0 esteja um zero entao e uma jogada possivel, passamos a verificar a posicao 13,13
+
+     (T (jogada-inicial-p tabuleiro tipo-peca 13 13)) ;passmos a verificar a posicao 13,13
      )
     )
 
@@ -690,21 +514,21 @@
 
         ((equal tipo-peca 'pequena)
           (cond
-            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'pequena))
+            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'pequena))  ;Caso exista um 1 na posicao 0,0 verificar se podemos colocar uma peca pequena
             (T nil)
           )
         )
 
         ((equal tipo-peca 'media)
           (cond
-            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'media))
+            ((casa-com-ump linha coluna tabuleiro) (pode-colocarp 1 1 tabuleiro 'media))  ;Caso exista um 1 na posicao 0,0 verificar se podemos colocar uma peca media
             (T nil)
           )
         )
 
         ((equal tipo-peca 'cruz)
           (cond
-            ((casa-com-ump linha coluna tabuleiro) (append (pode-colocarp 2 0 tabuleiro 'cruz) (pode-colocarp 1 1 tabuleiro 'cruz) )) 
+            ((casa-com-ump linha coluna tabuleiro) (append (pode-colocarp 2 0 tabuleiro 'cruz) (pode-colocarp 1 1 tabuleiro 'cruz) ))   ;Caso exista um 1 na posicao 0,0 verificar se podemos colocar uma peca em cruz
             (T nil)
           )
         )
@@ -712,9 +536,9 @@
       )
     )
 
-   ((= coluna -1) (percorre-matriz-peca tabuleiro tipo-peca (1- linha) 13))
+   ((= coluna -1) (percorre-matriz-peca tabuleiro tipo-peca (1- linha) 13)) ;Quando estivermos na coluna -1, vamos para a linha de cima e voltamos a coluna 13
 
-   ((casa-com-ump linha coluna tabuleiro)
+   ((casa-com-ump linha coluna tabuleiro) ;Caso a posicao em que estejamos atualmente tenha la um 1
     (cond
 
       ((equal tipo-peca 'pequena)
@@ -875,8 +699,7 @@
   "Funcao auxiliar para determinar se uma peca ira sobrepor alguma peca ja existente ou nao"
   (eval (cons 'and (mapcar #'(lambda (casa) 
               (cond
-
-                ((eq (nth (second casa) (nth (first casa) tabuleiro)) 0) T)
+                ((eq (nth (second casa) (nth (first casa) tabuleiro)) 0) T) ;Se a posicao dada conter um 0, entao esta vazia
                 (T nil)
               )
             ) casas)))
@@ -977,7 +800,6 @@
 
 (defun heuristica (tabuleiro)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
-  ;;limitar a heuristica a 0. Num no objetivo a heuristica tem que ser obrigatoriamente limitada a zero
   (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
 )
 
