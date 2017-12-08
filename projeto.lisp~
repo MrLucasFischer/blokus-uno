@@ -109,9 +109,9 @@
 
     (cond
      ((equal algoritmo-escolhido 'dfs)
-      (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida)))
+      (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida) caminho))
 
-     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores))))
+     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores)) caminho))
     )
     
     
@@ -245,34 +245,42 @@
 
 ;; escrever-resultados
 
-(defun escrever-resultados (resultado)
+(defun escrever-resultados (resultado caminho)
   "Funcao que ira imprimir o resultado para o ecra de uma forma mais clara bem como escrever as estatisticas num ficheiro estatisticas.dat"
   (cond
    ((not (null resultado))
     (let* (
            (no-objetivo (first resultado))
-           (tabuleiro (first no-objetivo))
-           (pecas (second no-objetivo))
-           (profundidade (third no-objetivo))
-           (heuristica-resultado (fourth no-objetivo))
-           (custo-resultado (fifth no-objetivo))
-           (no-pai-resultado (sixth no-objetivo))
+           (tabuleiro (get-estado-no no-objetivo))
+           (pecas (get-pecas-no no-objetivo))
+           (profundidade (get-profundidade-no no-objetivo))
+           (heuristica-resultado (get-heuristica-no no-objetivo))
+           (custo-resultado (get-f-no no-objetivo))
+           (no-pai-resultado (get-pai-no no-objetivo))
          
            (abertos (second resultado))
            (fechados (third resultado))
            (tempo-inicial (fourth resultado))
+
+           (nos-gerados (1- (+ (length abertos) (length fechados))))
           )
       (progn
         (formatar-tabuleiro tabuleiro)
+
         (format T "~%~%  -Pecas pequenas: ~A" (first pecas))
         (format T "~%  -Pecas medias: ~A" (second pecas))
         (format T "~%  -Pecas em cruz: ~A" (third pecas))
         (format T "~%~%  -Profundidade da solucao: ~A" profundidade)
         (format T "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
         (format T "~%  -Custo do no-objetivo: ~A" custo-resultado)
-        (format T "~%~%  -Nos gerados: ~A" (1- (+ (length abertos) (length fechados)))) ; para o IDA nao pode ser isto
-        (format T "~%  -Tempo de Execucao: ~A" (- (get-universal-time) tempo-inicial))
+
+        (format T "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
+        (format T "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
+        (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
+
         (format T "~%~%  -No pai: ~A" no-pai-resultado)
+
+        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados)
       )
     ))
    (T nil)
@@ -285,11 +293,45 @@
 
 ;; formatar-tabuleiro
 
-(defun formatar-tabuleiro (tabuleiro)
+(defun formatar-tabuleiro (tabuleiro &optional (ficheiro T))
   "Funcao que recebe um tabuleiro e formata-o de forma a ser mais apresentavel ao utilizador"
   (cond
    ((null tabuleiro) nil)
-   (T (format T "~%  ~A" (first tabuleiro)) (formatar-tabuleiro (rest tabuleiro)))
+   (T (format ficheiro "~%  ~A" (first tabuleiro)) (formatar-tabuleiro (rest tabuleiro) ficheiro))
   )
 )
 
+
+
+
+
+;; escrever-estatisticas-ficheiro
+
+(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados)
+  "Funcao que permite a escrita das estatisticas para um ficheiro estatisticas.dat"
+
+  (with-open-file (ficheiro-estatisticas 
+                   (concatenate 'string caminho "/estatisticas.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+    (progn
+      (formatar-tabuleiro tabuleiro ficheiro-estatisticas)
+
+      (format ficheiro-estatisticas "~%~%  -Pecas pequenas: ~A" (first pecas))
+      (format ficheiro-estatisticas "~%  -Pecas medias: ~A" (second pecas))
+      (format ficheiro-estatisticas "~%  -Pecas em cruz: ~A" (third pecas))
+      (format ficheiro-estatisticas "~%~%  -Profundidade da solucao: ~A" profundidade)
+      (format ficheiro-estatisticas "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
+      (format ficheiro-estatisticas "~%  -Custo do no-objetivo: ~A" custo-resultado)
+
+      (format ficheiro-estatisticas "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
+      (format ficheiro-estatisticas "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
+      (format ficheiro-estatisticas "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
+
+      (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------")
+      (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------~%") 
+    )
+  )
+)
