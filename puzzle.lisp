@@ -977,7 +977,6 @@
 
 (defun heuristica (tabuleiro)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
-  ;;limitar a heuristica a 0. Num no objetivo a heuristica tem que ser obrigatoriamente limitada a zero
   (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
 )
 

@@ -1,7 +1,7 @@
 ;;;;Disciplina de IA - 2017/2018
 ;;;;Projeto 1 - Blokus Uno
 ;;;;Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
-;;;Implementacao dos algoritmos de procura
+;;;Implementacao dos algoritmos de procura, sucessores e funcoes auxiliares para o calculo de eficiencia dos algoritmos
 
 ;;;;;;;; Sucessores ;;;;;;;;
 
@@ -528,6 +528,34 @@
 
 ;;;;;;;; Funcoes de Avaliacao da eficiencia ;;;;;;;;
 
+;; fator-ramificacao
+
+(defun fator-ramificacao(L nos-gerados &optional (limite-inferior 1) (limite-superior most-positive-fixnum) (margem-erro 0.1) (limite-medio (/ (+ limite-inferior limite-superior) 2)))
+  "Funcao que permite calcular o fator de ramificacao para um no. Aplica o metodo da bissecao para o calculo desta funcao com uma margem de erro de 0.1"
+  (cond
+   ((< (- limite-superior limite-inferior) margem-erro) (float limite-medio))
+
+   ((> (- (funcao-polinomial L limite-medio) nos-gerados) margem-erro) (fator-ramificacao L nos-gerados limite-inferior limite-medio margem-erro))
+
+   (T (float (fator-ramificacao L nos-gerados limite-medio limite-superior margem-erro)))
+
+  )
+)
+
+
+
+;; funcao-polinomial
+
+(defun funcao-polinomial (polinomio x)
+  "Funcao que implementa o calculo de uma funcao polinomial"
+    (cond
+     ((= polinomio 1) x)
+     (T (+ (expt x polinomio) (funcao-polinomial (1- polinomio) x)))
+    )
+)
+
+
+
 ;; penetrancia
 
 (defun penetrancia (L nos-gerados)
@@ -536,13 +564,4 @@
    ((not (zerop L)) (float (/ L nos-gerados)))
    (T 0)
   )
-)
-
-
-;; fator-ramificacao
-
-(defun fator-ramificacao(L nos-gerados &optional (limite-inferior 1) (limite-superior most-positive-fixnum) (margem-erro 0.1))
-  "Funcao que permite calcular o fator de ramificacao para um no"
-  
-
 )

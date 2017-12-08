@@ -261,7 +261,8 @@
            (abertos (second resultado))
            (fechados (third resultado))
            (tempo-inicial (fourth resultado))
-
+           
+           (nos-expandidos (fifth resultado))
            (nos-gerados (1- (+ (length abertos) (length fechados))))
           )
       (progn
@@ -274,7 +275,8 @@
         (format T "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
         (format T "~%  -Custo do no-objetivo: ~A" custo-resultado)
 
-        (format T "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
+        (format T "~%~%  -Nos expandidos: ~A" nos-expandidos)
+        (format T "~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
         (format T "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
         (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
         (format T "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))

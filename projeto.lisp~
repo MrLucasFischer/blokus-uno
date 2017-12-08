@@ -277,6 +277,7 @@
         (format T "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
         (format T "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
         (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
+        (format T "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
 
         (format T "~%~%  -No pai: ~A" no-pai-resultado)
 
@@ -329,6 +330,7 @@
       (format ficheiro-estatisticas "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
       (format ficheiro-estatisticas "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
       (format ficheiro-estatisticas "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
+      (format ficheiro-estatisticas "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
 
       (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------")
       (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------~%") 
