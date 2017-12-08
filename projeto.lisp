@@ -266,7 +266,7 @@
            (nos-gerados (1- (+ (length abertos) (length fechados))))
           )
       (progn
-        (formatar-tabuleiro tabuleiro)
+        (formatar-tabuleiro tabuleiro) ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
 
         (format T "~%~%  -Pecas pequenas: ~A" (first pecas))
         (format T "~%  -Pecas medias: ~A" (second pecas))
@@ -283,7 +283,7 @@
 
         (format T "~%~%  -No pai: ~A" no-pai-resultado)
 
-        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados)
+        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados nos-expandidos)
       )
     ))
    (T nil)
@@ -310,7 +310,7 @@
 
 ;; escrever-estatisticas-ficheiro
 
-(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados)
+(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados nos-expandidos)
   "Funcao que permite a escrita das estatisticas para um ficheiro estatisticas.dat"
 
   (with-open-file (ficheiro-estatisticas 
@@ -320,7 +320,7 @@
                    :if-does-not-exist :create
                   )
     (progn
-      (formatar-tabuleiro tabuleiro ficheiro-estatisticas)
+      (formatar-tabuleiro tabuleiro ficheiro-estatisticas)  ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
 
       (format ficheiro-estatisticas "~%~%  -Pecas pequenas: ~A" (first pecas))
       (format ficheiro-estatisticas "~%  -Pecas medias: ~A" (second pecas))
@@ -329,7 +329,8 @@
       (format ficheiro-estatisticas "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
       (format ficheiro-estatisticas "~%  -Custo do no-objetivo: ~A" custo-resultado)
 
-      (format ficheiro-estatisticas "~%~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
+      (format ficheiro-estatisticas "~%~%  -Nos expandidos: ~A" nos-expandidos)
+      (format ficheiro-estatisticas "~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
       (format ficheiro-estatisticas "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
       (format ficheiro-estatisticas "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
       (format ficheiro-estatisticas "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
