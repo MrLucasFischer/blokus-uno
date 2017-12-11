@@ -4,6 +4,26 @@
 ;;;; Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
 ;;;; Funcoes do dominio do problema
 
+
+(defun tabuleiro ()
+  '(
+    (0 0 0 0 2 2 0 0 2 0 2 0 2 0)
+    (0 0 0 0 2 2 0 2 2 2 0 2 2 2)
+    (0 0 0 2 0 0 2 0 2 0 2 0 2 0)
+    (0 2 2 0 0 2 2 2 0 2 2 2 0 2)
+    (0 2 2 0 0 0 2 0 2 0 2 0 2 0)
+    (0 0 0 0 0 0 0 2 2 2 0 2 2 2)
+    (0 0 0 0 0 0 2 0 2 0 2 0 2 0)
+    (0 0 0 0 0 2 2 2 0 2 2 2 0 2)
+    (0 0 0 0 2 0 2 0 2 0 2 0 2 0)
+    (0 0 0 2 2 2 0 2 2 2 0 2 2 2)
+    (0 0 2 1 2 1 2 0 2 0 2 0 2 0)
+    (1 2 2 2 1 2 2 2 0 2 2 2 0 0)
+    (0 1 2 1 2 0 2 0 2 0 2 0 2 2)
+    (1 0 1 2 1 2 0 2 0 2 0 0 2 2)
+  )
+)
+
 ;;;;;;;;;; Construtor ;;;;;;;;;;
 
 ;; cria-no
@@ -816,11 +836,45 @@
 
 ;;;;;;;;;; Heuristicas ;;;;;;;;;;
 
-;;heuristica
+;; heuristica
 
 (defun heuristica (tabuleiro)
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
   (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
+)
+
+
+
+
+;; heuristica2
+
+(defun heuristica2 (tabuleiro)
+  "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
+  (let* (
+         (pecas-pequenas (peca-contagem tabuleiro 'pequena))
+         (pecas-medias (peca-contagem tabuleiro 'media))
+         (pecas-cruz (peca-contagem tabuleiro 'cruz))
+         (pecas-nao-pequenas (+ pecas-medias pecas-cruz))
+        )
+    (- 196 (+ (* pecas-pequenas 2) pecas-nao-pequenas))
+  )
+)
+
+
+
+
+
+;; heuristica3
+
+(defun heuristica3 (tabuleiro)
+  "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
+  (let (
+        (jogadas-pequena (length (jogadas-possiveis tabuleiro 'pequena)))
+        (jogadas-media (length (jogadas-possiveis tabuleiro 'media)))
+        (jogadas-cruz (length (jogadas-possiveis tabuleiro 'cruz)))
+       )
+    (+ jogadas-pequena jogadas-media jogadas-cruz)
+  )
 )
 
 

@@ -85,7 +85,7 @@
       (mapcar #'(lambda (jogada)
                   (let* (
                         (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
-                        (heuristica-novo-no (heuristica estado))
+                        (heuristica-novo-no (heuristica3 estado))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
                         (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
                        )
@@ -206,7 +206,6 @@
 (defun a* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
   "Funcao que implementa o algoritmo de procura A*"
   
-   
   (cond
    ((null abertos) nil) ;Se abertos vazia falha
 
@@ -218,6 +217,8 @@
 
            (fechados-com-no-inicial (cons no-atual fechados)) ;Insere o primeiro no de abertos em fechados
           )
+(progn
+    (print (get-heuristica-no no-atual))
 
       (cond
 
@@ -242,6 +243,7 @@
     )
    )
   )
+)
 )
 
 
