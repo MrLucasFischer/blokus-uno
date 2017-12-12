@@ -85,7 +85,7 @@
       (mapcar #'(lambda (jogada)
                   (let* (
                         (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
-                        (heuristica-novo-no (heuristica2 estado))
+                        (heuristica-novo-no (heuristica3 estado))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
                         (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
                        )

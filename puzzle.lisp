@@ -846,9 +846,31 @@
 
 
 
+
+
 ;; heuristica2
 
 (defun heuristica2 (tabuleiro)
+  "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
+  (let (
+        (jogadas-pequena (length (jogadas-possiveis tabuleiro 'pequena)))
+        (jogadas-media (length (jogadas-possiveis tabuleiro 'media)))
+        (jogadas-cruz (length (jogadas-possiveis tabuleiro 'cruz)))
+       )
+    (+ jogadas-pequena jogadas-media jogadas-cruz)
+  )
+)
+
+
+
+
+
+
+
+
+;; heuristica3-teste
+
+(defun heuristica3-teste (tabuleiro)
   "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
   (let* (
          (pecas-pequenas (peca-contagem tabuleiro 'pequena))
@@ -861,21 +883,6 @@
 )
 
 
-
-
-
-;; heuristica3
-
-(defun heuristica3 (tabuleiro)
-  "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
-  (let (
-        (jogadas-pequena (length (jogadas-possiveis tabuleiro 'pequena)))
-        (jogadas-media (length (jogadas-possiveis tabuleiro 'media)))
-        (jogadas-cruz (length (jogadas-possiveis tabuleiro 'cruz)))
-       )
-    (+ jogadas-pequena jogadas-media jogadas-cruz)
-  )
-)
 
 
 

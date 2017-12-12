@@ -93,7 +93,13 @@
                                   ((equal algoritmo-escolhido 'dfs) (ler-profundidade))
                                   (T nil)
                                  ))
-         ;falta por aqui a escolha da heuristica
+         (heuristica-escolhida (cond
+                                ((or 
+                                  (equal algoritmo-escolhido 'a*) 
+                                  (equal algoritmo-escolhido 'ida*)
+                                 ) (ler-heuristica))
+                                (T 'heuristica)
+                               ))
          (no (cria-no tabuleiro-escolhido 
                       (list 
                        (- 10 (peca-contagem tabuleiro-escolhido 'pequena))
@@ -101,7 +107,7 @@
                        (- 15 (peca-contagem tabuleiro-escolhido 'cruz))
                       )
                       0 ;profundidade do no raiz
-                      0 ;chamar aqui a funcao heuristica escolhida
+                      (funcall heuristica-escolhida tabuleiro-escolhido)
                       0 ;f do no raiz, que vai ser igual a heuristica porque g=0
                       nil ;no pai
              ))
@@ -109,9 +115,9 @@
 
     (cond
      ((equal algoritmo-escolhido 'dfs)
-      (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida) caminho))
+      (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
 
-     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores)) caminho))
+     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
     )
     
     
@@ -238,6 +244,36 @@
   )
 
 )
+
+
+
+
+
+;; ler-heuristica
+
+(defun ler-heuristica ()
+  "Funcao que questiona o utilizador sobre qual a heuristica  pretende utilizar"
+  (progn
+    (format T "~% -> Escolha a heuristica que pretende")
+    (format T "~% -> 1 - Heuristica1")
+    (format T "~% -> 2 - Heuristica2 ~%")
+
+    (let (
+          (resposta (read))
+         )
+
+      (cond
+       ((not (numberp resposta)) (format T "~% > Precisa de inserir um numero entre 1 e 2~%") (ler-algoritmo))
+       ((= resposta 1) 'heuristica)
+       ((= resposta 2) 'heuristica2)
+       (T (format T "~% -> Precisa de inserir um numero entre 1 e 2~%") (ler-heuristica))
+      )
+
+    )
+
+  )
+)
+
 
 
 
