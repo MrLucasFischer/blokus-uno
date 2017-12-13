@@ -7,7 +7,7 @@
 
 ;; sucessores 
 
-(defun sucessores (no operadores algoritmo &optional (profundidade nil))
+(defun sucessores (no operadores algoritmo heuristica &optional (profundidade nil))
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
 
   (cond
@@ -17,13 +17,13 @@
      ((> (get-profundidade-no no) profundidade) nil)  ;So se aplica os sucessores caso a profundidade do no seja inferior a profundidade maxima
 
      (T (apply #'append (mapcar #'(lambda(operador)
-                                    (aplicar-operador-no no operador)
+                                    (aplicar-operador-no no operador heuristica)
                                   ) operadores)))
      )
    )
 
    (T (apply #'append (mapcar #'(lambda(operador)
-                                  (aplicar-operador-no no operador)
+                                  (aplicar-operador-no no operador heuristica)
                                 ) operadores)))
   )
 )
@@ -34,7 +34,7 @@
 
 ;;aplicar-operador-no
 
-(defun aplicar-operador-no (no operador)
+(defun aplicar-operador-no (no operador heuristica-escolhida)
   "Funcao que aplica apenas um operador a um determinado no. Consoante o operador passado por argumento esta funcao ira determinar as jogadas possiveis para esse operador e ira criar um no (um sucessor) para cada uma dessas jogadas possives"
   (let
     (
@@ -85,7 +85,7 @@
       (mapcar #'(lambda (jogada)
                   (let* (
                         (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
-                        (heuristica-novo-no (heuristica3 estado))
+                        (heuristica-novo-no (funcall heuristica-escolhida estado))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
                         (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
                        )
@@ -108,7 +108,7 @@
 ;;; Algoritmos
 
 ;; bfs
-(defun bfs (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0) )
+(defun bfs (no-inicial funcao-solucao funcao-sucessores operadores heuristica &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0) )
   "Funcao que implementa o algoritmo de procura em largura"
   (cond
 
@@ -123,7 +123,7 @@
 
            (fechados-com-no-inicial (cons no-atual fechados))
 
-           (sucessores (remover-nos-repetidos (funcall funcao-sucessores no-atual operadores 'bfs) abertos-sem-no-inicial fechados-com-no-inicial))
+           (sucessores (remover-nos-repetidos (funcall funcao-sucessores no-atual operadores 'bfs heuristica) abertos-sem-no-inicial fechados-com-no-inicial))
 
            (abertos-com-sucessores (abertos-bfs abertos-sem-no-inicial sucessores))
           )
@@ -135,7 +135,7 @@
        ((existe-solucaop sucessores funcao-solucao) 
         (list (procura-no-objetivo sucessores funcao-solucao) abertos-com-sucessores fechados-com-no-inicial tempo-inicial (1+ nos-expandidos)))
 
-       (T (bfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-com-no-inicial tempo-inicial (1+ nos-expandidos)))
+       (T (bfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores heuristica abertos-com-sucessores fechados-com-no-inicial tempo-inicial (1+ nos-expandidos)))
 
       )
 
@@ -150,7 +150,7 @@
 
 ;; dfs
 
-(defun dfs (no-inicial funcao-solucao funcao-sucessores operadores profundidade &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
+(defun dfs (no-inicial funcao-solucao funcao-sucessores operadores profundidade heuristica &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
   "Funcao que implementa o algoritmo de procura em profundidade"
    (cond
 
@@ -170,12 +170,12 @@
       (cond
 
        ;Se a profundidade do no atual ultrapassar a profundidade maxima passa-se para o no seguinte
-       ((> (get-profundidade-no no-atual) profundidade) (dfs (first abertos-sem-no-inicial) funcao-solucao funcao-sucessores operadores profundidade abertos-sem-no-inicial fechados-com-no-inicial tempo-inicial nos-expandidos))
+       ((> (get-profundidade-no no-atual) profundidade) (dfs (first abertos-sem-no-inicial) funcao-solucao funcao-sucessores operadores profundidade heuristica abertos-sem-no-inicial fechados-com-no-inicial tempo-inicial nos-expandidos))
 
        (T 
         (let* (
 
-               (sucessores (remover-nos-repetidos (funcall funcao-sucessores no-atual operadores 'dfs profundidade) abertos-sem-no-inicial fechados-com-no-inicial))
+               (sucessores (remover-nos-repetidos (funcall funcao-sucessores no-atual operadores 'dfs heuristica profundidade) abertos-sem-no-inicial fechados-com-no-inicial))
 
                (abertos-com-sucessores 
                 (abertos-dfs abertos-sem-no-inicial sucessores)
@@ -188,7 +188,7 @@
            ((existe-solucaop sucessores funcao-solucao) 
             (list (procura-no-objetivo sucessores funcao-solucao) abertos-com-sucessores fechados-com-no-inicial tempo-inicial (1+ nos-expandidos)))
            
-           (T (dfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores profundidade abertos-com-sucessores fechados-com-no-inicial tempo-inicial (1+ nos-expandidos)))
+           (T (dfs (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores profundidade heuristica abertos-com-sucessores fechados-com-no-inicial tempo-inicial (1+ nos-expandidos)))
           )
 
          )
@@ -203,7 +203,7 @@
 
 
 ;; a*
-(defun a* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
+(defun a* (no-inicial funcao-solucao funcao-sucessores operadores heuristica &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
   "Funcao que implementa o algoritmo de procura A*"
   
   (cond
@@ -217,8 +217,6 @@
 
            (fechados-com-no-inicial (cons no-atual fechados)) ;Insere o primeiro no de abertos em fechados
           )
-(progn
-    (print (get-heuristica-no no-atual))
 
       (cond
 
@@ -227,14 +225,14 @@
 
        (T
         (let* (
-               (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))  ;Expande o no
+               (sucessores (funcall funcao-sucessores no-atual operadores 'a* heuristica))  ;Expande o no
 
                (fechados-atualizados (remover-nos-com-menor-f-fechados sucessores fechados-com-no-inicial)) ;Primeiro remove todos os nos de fechados que possuam um f maior do que um mesmo no existente em sucessores
 
                (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados)) ;Insere todos os sucessores nao existentes em abertos nem fechados na lista de abertos, atualiza os nos de abertos que tenham f's maiores do que os nos dos sucessores
               )
 
-          (a* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-atualizados tempo-inicial (1+ nos-expandidos))
+          (a* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores heuristica abertos-com-sucessores fechados-atualizados tempo-inicial (1+ nos-expandidos))
 
         )
        )
@@ -244,13 +242,12 @@
    )
   )
 )
-)
 
 
 
 ;; ida*
 
-(defun ida* (no-inicial funcao-solucao funcao-sucessores operadores &optional (abertos (list no-inicial)) (fechados nil) (limiar (get-f-no no-inicial)) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
+(defun ida* (no-inicial funcao-solucao funcao-sucessores operadores heuristica &optional (abertos (list no-inicial)) (fechados nil) (limiar (get-f-no no-inicial)) (tempo-inicial (get-universal-time)) (nos-expandidos 0))
   "Funcao que imlementa o algoritmo IDA*"
   (cond
    ((null abertos) nil) ;Se abertos vazio falha
@@ -274,18 +271,18 @@
           (let* (
                  (novo-no-atual (procura-no-menor-limiar abertos-sem-no-inicial limiar))
 
-                 (sucessores (funcall funcao-sucessores novo-no-atual operadores 'bfs))
+                 (sucessores (funcall funcao-sucessores novo-no-atual operadores 'ida* heuristica))
 
                  (fechados-atualizados (remover-nos-com-menor-f-fechados sucessores fechados-com-no-inicial))
 
                  (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados))
                )
-            (ida* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-atualizados limiar tempo-inicial (1+ nos-expandidos))
+            (ida* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores heuristica abertos-com-sucessores fechados-atualizados limiar tempo-inicial (1+ nos-expandidos))
           )
          )
 
          ;Se nao existir nenhum no em abertos cujo f seja menor que o limiar, entao muda-se o limiar para o minimo dos f's em abertos e comeca-se tudo outra vez
-         (T (ida* no-inicial funcao-solucao funcao-sucessores operadores abertos fechados (novo-limiar abertos) tempo-inicial nos-expandidos))
+         (T (ida* no-inicial funcao-solucao funcao-sucessores operadores heuristica abertos fechados (novo-limiar abertos) tempo-inicial nos-expandidos))
         )
 
        )
@@ -294,13 +291,13 @@
 
        (T 
         (let* (
-               (sucessores (funcall funcao-sucessores no-atual operadores 'bfs))
+               (sucessores (funcall funcao-sucessores no-atual operadores 'ida* heuristica))
 
                (fechados-atualizados (remover-nos-com-menor-f-fechados sucessores fechados-com-no-inicial))
 
                (abertos-com-sucessores (abertos-a* abertos-sem-no-inicial sucessores fechados-atualizados))
                )
-          (ida* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores abertos-com-sucessores fechados-atualizados limiar tempo-inicial (1+ nos-expandidos))
+          (ida* (first abertos-com-sucessores) funcao-solucao funcao-sucessores operadores heuristica abertos-com-sucessores fechados-atualizados limiar tempo-inicial (1+ nos-expandidos))
           )
        )
        
