@@ -838,7 +838,7 @@
 
 ;; heuristica
 
-(defun heuristica (tabuleiro)
+(defun heuristica (tabuleiro &optional (pecas nil))
   "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
   (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
 )
@@ -850,39 +850,28 @@
 
 ;; heuristica2
 
-(defun heuristica2 (tabuleiro)
-  "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
+(defun heuristica2 (tabuleiro &optional (pecas nil))
+  "Segunda funcao heuristica do problema. Esta funcao heuristica tente priviligiar os tabuleiros onde o numero de jogadas possiveis for mais pequeno porque em geral quanto menos jogadas forem possiveis mais rapidamente chega-se a um no onde nao existem jogadas possiveis"
   (let (
-        (jogadas-pequena (length (jogadas-possiveis tabuleiro 'pequena)))
-        (jogadas-media (length (jogadas-possiveis tabuleiro 'media)))
-        (jogadas-cruz (length (jogadas-possiveis tabuleiro 'cruz)))
+        (jogadas-pequena (cond
+                          ((<= (first pecas) 0) 0)
+                          (T (length (jogadas-possiveis tabuleiro 'pequena)))
+                         )) ; Se ja nao existirem pecas pequenas entao ha 0 jogadas possives para a peca pequena, caso contrario vamos conta-las
+
+        (jogadas-media (cond
+                        ((<= (second pecas) 0))
+                        (T (length (jogadas-possiveis tabuleiro 'media)))
+                       )) ; Se ja nao existirem pecas medias entao ha 0 jogadas possives para a peca media, caso contrario vamos conta-las
+
+
+        (jogadas-cruz (cond
+                       ((<= (third pecas) 0) 0)
+                       (T (length (jogadas-possiveis tabuleiro 'cruz)))
+                      )) ; Se ja nao existirem pecas em cruz entao ha 0 jogadas possives para a peca em cruz, caso contrario vamos conta-las
        )
-    (+ jogadas-pequena jogadas-media jogadas-cruz)
+    (+ jogadas-pequena jogadas-media jogadas-cruz) ; Soma de todas as jogadas possiveis para obter o numero total de jogadas possiveis
   )
 )
-
-
-
-
-
-
-
-
-;; heuristica3-teste
-
-(defun heuristica3-teste (tabuleiro)
-  "Segunda funcao heuristica do problema, implementa uma funcao que tenta priviligiar os tabuleiros onde existam mais pecas pequenas jogadas pelo jogador. Para tal a funcao verifica as pecas jogadas pelo jogador que nao sao pecas pequenas, e subtrai-as pelo numero de pecas pequenas jogadas pelo jogador"
-  (let* (
-         (pecas-pequenas (peca-contagem tabuleiro 'pequena))
-         (pecas-medias (peca-contagem tabuleiro 'media))
-         (pecas-cruz (peca-contagem tabuleiro 'cruz))
-         (pecas-nao-pequenas (+ pecas-medias pecas-cruz))
-        )
-    (- 196 (+ (* pecas-pequenas 2) pecas-nao-pequenas))
-  )
-)
-
-
 
 
 

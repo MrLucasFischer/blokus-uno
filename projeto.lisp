@@ -4,6 +4,13 @@
 
 ;;;;Funcoes de interacao com o utilizador e de escrita e leitura de ficheiros
 
+;; jogar
+
+(defun jogar()
+  "Funcao que chama a funcao carregar-ficheiros. esta funcao existe meramente para nao se comecar a aplicacao pela funcao carregar-ficheiros"
+  (carregar-ficheiros)
+)
+
 ;; carregar-ficheiros
 
 (defun carregar-ficheiros ()
@@ -106,15 +113,19 @@
                                  ) (ler-heuristica))
                                 (T 'heuristica)
                                ))
-         (no (cria-no tabuleiro-escolhido 
-                      (list 
+         (pecas-no-raiz (list 
                        (- 10 (peca-contagem tabuleiro-escolhido 'pequena))
                        (- 10 (peca-contagem tabuleiro-escolhido 'media))
                        (- 15 (peca-contagem tabuleiro-escolhido 'cruz))
-                      )
+                       ))
+
+         (heuristica-no-raiz (funcall heuristica-escolhida tabuleiro-escolhido pecas-no-raiz))
+
+         (no (cria-no tabuleiro-escolhido 
+                      pecas-no-raiz
                       0 ;profundidade do no raiz
-                      (funcall heuristica-escolhida tabuleiro-escolhido)
-                      0 ;f do no raiz, que vai ser igual a heuristica porque g=0
+                      heuristica-no-raiz
+                      heuristica-no-raiz ;f do no raiz, que vai ser igual a heuristica porque g=0
                       nil ;no pai
              ))
         )
@@ -125,7 +136,6 @@
 
      (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
     )
-    
     
   )
 )

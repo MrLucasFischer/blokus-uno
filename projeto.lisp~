@@ -7,7 +7,7 @@
 ;; carregar-ficheiros
 
 (defun carregar-ficheiros ()
-  "Funcao que carrega os restantes ficheiros do projeto (puzzle.lisp e procura.lisp) para que possam ser executados"
+  "Funcao que carrega os restantes ficheiros do projeto (puzzle.lisp e procura.lisp) para que possam ser executados" 
   (let (
         (caminho (ler-caminho))
        )
@@ -48,24 +48,30 @@
 
   ;;Ao Correr ficara com a formatacao correta
   (progn
-    (format T "~%                                                      ")
-    (format T "~%                    ______               _____        ")
-    (format T "~%      |---   |     /      \\ | /  |    | |     \\       ")
-    (format T "~%      |   |  |     |      | |/   |    | \\_____        ")
-    (format T "~%      |---   |     |      | |\\   |    |       \\       ")
-    (format T "~%      |   |  |     |      | | \\  |    | \\     |       ")
-    (format T "~%      |---   |____  \\____/  |  \\  \\__/   \\___/        ")
-    (format T "~%                                 ____                 ")
-    (format T "~%                 |     | |\\   | /    \\                ")
-    (format T "~%                 |     | | \\  | |    |                ")
-    (format T "~%                 |     | |  \\ | |    |                ")
-    (format T "~%                  \\___/  |   \\|  \\___/                ")
-    (format T "~%                                                      ")
-    (format T "~%                                                      ")
-    (format T "~%                     1 - Iniciar                      ")
-    (format T "~%                     2 - Sair                         ")
-    (format T "~%                                                      ")
-    (format T "~%                                                      ~%")
+    (format T "~% _______________________________________________________________________________")
+    (format T "~%|                                                                               |")
+    (format T "~%|                                                                               |")
+    (format T "~%|                                                                               |")
+    (format T "~%|                               ______               _____                      |")
+    (format T "~%|                 |---   |     /      \\ | /  |    | |     \\                     |")
+    (format T "~%|                 |   |  |     |      | |/   |    | \\_____                      |")
+    (format T "~%|                 |---   |     |      | |\\   |    |       \\                     |")
+    (format T "~%|                 |   |  |     |      | | \\  |    | \\     |                     |")
+    (format T "~%|                 |---   |____  \\____/  |  \\  \\__/   \\___/                      |")
+    (format T "~%|                                            ____                               |")
+    (format T "~%|                            |     | |\\   | /    \\                              |")
+    (format T "~%|                            |     | | \\  | |    |                              |")
+    (format T "~%|                            |     | |  \\ | |    |                              |")
+    (format T "~%|                             \\___/  |   \\|  \\___/                              |")
+    (format T "~%|                                                                               |")
+    (format T "~%|                                                                               |")
+    (format T "~%|                                1 - Iniciar                                    |")
+    (format T "~%|                                2 - Sair                                       |")
+    (format T "~%|                                                                               |")
+    (format T "~%|                                                                               |")
+    (format T "~%|                                                                               |")
+    (format T "~%|_______________________________________________________________________________|")
+    (format T "~%                                                                 ~%")
 
     (let* (
            (resposta (read))
@@ -294,12 +300,10 @@
            (custo-resultado (get-f-no no-objetivo))
            (no-pai-resultado (get-pai-no no-objetivo))
          
-           (abertos (second resultado))
-           (fechados (third resultado))
-           (tempo-inicial (fourth resultado))
+           (tempo-inicial (second resultado))
            
-           (nos-expandidos (fifth resultado))
-           (nos-gerados (1- (+ (length abertos) (length fechados))))
+           (nos-expandidos (third resultado))
+           (nos-gerados (fourth resultado))
           )
       (progn
         (formatar-tabuleiro tabuleiro) ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
@@ -319,7 +323,7 @@
 
         (format T "~%~%  -No pai: ~A" no-pai-resultado)
 
-        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados nos-expandidos)
+        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-expandidos nos-gerados)
       )
     ))
    (T nil)
@@ -346,7 +350,7 @@
 
 ;; escrever-estatisticas-ficheiro
 
-(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-gerados nos-expandidos)
+(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-expandidos nos-gerados)
   "Funcao que permite a escrita das estatisticas para um ficheiro estatisticas.dat"
 
   (with-open-file (ficheiro-estatisticas 
@@ -366,7 +370,7 @@
       (format ficheiro-estatisticas "~%  -Custo do no-objetivo: ~A" custo-resultado)
 
       (format ficheiro-estatisticas "~%~%  -Nos expandidos: ~A" nos-expandidos)
-      (format ficheiro-estatisticas "~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
+      (format ficheiro-estatisticas "~%  -Nos gerados: ~A" nos-gerados)
       (format ficheiro-estatisticas "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
       (format ficheiro-estatisticas "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
       (format ficheiro-estatisticas "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
