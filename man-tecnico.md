@@ -2,6 +2,10 @@
 
 <br /><br />
 
+<p align="center">
+        <img src="./images/IPSlogo.PNG">
+</p>
+
 ### _Unidade Curricular: Inteligência Artificial_ &nbsp;&nbsp;2017/2018
 
 

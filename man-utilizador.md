@@ -3,6 +3,10 @@
 
 <br /><br />
 
+<p align="center">
+    <img src="./images/IPSlogo.PNG">
+</p>
+
 ### _Unidade Curricular: Inteligência Artificial_ &nbsp;&nbsp;2017/2018
 
 
@@ -19,8 +23,12 @@
 
 <h1>2- Iniciar a Aplicação</h1>
 
- Para poder dar iniciar a aplicação necessita de abrir o ficheiro _**projeto.lisp**_ no IDE _**LispWorks**_.  Uma vez aberto deverá estar à semelhança da seguinte foto
-![Imagem do inicio da aplicação blokus-uno](./images/main-screen.png)
+ Para poder dar iniciar a aplicação necessita de abrir o ficheiro _**projeto.lisp**_ no IDE _**LispWorks**_.  Uma vez aberto deverá estar à semelhança da seguinte foto: 
+
+<p align="center">
+    <img src="./images/main-screen.png">
+</p>
+
 <br/>
  De modo a que consiga iniciar a aplicação, tem que primeiro compilar as suas funções, para isso carregue no botão que diga **"Compile Buffer"**: ![Compile Buffer](./images/compile-buffer.png)
 
@@ -28,11 +36,17 @@
 
  Está agora pronto para iniciar esta fantástica aplicação! Comece por executar a função `(jogar)` no painel chamado _**Listener**_ e de seguida insira o caminho para a diretoria principal da aplicação. (ex: C:/Users/_NOME DO UTILIZADOR_/Documentos/blokus-uno) e carregue na tecla enter.
 
-![Execução da função (carregar-ficheiros)](./images/carregar-ficheiros.png)
+<p align="center">
+    <img src="./images/carregar-ficheiros.png">
+</p>
 
 
  Irá ver que a aplicação foi bem compilada e de seguida ser-lhe-á apresentado um menu principal onde poderá dar início à aplicação.
-![Menu principal da aplicação](./images/main-menu.png)
+
+<p align="center">
+    <img src="./images/main-menu.png">
+</p>
+
 
  Neste magnífico menu principal pode escolher uma de duas opções:
 1. **Iniciar** - Esta opção dará início à aplicação, levando-lhe para outros menus onde tem a possibilidade de escolher qual o **tabuleiro inicial** que deseja, qual o **algoritmo** de procura que deseja, qual a **heurística** que deseja e qual a **profundidade máxima** que deseja (caso tenha selecionado o algoritmo _Depth First_)
@@ -45,29 +59,44 @@
 
  Escolhendo a opção de **Iniciar** a aplicação irá levá-lo para outros menus onde irá ser questionado sobre as escolhas que pretende fazer na execução da aplicação. <br/> Estes menus são:
 * <b>Escolha do tabuleiro inicial</b>
-![Menu de escolha do tabuleiro](./images/escolher-tabuleiro1.png)
+
+<p align="center">
+    <img src="./images/escolher-tabuleiro1.png">
+</p>
+
 <br/>
 Onde pode escolher qual o tabuleiro que pretende que seja o tabuleiro inicial
 
 <br/>
 
 * <b>Escolha do algoritmo de procura em espaço de estados</b>
-![Menu de escolha do algoritmo de procura em espaço de estados](./images/escolher-algoritmo.png)
-<br/>
+
+<p align="center">
+    <img src="./images/escolher-algoritmo.png">
+</p>
+
 Neste menu pode escolher um dos quatro algoritmos de procura em espaço de estados disponíveis na aplicação
 
 <br/>
 
 * <b>Escolha da profundidade máxima da árvore de procura (caso tenha escolhido o algoritmo Depth-First)</b>
-![Menu de escolha da profundidade máxima](./images/escolher-profundidade.png)
+
+<p align="center">
+    <img src="./images/escolher-profundidade.png">
+</p>
+
 <br/>
 Caso tenha escolhido o algoritmo _Depth First_ no menu anterior ser-lhe-á questionado qual a profundidade máxima que pretende que este algoritmo vá. A título de exemplo foi inserido a profundidade máxima de 10 mas o valor inserido é qualquer número positivo que desejar
 
 <br/>
 
 * <b>Escolha da heurística a utilizar (caso tenha escolhido o algoritmo A* ou IDA*)</b>
-<br/>
-![Escolher Heuristica](./images/escolher-heuristica.png)
+
+
+<p align="center">
+    <img src="./images/escolher-heuristica.png">
+</p>
+
 <br/>
 Neste menu pode escolher qual a heurística que pretende utilizar caso tenha escolhido o algoritmo **A*** ou **IDA***. A Heurística é uma função que irá ajudar estes algoritmos de procura a "filtrar" alguns nós que não sejam tão relevantes para o problema.
 
@@ -75,7 +104,9 @@ Neste menu pode escolher qual a heurística que pretende utilizar caso tenha esc
 
  Após responder a estas questões poderá ver a magia a acontecer, ser-lhe-á apresentado algo com o seguinte aspeto:
 
-![Resultado da aplicação](./images/resultado1.png)
+ <p align="center">
+    <img src="./images/resultado1.png">
+</p>
 
  Muito bem, mas o que quer dizer toda esta informação ? Não se preocupe, ficará a saber tudo já a seguir!
 
@@ -86,33 +117,41 @@ Neste menu pode escolher qual a heurística que pretende utilizar caso tenha esc
  Agora que já tem o resultado da execução da aplicação falta-lhe apenas saber interpretar os dados fornecidos por este resultado. Vamos passo a passo explicar-lhe cada um.
 
 * <b>Estado do nó objetivo</b>
-<br/>
-![Estado nó objetivo](./images/estado1.png)
-<br/>
+
+<p align="center">
+    <img src="./images/estado1.png">
+</p>
+
 A primeira informação que encontramos refere-se ao estado do nó objetivo, isto é, para este problema, o tabuleiro no qual o algoritmo de procura terminou, que corresponde a um tabuleiro onde o jogador não consegue por mais nenhuma das suas peças (representadas pelo número 1).
 
-<br/><br/>
+<br/>
 
 * <b>Peças restantes do nó objetivo</b>
-<br/>
-![Peças restantes do nó objetivo](./images/pecas-restantes1.png)
-<br/>
+
+<p align="center">
+    <img src="./images/pecas-restantes1.png">
+</p>
+
 Estas três linhas indicam-lhe as peças que o jogador ainda tinha quando chegou ao nó objetivo. O jogo inicia-se com **10 peças pequenas**, **10 peças médias** e **15 peças em cruz** por isso deixamos-lhe fazer as contas para determinar quantas peças foram usadas.
 
 <br/>
 
 * <b>Informação sobre o custo, heurística e profundidade</b>
-<br/>
-![Informação sobre o custo, heurística e profundidade](./images/prof-heu-custo.png)
-<br/>
+
+<p align="center">
+    <img src="./images/prof-heu-custo.png">
+</p>
+
 As seguintes três linhas do resultado dão-lhe informação sobre a profundidade em que se encontrava o nó objetivo, o valor heurístico que esse nó objetivo tinha (o ideal é que o valor seja **0** nos nós objetivos), e o custo necessário para que se consiga chegar desde o nó inicial até este nó objetivo.
 
 <br/>
 
 * <b>Informação sobre a eficiência do algoritmo</b>
-<br/>
-![Informação sobre a eficiência do algoritmo](./images/eficiencia.png)
-<br/>
+
+<p align="center">
+    <img src="./images/eficiencia.png">
+</p>
+
 Esta porção do resultado dá-lhe informação sobre a eficiência que o algoritmo obteve, calculada através de métricas como **Penetrância** e **Fator de ramificação médio**, estas métricas involvem fórmulas matemáticas complexas por isso poupamos-lhe o trabalho de ter que fazer as contas, não tem que agradecer.
 <br/><br/>
 **Nós expandidos** - Este valor indica quantos nós o algoritmo 
@@ -126,10 +165,14 @@ expandiu (gerou os seus sucessores) até que encontrasse um nó que fosse um nó
 <br/><br/>
 **Fator de ramificação médio** - Esta métrica consiste num valor entre **1** e **mais infinito (+00)** e representa o número de sucessores que, em média, cada nó possui.
 
-<br/><br/>
-* <b>Informação sobre o nó pai do nó objetivo</b>
-![Informação sobre o nó pai do nó objetivo](./images/no-pai.png)
 <br/>
+
+* <b>Informação sobre o nó pai do nó objetivo</b>
+
+<p align="center">
+    <img src="./images/no-pai.png">
+</p>
+
 A última informação que o resultado lhe apresenta é uma lista (que pode ser enorme) que corresponde ao nó pai do nó objetivo. Neste nó pai pode por sua vez ver o nó pai desse nó e assim sucessivamente até chegar ao nó raiz por isso é uma informação útil que lhe permite obter o caminho de solução que o algoritmo percorreu até encontrar o nó objetivo.
 
 <br/><br/>
@@ -138,8 +181,9 @@ A última informação que o resultado lhe apresenta é uma lista (que pode ser 
 
  Para que não tenha que estar sempre a repetir todos estes passos e estar constantemente a executar a aplicação, esta mesma escreve os resultados tal como apresentados anteriormente, num ficheiro situado na diretoria principal do projeto denominado _**estatisticas.dat**_.
 
-
-![Ficheiro das estatísticas](./images/ficheiro-estatisticas.png)
+<p align="center">
+    <img src="./images/ficheiro-estatisticas.png">
+</p>
 
 <br/><br/>
 
