@@ -1,5 +1,5 @@
 
-# **&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual Técnico**
+# **Manual Técnico**
 
 <br /><br />
 
@@ -83,9 +83,11 @@ blokus-uno/
 * <b>Número de nós expandidos</b> - O número de nós que foram gerados pelo algoritmo até este encontrar o nó objetivo
 
 
-* <b>Penetrância</b> - P = Tamanho da Solução / Nós gerados . Esta métrica consiste na razão entre o número de nós que pertencem ao conjunto de nós que constituem a solução do problema e o número total de nós gerados, o que nos dá uma boa percepção do número de nós, sem significado para a solução do problema, que foram gerados até se encontrar o nó objetivo. <br/> O valor da penetrância varia entre **[0,1]** em que 1 seria o valor ideal para esta métrica. Ex:. P = 0.5, conclui-se que 50% dos nós que foram gerados não têm fazem parte do conjunto de nós que constitui a solução
+* <b>Penetrância</b> - **P = Tamanho da Solução / Nós gerados** . Esta métrica consiste na razão entre o número de nós que pertencem ao conjunto de nós que constituem a solução do problema e o número total de nós gerados, o que nos dá uma boa percepção do número de nós, sem significado para a solução do problema, que foram gerados até se encontrar o nó objetivo. <br/> O valor da penetrância varia entre **[0,1]** em que 1 seria o valor ideal para esta métrica. Ex:. P = 0.5, conclui-se que 50% dos nós que foram gerados não têm fazem parte do conjunto de nós que constitui a solução
 
 
-* <b>Fator de Ramificação</b> - 
+* <b>Fator de Ramificação</b> - **( B / B-1 ) * ( B^L - 1) = T**. É necessário resolver esta equação em ordem a B para nos dar o valor de ramificação médio da árvore de estados do problema, mas dado a impraticabilidade de calcular esta equação, são aplicados métodos computacionais de modo a conseguir resolve-la aproximadamente. Neste projeto foi implementado o método da bisseção para o calculo do fator de ramificação. <br/> Esta métrica representa o número de sucessores que, em média, cada nó terá e corresponde a um valor pertencente ao intervalo de **[1,+00[**.
 
-* <b>Tempo de Execução</b> - 
+* <b>Tempo de Execução</b> - Talvez a métrica mais intuitiva, o tempo de execução cronometra o tempo que o algoritmo demorou até devolver uma solução, logo, quanto menos tempo o algoritmo demorar melhor.
+
+Para a comparação de estes algoritmos foi elaborada uma tabela comparativa de modo a facilitar a percepção e comparação entre os algoritmos:

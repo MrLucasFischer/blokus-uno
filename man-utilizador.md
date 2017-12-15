@@ -1,5 +1,5 @@
 
-# **&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual de Utilizador**
+# **Manual de Utilizador**
 
 <br /><br />
 

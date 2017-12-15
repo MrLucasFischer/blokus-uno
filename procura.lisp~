@@ -85,20 +85,14 @@
       (mapcar #'(lambda (jogada)
                   (let* (
                         (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
-                        (heuristica-novo-no (funcall heuristica-escolhida estado))
+                        (pecas-novas (list numero-peca-pequena numero-peca-media numero-peca-cruz))
+                        (heuristica-novo-no (funcall heuristica-escolhida estado pecas-novas))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
                         (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
                        )
-                    (cria-no 
-                     estado
-                     (list numero-peca-pequena numero-peca-media numero-peca-cruz)
-                     profundidade-novo-no 
-                     heuristica-novo-no
-                     custo-novo-no
-                     no
-                    )
-                  )
-                 ) jogadas-possiveis)
+                    (cria-no estado pecas-novas profundidade-novo-no heuristica-novo-no custo-novo-no no)
+                 )
+                ) jogadas-possiveis)
       )
     )
   )
@@ -534,8 +528,8 @@
 
 ;; fator-ramificacao
 
-(defun fator-ramificacao(L nos-gerados &optional (limite-inferior 1) (limite-superior most-positive-fixnum) (margem-erro 0.1) (limite-medio (/ (+ limite-inferior limite-superior) 2)))
-  "Funcao que permite calcular o fator de ramificacao para um no. Aplica o metodo da bissecao para o calculo desta funcao com uma margem de erro de 0.1"
+(defun fator-ramificacao(L nos-gerados &optional (limite-inferior 1) (limite-superior most-positive-fixnum) (margem-erro 0.00001) (limite-medio (/ (+ limite-inferior limite-superior) 2)))
+  "Funcao que permite calcular o fator de ramificacao para um no. Aplica o metodo da bissecao para o calculo desta funcao com uma margem de erro de 0.00001"
   (cond
    ((< (- limite-superior limite-inferior) margem-erro) (float limite-medio)) ;Se a diferenca entre os limites for inferior a margem de erro entao podemos assumir com precisao que o fator de ramificacao encontra-se entre estes dois limites
 
@@ -550,11 +544,11 @@
 
 ;; funcao-polinomial
 
-(defun funcao-polinomial (polinomio x)
+(defun funcao-polinomial (grau polinomio)
   "Funcao que implementa o calculo de uma funcao polinomial"
     (cond
-     ((= polinomio 1) x)
-     (T (+ (expt x polinomio) (funcao-polinomial (1- polinomio) x)))
+     ((= grau 1) polinomio)
+     (T (+ (expt polinomio grau) (funcao-polinomial (1- grau) polinomio)))
     )
 )
 
