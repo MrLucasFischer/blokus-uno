@@ -1,4 +1,3 @@
-
 # **Manual Técnico**
 
 <br /><br />
@@ -9,7 +8,7 @@
  Andreia Pereira nº 150221021 <br/>
  Lucas Fischer nº 140221004
 
-<br /><br />
+<div style="page-break-after: always;"></div>
 
 <h1>Tabela de Conteudos</h1>
 
@@ -20,7 +19,7 @@
 * Documentação das Funções
 * Conclusão
 
-<br /><br />
+<div style="page-break-after: always;"></div>
 
 <h1>1- Introdução</h1>
 
@@ -103,3 +102,5 @@ Para o tabuleiro A podemos constatar que executando os algoritmos **A*** e **IDA
 Algo também importante de se notar torna-se visível nos estudos para o tabuleiro D e F, que é o facto da explosão combinatória começar a aumentar exponencialmente nestes tabuleiros fazendo com que o algoritmo **BFS** e **DFS** tenham eficiências inferiores aos algoritmos **A*** e **IDA*** com heurísticas não ótimas, o que não acontecia no tabuleiro A visto que a solução encontrava-se no primeiro nível da árvore de estados evitando assim o aumento da explosão combinatória para este tabuleiro. Com isto em conta podemos afirmar que o algoritmo **BFS** e **DFS** tornam-se cada vez menos eficientes à medida que a explosão combinatória aumenta, e até mesmo impraticáveis (como é o caso do tabuleiro F em que estes algoritmos não foram capazes de devolver uma resposta devido a limitações de recursos do computador).
 <br/><br/>
 Outra comparação importante de se fazer é entre os algoritmos **A*** e **IDA***. Já concluimos que estes sãos os algoritmos mais eficiêntes quando equipados com uma "boa" heurística (mesmo que não seja admissível), mas que conclusões podemos tomar comparando estes dois algoritmos entre si? É importante ter em conta que o algoritmo **IDA*** é apenas uma variante do **A*** por isso estes algoritmos chegam, obrigatóriamente, à mesma solução, onde vairam é apenas na sua implementação e a sua preocupação com a memória utilizada e o tempo de CPU utilizado. Vamos considerar que estamos a utilizar a heurística desenvolvida pelo grupo e que estamos a solucionar o problema para o tabuleiro F, à primeira vista podemos constatar que o **IDA*** gerou quase o dobro dos nós gerados pelo **A***, expandiu quase o dobro dos nós expandidos pelo **A***, teve valores de penetrância inferiores ao **A*** e um fator de ramificação superiro ao **A***, tudo indicios de que o **IDA*** poderá ser menos eficiênte que o **A***, mas no entanto temos que compreender um aspecto muito importante sobre a implementação do **IDA***. O **IDA*** é implementado com o objetivo de ser mais eficiênte com a sua utilização de memória guardando em memória apenas um número de nós igual ao maior ramo explorado, mesmo que para isso tenha que utilizar mais tempo de CPU para voltar a expandir e gerar vários nós novamente. Em diversos problemas (tal como no problema apresentado para este projeto) este _trade off_ entre memória e tempo de CPU é bastante vantajoso visto que o tempo de CPU é um recurso muito mais disponível que memória, por isso podemos concluir que entre os algoritmos **A*** e **IDA*** a decisão sobre qual é o mais eficiênte pode variar consoante o domínio do problema, caso queiramos ser mais eficiêntes com a memória então o **IDA*** é a melhor escolha, caso queiramos expandir e gerar o menor número de nós possíveis então o **A*** é a melhor escolha.
+<br/><br/>
+**Concluindo**, todos os algoritmos desenvolvidos têm o seu ponto forte e o seu ponto fraco, mas para combater o problema de explosão combinatória é favorável utilizarmos algoritmos informados como o **A*** e **IDA*** equipados com uma boa heurística.

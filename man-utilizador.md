@@ -9,7 +9,7 @@
  Andreia Pereira nº 150221021 <br/>
  Lucas Fischer nº 140221004
 
-<br /><br />
+<div style="page-break-after: always;"></div>
 
 <h1>1- Descrição da aplicação</h1>
 
