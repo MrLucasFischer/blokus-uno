@@ -1,6 +1,4 @@
 
-<link rel="stylesheet" type="text/css" media="all" href="./styles.css" />
-
 # **&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual de Utilizador**
 
 <br /><br />
