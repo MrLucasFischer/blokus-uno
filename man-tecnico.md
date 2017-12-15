@@ -13,12 +13,12 @@
 
 <h1>Tabela de Conteudos</h1>
 
-* <h2>Introdução</h2>
-* <h2>Estrutura do Projeto</h2>
-* <h2>Detalhes de Implementação</h2>
-* <h2>Estudos de Algoritmos</h2>
-* <h2>Documentação das Funções</h2>
-* <h2>Conclusão</h2>
+* Introdução
+* Estrutura do Projeto
+* Detalhes de Implementação
+* Estudos de Algoritmos
+* Documentação das Funções
+* Conclusão
 
 <br /><br />
 
