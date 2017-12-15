@@ -3,13 +3,13 @@
 
 <br /><br />
 
-## _Unidade Curricular: Inteligência Artificial_ &nbsp;&nbsp;2017/2018
+### _Unidade Curricular: Inteligência Artificial_ &nbsp;&nbsp;2017/2018
 
 
  Andreia Pereira nº 150221021 <br/>
  Lucas Fischer nº 140221004
 
-<br /><br /><br /><br />
+<br /><br />
 
 <h1>1- Descrição da aplicação</h1>
 

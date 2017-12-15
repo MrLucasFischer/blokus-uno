@@ -3,13 +3,13 @@
 
 <br /><br />
 
-## _Unidade Curricular: Inteligência Artificial_ &nbsp;&nbsp;2017/2018
+### _Unidade Curricular: Inteligência Artificial_ &nbsp;&nbsp;2017/2018
 
 
  Andreia Pereira nº 150221021 <br/>
  Lucas Fischer nº 140221004
 
-<br /><br /><br /><br />
+<br /><br />
 
 <h1>Tabela de Conteudos</h1>
 
@@ -41,6 +41,25 @@
 <br/>
 
 * <b>_projeto.lisp_</b> - Este ficheiro é responsável por orquestrar os restantes ficheiros, carregando as funções presentes nos outros ficheiros para memória e compilando-as de modo a que se tornem executáveis. É também neste ficheiro que decorre a implementação do código responsável pela interação com o utilizador e com a leitura e escrita de ficheiros.
+
+<br/>
+
+* <b>_estatisticas.dat_</b> - O ficheiro estatisticas.dat é onde podem ser consultadas todas as métricas de eficiência (bem como outras informações) provenientes da execução da aplicação para um determinado problema.
+
+<br/>
+
+* <b>_problemas.dat_</b> - Neste ficheiro estão presentes todos os tabuleiros iniciais possíveis para a execução da aplicação. Consiste numa série de listas que representam um tabuleiro separadas por um separador legal.
+
+<br/>
+
+```
+blokus-uno/
+        ├── projeto.lisp ; Ficheiro onde é iniciada a aplicação
+        ├── procura.lisp ; Contem a implementação dos algoritmos
+        ├── puzzle.lisp	; Contem as funções do domínio do problema
+        ├── estatisticas.dat ; Ficheiro que contem logs das estatisticas
+        └── problemas.dat ; Ficheiro com os tabuleiros iniciais do problema
+```
 
 <br/><br/>
 
