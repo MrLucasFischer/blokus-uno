@@ -86,4 +86,6 @@ blokus-uno/
 * <b>Penetrância</b> - P = Tamanho da Solução / Nós gerados . Esta métrica consiste na razão entre o número de nós que pertencem ao conjunto de nós que constituem a solução do problema e o número total de nós gerados, o que nos dá uma boa percepção do número de nós, sem significado para a solução do problema, que foram gerados até se encontrar o nó objetivo. <br/> O valor da penetrância varia entre **[0,1]** em que 1 seria o valor ideal para esta métrica. Ex:. P = 0.5, conclui-se que 50% dos nós que foram gerados não têm fazem parte do conjunto de nós que constitui a solução
 
 
-* <b>Número de nós expandidos</b> - O número de nós que foram gerados pelo algoritmo até este encontrar o nó objetivo
+* <b>Fator de Ramificação</b> - 
+
+* <b>Tempo de Execução</b> - 
