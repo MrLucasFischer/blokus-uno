@@ -156,6 +156,7 @@
     (format T "~% -> 4 - Tabuleiro d)")
     (format T "~% -> 5 - Tabuleiro e)")
     (format T "~% -> 6 - Tabuleiro f)~%")
+    ;(format T "~% -> 7 - Tabuleiro g)~%")
 
     (let (
           (resposta (read))
@@ -179,6 +180,7 @@
          ((= resposta 4) tabuleiro-d)
          ((= resposta 5) tabuleiro-e)
          ((= resposta 6) tabuleiro-f)
+         ;((= resposta 7) tabuleiro-g)
          (T (format T "~% -> Precisa de inserir um numero de 1 a 6~%") (ler-tabuleiro caminho))
        )
       )

@@ -878,6 +878,23 @@
 
 
 
+;; heuristica 3
+(defun heuristica3 (tabuleiro &optional (pecas nil))
+  "Tentativa de criar uma heuristica que trabalhasse com o numero de pecas no tabuleiro, nao esta a funcionar"
+  (let (
+        (pecas-pequenas (peca-contagem tabuleiro 'pequena))
+        (pecas-media (peca-contagem tabuleiro 'media))
+        (pecas-cruz (peca-contagem tabuleiro 'cruz))
+       )
+    (- 35 pecas-pequenas pecas-media pecas-cruz)
+  )
+)
+
+
+
+
+
+
 
 ;;;;;;;;;; Solucao ;;;;;;;;;;
 

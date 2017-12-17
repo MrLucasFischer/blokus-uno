@@ -199,7 +199,6 @@
 ;; a*
 (defun a* (no-inicial funcao-solucao funcao-sucessores operadores heuristica &optional (abertos (list no-inicial)) (fechados nil) (tempo-inicial (get-universal-time)) (nos-expandidos 0) (nos-gerados 0))
   "Funcao que implementa o algoritmo de procura A*"
-  
   (cond
    ((null abertos) nil) ;Se abertos vazia falha
 

@@ -111,4 +111,6 @@ Outra comparação importante de se fazer é entre os algoritmos **A*** e **IDA*
 
 <h1>Limitações</h1>
 
-Devido à inexistência de um compilador de LISP incorporado na maioria dos Sistemas Operativos, é necessário recorrer a software de terceiros para conseguir complar código LISP. Neste projeto foi utilizado o software LispWorks para este objétivo, e dado ser a versão gratuita deste software cadece de limitações de memória Stack e Heap o que compromete a execução de alguns algoritmos para alguns problemas.
+Devido à inexistência de um compilador de LISP incorporado na maioria dos Sistemas Operativos, é necessário recorrer a software de terceiros para conseguir complar código LISP. Neste projeto foi utilizado o software LispWorks para este objétivo, e dado ser a versão gratuita deste software cadece de limitações de memória Stack e Heap o que compromete a execução de alguns algoritmos para alguns problemas. 
+<br/> 
+A heurística desenvolvida, para tabuleiros vazios não consegue encontrar solução devido a não descartar nós suficientes para combater a explosão combinatória causada por estes tipos de tabuleiro, levando a um erro de _StackOverflow_ quando utilizada no algoritmo **A*** e um erro de lista demasiado grande ao tentar aplicar a função `min` a essa lista.
