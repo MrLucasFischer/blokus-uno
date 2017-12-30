@@ -503,7 +503,7 @@
       (cond
        ((zerop (nth 0 (nth 0 tabuleiro))) '(0 0)) ;Se for o jogador 1, a primeira peca tem que ser no canto esquerdo
        
-       (T (percorre-matriz-peca tabuleiro tipo-peca jogador)) ;POR AQUI TAMBEM O JOGADOR
+       (T (percorre-matriz-peca tabuleiro tipo-peca jogador))
       )
      ) ;Caso seja o jogador1
 
@@ -511,7 +511,7 @@
       (cond
        ((zerop (nth ultima-coluna (nth ultima-linha tabuleiro))) (list ultima-linha ultima-coluna))
 
-       (T (percorre-matriz-peca tabuleiro tipo-peca jogador)) ;POR AQUI TAMBEM O JOGADOR
+       (T (percorre-matriz-peca tabuleiro tipo-peca jogador))
       )
      ) ; Caso seja o jogador2
 
@@ -571,7 +571,7 @@
       )
 
       ((equal tipo-peca 'cruz)
-        (append (append (cantos-disponiveis-peca-cruz-horizontal (1- linha) (- coluna 3) tabuleiro linha coluna jogador) (cantos-disponiveis-peca-cruz-vertical (- linha 2) (- coluna 2) tabuleiro linha coluna jogador)) (percorre-matriz-peca tabuleiro tipo-peca linha (1- coluna)))
+        (append (append (cantos-disponiveis-peca-cruz-horizontal (1- linha) (- coluna 3) tabuleiro linha coluna jogador) (cantos-disponiveis-peca-cruz-vertical (- linha 2) (- coluna 2) tabuleiro linha coluna jogador)) (percorre-matriz-peca tabuleiro tipo-peca jogador linha (1- coluna)))
       )
 
       (T nil)
