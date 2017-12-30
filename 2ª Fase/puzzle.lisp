@@ -191,10 +191,10 @@
 
 ;; jogada-in-jogadas-possiveis-p
 
-(defun jogada-in-jogadas-possiveis-p (jogada tabuleiro tipo-peca)
+(defun jogada-in-jogadas-possiveis-p (jogada tabuleiro tipo-peca jogador)
   "Funcao que verifica se uma determinada jogada existe na lista de jogadas possiveis para a peca passada por argumento"
   (let (
-        (jogadas-possiveis (funcall #'jogadas-possiveis tabuleiro tipo-peca))
+        (jogadas-possiveis (funcall #'jogadas-possiveis tabuleiro tipo-peca jogador))
        )
     (eval (cons 'or (mapcar #'(lambda (jogada-possivel) 
                                 (cond
@@ -290,14 +290,14 @@
 
 ;; inserir-peca-pequena-na-coluna
 
-(defun inserir-peca-pequena-na-coluna (coluna lista)
+(defun inserir-peca-pequena-na-coluna (coluna lista elem)
   "Permite inserir a peca mais pequena numa determinada coluna da lista passada como argumento"
   (cond 
    ((null lista) nil)
 
-   ((= coluna 0) (cons 1 (rest lista)))
+   ((= coluna 0) (cons elem (rest lista)))
 
-   (T (cons (first lista) (inserir-peca-pequena-na-coluna (1- coluna) (rest lista))))
+   (T (cons (first lista) (inserir-peca-pequena-na-coluna (1- coluna) (rest lista) elem)))
 
   )
 )
@@ -310,7 +310,7 @@
 
 ;; inserir-peca-media-na-coluna
 
-(defun inserir-peca-media-na-coluna (coluna linhas)
+(defun inserir-peca-media-na-coluna (coluna linhas elem)
   "Funcao que permite inserir uma peca media numa determinada coluna colocando o primeiro quadrado no canto superior esquerdo da peca"
   (let (
         (linha-cima (first linhas)) 
@@ -322,15 +322,15 @@
 
      ((= coluna 0) 
       (list
-       (append '(1 1) (rest (rest linha-cima))) ;;cddr 
-       (append '(1 1) (rest (rest linha-baixo))) ;;cddr
+       (append (list elem elem) (rest (rest linha-cima))) ;;cddr 
+       (append (list  elem elem) (rest (rest linha-baixo))) ;;cddr
        )
       )
 
      (T
       (construir-listas 
         (list (first linha-cima) (first linha-baixo))
-        (inserir-peca-media-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-baixo)))
+        (inserir-peca-media-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-baixo)) elem)
       )
      )
 
@@ -347,7 +347,7 @@
 
 ;; inserir-peca-cruz-na-coluna
 
-(defun inserir-peca-cruz-na-coluna (coluna linhas)
+(defun inserir-peca-cruz-na-coluna (coluna linhas elem)
   "Funcao auxiliar da funcao inserir-peca-cruz que permite inserir uma peca em cruz numa determinada colocando o primeiro quadrado na ponta esquerda da peca"
   (let (
         (linha-cima (first linhas)) 
@@ -360,16 +360,16 @@
      
      ((= coluna 0)
       (list
-       (cons (first linha-cima) (cons 1 (rest (rest linha-cima))))
-       (append '(1 1 1) (rest (rest (rest linha-meio))))
-       (cons (first linha-baixo) (cons 1 (rest (rest linha-baixo))))
+       (cons (first linha-cima) (cons elem (rest (rest linha-cima))))
+       (append (list elem elem elem) (rest (rest (rest linha-meio))))
+       (cons (first linha-baixo) (cons elem (rest (rest linha-baixo))))
       )
      )
 
      (T
       (construir-listas
        (list (first linha-cima) (first linha-meio) (first linha-baixo))
-       (inserir-peca-cruz-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-meio) (rest linha-baixo)))
+       (inserir-peca-cruz-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-meio) (rest linha-baixo)) elem)
       )
      )
 
@@ -387,19 +387,19 @@
 
 ;; inserir-peca-pequena
 
-(defun inserir-peca-pequena (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
+(defun inserir-peca-pequena (linha coluna tabuleiro jogador &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca mais pequena numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
    ((null tabuleiro) nil)
 
-   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'pequena)) nil)  ;Se nao for uma jogada possivel nao pode jogar
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'pequena jogador)) nil)  ;Se nao for uma jogada possivel nao pode jogar
 
-   ((= linha 0) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro)) (rest tabuleiro))) ;Retiramos a linha onde vamos colocar a peca media e juntamos-a com o resto do tabuleiro
+   ((= linha 0) (cons (inserir-peca-pequena-na-coluna coluna (first tabuleiro) jogador) (rest tabuleiro))) ;Retiramos a linha onde vamos colocar a peca media e juntamos-a com o resto do tabuleiro
 
    (T 
     (cons 
      (first tabuleiro) 
-     (inserir-peca-pequena (1- linha) coluna (rest tabuleiro) linha-original coluna-original tabuleiro-original))
+     (inserir-peca-pequena (1- linha) coluna (rest tabuleiro) jogador linha-original coluna-original tabuleiro-original))
     )
 
   )
@@ -413,16 +413,16 @@
 
 ;; inserir-peca-media   
 
-(defun inserir-peca-media (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
+(defun inserir-peca-media (linha coluna tabuleiro jogador &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro))
   "Funcao que permite inserir a peca media numa determinada linha e coluna do tabuleiro passado por argumento. A linha e coluna sao argumentos numericos"
   (cond 
    ((null tabuleiro) nil)
 
-   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'media)) nil)  ;Se nao for uma jogada possivel nao pode jogar
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'media jogador)) nil)  ;Se nao for uma jogada possivel nao pode jogar
 
    ((= linha 0) 
     (append 
-     (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro))) 
+     (inserir-peca-media-na-coluna coluna (list (first tabuleiro) (second tabuleiro)) jogador) 
      (rest (rest tabuleiro)) ;;cddr
     ) ;Retira-se as 2 linhas onde vamos colocar os 1's para construir a peca media e juntamos-as com o resto do tabuleiro
    )
@@ -430,7 +430,7 @@
    (T
     (cons 
      (first tabuleiro) 
-     (inserir-peca-media (1- linha) coluna (rest tabuleiro) linha-original coluna-original tabuleiro-original)
+     (inserir-peca-media (1- linha) coluna (rest tabuleiro) jogador linha-original coluna-original tabuleiro-original)
     )
    )
 
@@ -445,16 +445,16 @@
 
 ;; inserir-peca-cruz
 
-(defun inserir-peca-cruz (linha coluna tabuleiro &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro) )
+(defun inserir-peca-cruz (linha coluna tabuleiro jogador &optional (linha-original linha) (coluna-original coluna) (tabuleiro-original tabuleiro) )
   "Funcao que permite inserir uma peca em cruz no tabuleiro passado como argumento numa determinada linha e coluna. A linha e coluna sao argumentos numericos"
   (cond
    ((null tabuleiro) nil)
 
-   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'cruz)) nil) ;Se nao for uma jogada possivel nao pode jogar
+   ((not (jogada-in-jogadas-possiveis-p (list linha-original coluna-original) tabuleiro-original 'cruz jogador)) nil) ;Se nao for uma jogada possivel nao pode jogar
    
    ((= linha 1) ;;tem que ser uma linha antes para por a peca de cima
     (append
-     (inserir-peca-cruz-na-coluna coluna (list (first tabuleiro) (second tabuleiro) (third tabuleiro)))
+     (inserir-peca-cruz-na-coluna coluna (list (first tabuleiro) (second tabuleiro) (third tabuleiro)) jogador)
      (rest (rest (rest tabuleiro))) ;;cdddr
     ) ;Retira-se as 3 linhas onde vamos colocar os 1's para construir a peca em cruz e juntamos-as com o resto do tabuleiro
    )
@@ -462,7 +462,7 @@
    (T
     (cons
      (first tabuleiro)
-     (inserir-peca-cruz (1- linha) coluna (rest tabuleiro) linha-original coluna-original tabuleiro-original)
+     (inserir-peca-cruz (1- linha) coluna (rest tabuleiro) jogador linha-original coluna-original tabuleiro-original)
     )
    )
 
