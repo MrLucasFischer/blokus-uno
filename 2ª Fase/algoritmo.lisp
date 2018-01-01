@@ -25,57 +25,125 @@
   "Funcao que aplica apenas um operador a um determinado no. Consoante o operador passado por argumento esta funcao ira determinar as jogadas possiveis para esse operador e ira criar um no (um sucessor) para cada uma dessas jogadas possives"
   (let
     (
-     (jogadas-possiveis (cond
-                         ((equal operador 'inserir-peca-pequena)
-                          (jogadas-possiveis (get-estado-no no) 'pequena (get-tipo-jogador-no no)))
+     (jogadas-possiveis 
+      (cond
+       ((equal operador 'inserir-peca-pequena)
+        (jogadas-possiveis (get-estado-no no) 'pequena (get-valor-jogador-no no)))
 
-                         ((equal operador 'inserir-peca-media)
-                          (jogadas-possiveis (get-estado-no no) 'media (get-tipo-jogador-no no)))
+       ((equal operador 'inserir-peca-media)
+        (jogadas-possiveis (get-estado-no no) 'media (get-valor-jogador-no no)))
 
-                         ((equal operador 'inserir-peca-cruz)
-                          (jogadas-possiveis (get-estado-no no) 'cruz (get-tipo-jogador-no no)))
-                         )
-                        )
+       ((equal operador 'inserir-peca-cruz)
+        (jogadas-possiveis (get-estado-no no) 'cruz (get-valor-jogador-no no)))
+      )
+     )
 
-     (numero-peca-pequena (cond
-                           ((equal operador 'inserir-peca-pequena)
-                            (1- (first (get-pecas-no no)))
-                           )
-                           (T (first (get-pecas-no no)))
-                           )
-                          )
+;;Jogador 1
 
-     (numero-peca-media (cond
-                           ((equal operador 'inserir-peca-media)
-                            (1- (second (get-pecas-no no)))
-                           )
-                           (T (second (get-pecas-no no)))
-                          )
-                        )
+     (numero-peca-pequena-jogador1 
+      (cond
+       ((not (= (get-valor-jogador-no no) 1)) (first (get-pecas-jogador1-no no)))
+       (T (cond
+           ((equal operador 'inserir-peca-pequena)
+            (1- (first (get-pecas-jogador1-no no)))
+           )
+           (T (first (get-pecas-jogador1-no no)))
+          )
+       )
+      )
+     )
 
-     (numero-peca-cruz (cond
-                           ((equal operador 'inserir-peca-cruz)
-                            (1- (third (get-pecas-no no)))
-                           )
-                           (T (third (get-pecas-no no)))
-                          )
-                       )
+     (numero-peca-media-jogador1 
+      (cond
+       ((not (= (get-valor-jogador-no no) 1)) (second (get-pecas-jogador1-no no)))
+       (T (cond
+           ((equal operador 'inserir-peca-media)
+            (1- (second (get-pecas-jogador1-no no)))
+            )
+           (T (second (get-pecas-jogador1-no no)))
+          )
+       )
+      )
+     )
 
+
+
+     (numero-peca-cruz-jogador1 
+      (cond
+       ((not (= (get-valor-jogador-no no) 1)) (third (get-pecas-jogador1-no no)))
+       (T (cond
+           ((equal operador 'inserir-peca-cruz)
+            (1- (third (get-pecas-jogador1-no no)))
+            )
+           (T (third (get-pecas-jogador1-no no)))
+          )
+       )
+      )
+     )
+
+;; Jogador 2
+
+
+     (numero-peca-pequena-jogador2 
+      (cond
+       ((not (= (get-valor-jogador-no no) 2)) (first (get-pecas-jogador2-no no)))
+       (T (cond
+           ((equal operador 'inserir-peca-pequena)
+            (1- (first (get-pecas-jogador2-no no)))
+            )
+           (T (first (get-pecas-jogador2-no no)))
+          )
+       )
+      )
+     )
+
+
+     (numero-peca-media-jogador2 
+      (cond
+       ((not (= (get-valor-jogador-no no) 2)) (second (get-pecas-jogador2-no no)))
+       (T (cond
+           ((equal operador 'inserir-peca-media)
+            (1- (second (get-pecas-jogador2-no no)))
+            )
+           (T (second (get-pecas-jogador2-no no)))
+          )
+       )
+      )
+     )
+
+
+     (numero-peca-cruz-jogador2 
+      (cond
+       ((not (= (get-valor-jogador-no no) 2)) (third (get-pecas-jogador2-no no)))
+       (T (cond
+           ((equal operador 'inserir-peca-cruz)
+            (1- (third (get-pecas-jogador2-no no)))
+            )
+           (T (third (get-pecas-jogador2-no no)))
+          )
+       )
+      )
+     )
+     
     )
     
     (cond
-     ((and (equal operador 'inserir-peca-pequena) (< numero-peca-pequena 0)) nil) ;Se nao existir pecas para o operador que queremos usar, devolve nil
-     ((and (equal operador 'inserir-peca-media) (< numero-peca-media 0)) nil)
-     ((and (equal operador 'inserir-peca-cruz) (< numero-peca-cruz 0)) nil)
+     ((and (= (get-valor-jogador-no no) 1) (equal operador 'inserir-peca-pequena) (< numero-peca-pequena-jogador1 0)) nil) ;Se nao existir pecas para o operador que queremos usar, devolve nil
+     ((and (= (get-valor-jogador-no no) 1) (equal operador 'inserir-peca-media) (< numero-peca-media-jogador1 0)) nil)
+     ((and (= (get-valor-jogador-no no) 1) (equal operador 'inserir-peca-cruz) (< numero-peca-cruz-jogador1 0)) nil)
+     ((and (= (get-valor-jogador-no no) 2) (equal operador 'inserir-peca-pequena) (< numero-peca-pequena-jogador2 0)) nil)
+     ((and (= (get-valor-jogador-no no) 2) (equal operador 'inserir-peca-media) (< numero-peca-media-jogador2 0)) nil)
+     ((and (= (get-valor-jogador-no no) 2) (equal operador 'inserir-peca-cruz) (< numero-peca-cruz-jogador2 0)) nil)
      
      (T 
       (mapcar #'(lambda (jogada)
                   (let* (
-                        (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
-                        (pecas-novas (list numero-peca-pequena numero-peca-media numero-peca-cruz))
+                        (estado (funcall operador (first jogada) (second jogada) (get-estado-no no) (get-valor-jogador-no no)))
+                        (pecas-jogador1 (list numero-peca-pequena-jogador1 numero-peca-media-jogador1 numero-peca-cruz-jogador1))
+                        (pecas-jogador2 (list numero-peca-pequena-jogador2 numero-peca-media-jogador2 numero-peca-cruz-jogador2))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
                        )
-                    (cria-no estado pecas-novas profundidade-novo-no no (trocar-jogador no) (trocar-tipo-no no))
+                    (cria-no estado pecas-jogador1 pecas-jogador2 profundidade-novo-no no (trocar-jogador no) (trocar-tipo-no no))
                  )
                 ) jogadas-possiveis)
       )
