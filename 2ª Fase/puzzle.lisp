@@ -52,9 +52,9 @@
 
 ;; cria-no
 
-(defun cria-no (estado pecas &optional (profundidade 0) (heuristica 0) (f 0) (no-pai nil))
+(defun cria-no (estado pecas &optional (profundidade 0) (no-pai nil) (tipo-jogador 1) (tipo-no 'max))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
-  (list estado pecas profundidade heuristica f no-pai)
+  (list estado pecas profundidade no-pai tipo-jogador tipo-no)
 )
 
 
@@ -87,28 +87,28 @@
 
 
 
-;; get-heuristica-no
+;; get-pai-no
 
-(defun get-heuristica-no (no)
-  "Funcao que retorna a heuristica de um no"
+(defun get-pai-no (no)
+  "Funcao que retorna o no gerador de um determinado no"
   (fourth no)
 )
 
 
 
-;; get-f-no
+;; get-tipo-jogador
 
-(defun get-f-no (no)
-  "Funcao que retorna o f de um no"
+(defun get-tipo-jogador-no (no)
+  "Funcao que retorna qual e o valor da peca do jogador de um determinado no"
   (fifth no)
 )
 
 
 
-;; get-pai-no
+;; get-tipo-no
 
-(defun get-pai-no (no)
-  "Funcao que retorna o no gerador de um determinado no"
+(defun get-tipo-no (no)
+  "Funcao que retorna o tipo de um no, se e max ou min"
   (sixth no)
 )
 
@@ -133,6 +133,30 @@
 )
 
 
+
+
+;; trocar-jogador
+
+(defun trocar-jogador (no)
+  "Funcao que recebe um no avalia qual e o tipo de jogador desse no e altera para o seguinte jogador"
+  (cond
+   ((= (get-tipo-jogador-no no) 1) 2)
+   (T 1)
+  )
+)
+
+
+
+
+;; trocar-tipo-no
+
+(defun trocar-tipo-no (no)
+  "Funcao que recebe um no como argumento e troca o tipo desse no, se e max passa a min se e min passa a max"
+  (cond
+   ((equal (get-tipo-no no) 'max) 'min)
+   (T 'max)
+  )
+)
 
 
 
@@ -828,63 +852,15 @@
 
 
 
-;;;;;;;;;; Heuristicas ;;;;;;;;;;
 
-;; heuristica
 
-(defun heuristica (tabuleiro &optional (pecas nil))
-  "Funcao heuristica do problema, implementa uma funcao que subtrai os quadrados por preencher de um tabuleiro pelos quadrados ja preenchidos, priviligiando os tabuleiros com maior numedo de quadrados preenchidos"
-  (- (quadrados-por-preencher tabuleiro) (quadrados-ja-preenchidos tabuleiro))
+;;;;;;;;;; Funcao de Utilidade ;;;;;;;;;;
+
+;; funcao-utilidade
+
+(defun funcao-utilidade (no)
+  "Funcao que retorna a utilidade de um no"
 )
-
-
-
-
-
-
-;; heuristica2
-
-(defun heuristica2 (tabuleiro &optional (pecas nil))
-  "Segunda funcao heuristica do problema. Esta funcao heuristica tente priviligiar os tabuleiros onde o numero de jogadas possiveis for mais pequeno porque em geral quanto menos jogadas forem possiveis mais rapidamente chega-se a um no onde nao existem jogadas possiveis"
-  (let (
-        (jogadas-pequena (cond
-                          ((<= (first pecas) 0) 0)
-                          (T (length (jogadas-possiveis tabuleiro 'pequena)))
-                         )) ; Se ja nao existirem pecas pequenas entao ha 0 jogadas possives para a peca pequena, caso contrario vamos conta-las
-
-        (jogadas-media (cond
-                        ((<= (second pecas) 0))
-                        (T (length (jogadas-possiveis tabuleiro 'media)))
-                       )) ; Se ja nao existirem pecas medias entao ha 0 jogadas possives para a peca media, caso contrario vamos conta-las
-
-
-        (jogadas-cruz (cond
-                       ((<= (third pecas) 0) 0)
-                       (T (length (jogadas-possiveis tabuleiro 'cruz)))
-                      )) ; Se ja nao existirem pecas em cruz entao ha 0 jogadas possives para a peca em cruz, caso contrario vamos conta-las
-       )
-    (+ jogadas-pequena jogadas-media jogadas-cruz) ; Soma de todas as jogadas possiveis para obter o numero total de jogadas possiveis
-  )
-)
-
-
-
-
-
-
-;; heuristica 3
-(defun heuristica3 (tabuleiro &optional (pecas nil))
-  "Tentativa de criar uma heuristica que trabalhasse com o numero de pecas no tabuleiro, nao esta a funcionar"
-  (let (
-        (pecas-pequenas (peca-contagem tabuleiro 'pequena))
-        (pecas-media (peca-contagem tabuleiro 'media))
-        (pecas-cruz (peca-contagem tabuleiro 'cruz))
-       )
-    (- 35 pecas-pequenas pecas-media pecas-cruz)
-  )
-)
-
-
 
 
 
@@ -905,13 +881,22 @@
     (cond
 
      ((or
-       (and (not (null (jogadas-possiveis tabuleiro 'pequena))) (> (first pecas-no) 0))
-       (and (not (null (jogadas-possiveis tabuleiro 'media))) (> (second pecas-no) 0))
-       (and (not (null (jogadas-possiveis tabuleiro 'cruz))) (> (third pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'pequena (get-tipo-jogador no)))) (> (first pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'media (get-tipo-jogador no)))) (> (second pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'cruz (get-tipo-jogador no)))) (> (third pecas-no) 0))
       ) nil)
 
      (T T)
 
     )
   )
+)
+
+
+
+
+
+;; existe-vencedorp
+;; Os dois jogadores so passam a vez se nao tiverem pecas ou nao tiverem jogadas possiveis
+(defun existe-vencedorp (no1 no2)
 )

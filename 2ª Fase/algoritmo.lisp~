@@ -6,14 +6,26 @@
 
 ;; sucessores 
 
-(defun sucessores (no operadores)
+(defun sucessores (no operadores algoritmo heuristica &optional (profundidade nil))
   "Funcao que devolve a lista de todos os sucessores de um determinado no passado como argumento"
 
-  (apply #'append (mapcar #'(lambda(operador)
-                              (aplicar-operador-no no operador)
-                            ) operadores))
-)
+  (cond
 
+   ((equal algoritmo 'dfs)
+    (cond
+     ((>= (get-profundidade-no no) profundidade) nil)  ;So se aplica os sucessores caso a profundidade do no seja inferior a profundidade maxima
+
+     (T (apply #'append (mapcar #'(lambda(operador)
+                                    (aplicar-operador-no no operador heuristica)
+                                  ) operadores)))
+     )
+   )
+
+   (T (apply #'append (mapcar #'(lambda(operador)
+                                  (aplicar-operador-no no operador heuristica)
+                                ) operadores)))
+  )
+)
 
 
 
@@ -21,19 +33,19 @@
 
 ;;aplicar-operador-no
 
-(defun aplicar-operador-no (no operador)
+(defun aplicar-operador-no (no operador heuristica-escolhida)
   "Funcao que aplica apenas um operador a um determinado no. Consoante o operador passado por argumento esta funcao ira determinar as jogadas possiveis para esse operador e ira criar um no (um sucessor) para cada uma dessas jogadas possives"
   (let
     (
      (jogadas-possiveis (cond
                          ((equal operador 'inserir-peca-pequena)
-                          (jogadas-possiveis (get-estado-no no) 'pequena (get-tipo-jogador-no no)))
+                          (jogadas-possiveis (get-estado-no no) 'pequena))
 
                          ((equal operador 'inserir-peca-media)
-                          (jogadas-possiveis (get-estado-no no) 'media (get-tipo-jogador-no no)))
+                          (jogadas-possiveis (get-estado-no no) 'media))
 
                          ((equal operador 'inserir-peca-cruz)
-                          (jogadas-possiveis (get-estado-no no) 'cruz (get-tipo-jogador-no no)))
+                          (jogadas-possiveis (get-estado-no no) 'cruz))
                          )
                         )
 
@@ -73,9 +85,11 @@
                   (let* (
                         (estado (funcall operador (first jogada) (second jogada) (get-estado-no no)))
                         (pecas-novas (list numero-peca-pequena numero-peca-media numero-peca-cruz))
+                        (heuristica-novo-no (funcall heuristica-escolhida estado pecas-novas))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
+                        (custo-novo-no (+ profundidade-novo-no heuristica-novo-no))
                        )
-                    (cria-no estado pecas-novas profundidade-novo-no no (trocar-jogador no) (trocar-tipo-no no))
+                    (cria-no estado pecas-novas profundidade-novo-no heuristica-novo-no custo-novo-no no)
                  )
                 ) jogadas-possiveis)
       )
