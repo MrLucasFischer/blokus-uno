@@ -151,3 +151,93 @@
   )
 )
 
+
+
+
+
+;; alfabeta
+
+(defun alfabeta (no profundidade-limite operadores &optional (alfa most-negative-fixnum) (beta most-positive-fixnum))
+  "Funcao que implementa o algoritmo alfabeta"
+  (cond
+    ((or 
+      (zerop profundidade-limite) 
+      (no-objetivop no)
+      ) (avaliar-no no))
+    
+    (T
+      (let
+          (
+            (sucessores-no (sucessores no operadores))
+          )
+          (percorrer-sucessores sucessores-no alfa beta profundidade operadores)
+        ; (cond
+        ;   ((equal (get-tipo-no no) 'max) ) ; se for no max
+
+        ;   (T ) ; se for no min
+        ; )
+      ) 
+    )
+
+  )
+)
+
+
+
+;; avaliar-no
+
+(defun avaliar-no (no)
+  "Funcao que retorna a utilidade de um no"
+  1
+)
+
+
+
+
+;; percorrer-sucessores
+
+(defun percorrer-sucessores (sucessores alfa beta profundidade operadores &optional (v (cond ((equal (get-tipo-no (first sucessores)) 'max) most-negative-fixnum) (T most-positive-fixnum)))) 
+  "Funcao que percorre cada um dos sucessores e atualiza o alfa ou beta"  
+    (cond
+      ((null sucessores) v)
+
+      (T
+        (cond
+
+          ((equal (get-tipo-no (first sucessores)) 'max )
+
+            (let*
+              (
+                (novo-v (max v (alfabeta (first sucessores) (1- profundidade) operadores alfa beta) ))
+                (novo-alfa (max alfa novo-v))
+              )
+              (cond 
+                ((<= beta novo-alfa) beta)
+                (T (percorrer-sucessores (rest sucessores) novo-alfa beta profundidade operadores novo-v))
+
+              )
+
+            )
+          ) ;Caso seja no max
+          
+          (T 
+            (let*
+              (
+                (novo-v (min v (alfabeta (first sucessores) (1- profundidade) operadores alfa beta)))
+                (novo-beta (min alfa novo-v))
+              )
+              (cond 
+                ((<= novo-beta alfa) alfa)
+                (T (percorrer-sucessores (rest sucessores) alfa novo-beta profundidade operadores novo-v))
+
+              )
+
+            )
+          ) ;Caso seja no min
+        )
+
+        
+
+    )      
+  )
+)
