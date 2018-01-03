@@ -143,7 +143,7 @@
                         (pecas-jogador2 (list numero-peca-pequena-jogador2 numero-peca-media-jogador2 numero-peca-cruz-jogador2))
                         (profundidade-novo-no (1+ (get-profundidade-no no)))
                        )
-                    (cria-no estado pecas-jogador1 pecas-jogador2 profundidade-novo-no no (trocar-jogador no) (trocar-tipo-no no))
+                    (cria-no estado pecas-jogador1 pecas-jogador2 (trocar-jogador no) profundidade-novo-no (trocar-tipo-no no) no)
                  )
                 ) jogadas-possiveis)
       )

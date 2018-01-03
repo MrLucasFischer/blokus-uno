@@ -52,9 +52,9 @@
 
 ;; cria-no
 
-(defun cria-no (estado pecas &optional (profundidade 0) (no-pai nil) (tipo-jogador 1) (tipo-no 'max))
+(defun cria-no (estado pecas-jogador1 pecas-jogador2 &optional (profundidade 0) (no-pai nil) (valor-jogador 1) (tipo-no 'max))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
-  (list estado pecas profundidade no-pai tipo-jogador tipo-no)
+  (list estado pecas-jogador1 pecas-jogador2 profundidade no-pai valor-jogador tipo-no)
 )
 
 
@@ -69,11 +69,20 @@
 
 
 
-;; get-pecas-no
+;; get-pecas-jogador1-no
 
-(defun get-pecas-no (no)
+(defun get-pecas-jogador1-no (no)
   "Funcao que retorna uma lista com 3 elementos que identificam o numero de pecas pequenas, o numero de pecas medias e o numero de pecas em cruz respetivamente"
   (second no)
+)
+
+
+
+;; get-pecas-jogador2-no
+
+(defun get-pecas-jogador2-no (no)
+  "Funcao que retorna uma lista com 3 elementos que identificam o numero de pecas pequenas, o numero de pecas medias e o numero de pecas em cruz respetivamente"
+  (third no)
 )
 
 
@@ -82,7 +91,7 @@
 
 (defun get-profundidade-no (no)
   "Funcao que retorna a profundidade de um no"
-  (third no)
+  (fourth no)
 )
 
 
@@ -91,16 +100,16 @@
 
 (defun get-pai-no (no)
   "Funcao que retorna o no gerador de um determinado no"
-  (fourth no)
+  (fifth no)
 )
 
 
 
-;; get-tipo-jogador
+;; get-valor-jogador
 
-(defun get-tipo-jogador-no (no)
+(defun get-valor-jogador-no (no)
   "Funcao que retorna qual e o valor da peca do jogador de um determinado no"
-  (fifth no)
+  (sixth no)
 )
 
 
@@ -109,7 +118,7 @@
 
 (defun get-tipo-no (no)
   "Funcao que retorna o tipo de um no, se e max ou min"
-  (sixth no)
+  (seventh no)
 )
 
 
@@ -140,7 +149,7 @@
 (defun trocar-jogador (no)
   "Funcao que recebe um no avalia qual e o tipo de jogador desse no e altera para o seguinte jogador"
   (cond
-   ((= (get-tipo-jogador-no no) 1) 2)
+   ((= (get-valor-jogador-no no) 1) 2)
    (T 1)
   )
 )
@@ -875,15 +884,19 @@
   (let
       (
        (tabuleiro (get-estado-no no))
-       (pecas-no (get-pecas-no no))
+       (pecas-no (cond
+                  ((= (get-valor-jogador-no no) 1)  (get-pecas-jogador1-no no))
+                  (T (get-pecas-jogador2-no no))
+                 )
+       )
       )
 
     (cond
 
      ((or
-       (and (not (null (jogadas-possiveis tabuleiro 'pequena (get-tipo-jogador no)))) (> (first pecas-no) 0))
-       (and (not (null (jogadas-possiveis tabuleiro 'media (get-tipo-jogador no)))) (> (second pecas-no) 0))
-       (and (not (null (jogadas-possiveis tabuleiro 'cruz (get-tipo-jogador no)))) (> (third pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'pequena (get-valor-jogador-no no)))) (> (first pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'media (get-valor-jogador-no no)))) (> (second pecas-no) 0))
+       (and (not (null (jogadas-possiveis tabuleiro 'cruz (get-valor-jogador-no no)))) (> (third pecas-no) 0))
       ) nil)
 
      (T T)
