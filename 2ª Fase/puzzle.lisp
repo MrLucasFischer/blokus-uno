@@ -885,6 +885,31 @@
 
 (defun funcao-utilidade (no)
   "Funcao que retorna a utilidade de um no"
+  (let* (
+         (pecas (cond
+                 ((= (get-valor-jogador-no no) 1) (get-pecas-jogador1-no no))
+                 (T (get-pecas-jogador2-no no))))
+
+         (tabuleiro (get-estado-no no))
+
+         (jogadas-pequena (cond
+                           ((<= (first pecas) 0) 0)
+                           (T (length (jogadas-possiveis tabuleiro 'pequena (get-valor-jogador-no no))))
+                           )) ; Se ja nao existirem pecas pequenas entao ha 0 jogadas possives para a peca pequena, caso contrario vamos conta-las
+
+         (jogadas-media (cond
+                         ((<= (second pecas) 0))
+                         (T (length (jogadas-possiveis tabuleiro 'media (get-valor-jogador-no no))))
+                         )) ; Se ja nao existirem pecas medias entao ha 0 jogadas possives para a peca media, caso contrario vamos conta-las
+
+
+         (jogadas-cruz (cond
+                        ((<= (third pecas) 0) 0)
+                        (T (length (jogadas-possiveis tabuleiro 'cruz (get-valor-jogador-no no))))
+                        )) ; Se ja nao existirem pecas em cruz entao ha 0 jogadas possives para a peca em cruz, caso contrario vamos conta-las
+        )
+    (+ jogadas-pequena jogadas-media jogadas-cruz) ; Soma de todas as jogadas possiveis para obter o numero total de jogadas possiveis
+  )
 )
 
 

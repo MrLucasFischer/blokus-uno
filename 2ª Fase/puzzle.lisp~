@@ -52,11 +52,27 @@
 
 ;; cria-no
 
-(defun cria-no (estado pecas-jogador1 pecas-jogador2 &optional (profundidade 0) (no-pai nil) (valor-jogador 1) (tipo-no 'max))
+(defun cria-no (estado pecas-jogador1 pecas-jogador2 valor-jogador &optional (profundidade 0) (tipo-no 'max) (no-pai nil))
   "Cria uma lista que representa um no que tem um estado. Este no pode tambem ter uma profunidade, heuristica, f e um no que o gerou"
-  (list estado pecas-jogador1 pecas-jogador2 profundidade no-pai valor-jogador tipo-no)
+  (list estado pecas-jogador1 pecas-jogador2 valor-jogador profundidade tipo-no no-pai)
 )
 
+(defun no-teste()
+  (cria-no 
+   (tabuleiro-vazio)
+   (list
+    (- 10 (peca-contagem (tabuleiro-vazio) 'pequena 1))
+    (- 10(peca-contagem (tabuleiro-vazio) 'media 1))
+    (- 15 (peca-contagem (tabuleiro-vazio) 'cruz 1))
+    )
+   (list
+    (- 10 (peca-contagem (tabuleiro-vazio) 'pequena 2))
+    (- 10(peca-contagem (tabuleiro-vazio) 'media 2))
+    (- 15 (peca-contagem (tabuleiro-vazio) 'cruz 2))
+    )
+   1
+   )
+  )
 
 ;;;;;;;;;; Getters ;;;;;;;;;;
 
@@ -87,30 +103,22 @@
 
 
 
-;; get-profundidade-no
+;; get-valor-jogador
 
-(defun get-profundidade-no (no)
-  "Funcao que retorna a profundidade de um no"
+(defun get-valor-jogador-no (no)
+  "Funcao que retorna qual e o valor da peca do jogador de um determinado no"
   (fourth no)
 )
 
 
 
-;; get-pai-no
+;; get-profundidade-no
 
-(defun get-pai-no (no)
-  "Funcao que retorna o no gerador de um determinado no"
+(defun get-profundidade-no (no)
+  "Funcao que retorna a profundidade de um no"
   (fifth no)
 )
 
-
-
-;; get-valor-jogador
-
-(defun get-valor-jogador-no (no)
-  "Funcao que retorna qual e o valor da peca do jogador de um determinado no"
-  (sixth no)
-)
 
 
 
@@ -118,6 +126,14 @@
 
 (defun get-tipo-no (no)
   "Funcao que retorna o tipo de um no, se e max ou min"
+  (sixth no)
+)
+
+
+;; get-pai-no
+
+(defun get-pai-no (no)
+  "Funcao que retorna o no gerador de um determinado no"
   (seventh no)
 )
 
@@ -127,16 +143,16 @@
 
 ;; peca-contagem, alterado
 
-(defun peca-contagem (tabuleiro tipo-peca &optional (linha 0) (coluna 0))
+(defun peca-contagem (tabuleiro tipo-peca elem &optional (linha 0) (coluna 0))
   "Funcao que permite contar o numero de pecas do jogador existentes no tabuleiro conforme o seu tipo. Percore o tabuleiro das posicoes 13,13 ate a posicao 0,0"
   (cond
    ((null (nth linha tabuleiro)) 0)
 
-   ((null (nth coluna (nth linha tabuleiro))) (peca-contagem tabuleiro tipo-peca (1+ linha) 0)) ; Quando ja tiver chegado a ultima coluna, muda de linha
+   ((null (nth coluna (nth linha tabuleiro))) (peca-contagem tabuleiro tipo-peca elem (1+ linha) 0)) ; Quando ja tiver chegado a ultima coluna, muda de linha
 
-   ((= (nth coluna (nth linha tabuleiro)) 1) (+ (tipo-pecap linha coluna tabuleiro tipo-peca) (peca-contagem tabuleiro tipo-peca linha (1+ coluna))))
-
-   (T (peca-contagem tabuleiro tipo-peca linha (1+ coluna)))
+   ((= (nth coluna (nth linha tabuleiro)) elem) (+ (tipo-pecap linha coluna tabuleiro tipo-peca elem) (peca-contagem tabuleiro tipo-peca elem linha (1+ coluna))))
+ 
+   (T (peca-contagem tabuleiro tipo-peca elem linha (1+ coluna)))
 
   )
 )
@@ -171,17 +187,17 @@
 
 ;; tipo-pecap
 
-(defun tipo-pecap (linha coluna tabuleiro tipo-peca)
+(defun tipo-pecap (linha coluna tabuleiro tipo-peca elem)
   "Funcao que ao passarmos uma posicao de um tabuleiro verifica se essa peca e do tipo de peca enviado por argumento"
   (cond
 
    ((equal tipo-peca 'pequena)
     (cond
      ((or ;Se em algumas das casas vizinhas estiver la um 1 entao devolvemos 0
-       (casa-com-ump linha (1+ coluna) tabuleiro)
-       (casa-com-ump linha (1- coluna) tabuleiro)
-       (casa-com-ump (1+ linha) coluna tabuleiro)
-       (casa-com-ump (1- linha) coluna tabuleiro)
+       (casa-com-elementop linha (1+ coluna) tabuleiro elem)
+       (casa-com-elementop linha (1- coluna) tabuleiro elem)
+       (casa-com-elementop (1+ linha) coluna tabuleiro elem)
+       (casa-com-elementop (1- linha) coluna tabuleiro elem)
        ) 0)
      (T 1)
      )
@@ -190,9 +206,9 @@
    ((equal tipo-peca 'media)
     (cond
      ((and ;Se tiver 1 nestas posicoes entao e porque e uma peca media
-       (casa-com-ump linha (1- coluna) tabuleiro)
-       (casa-com-ump (1- linha) coluna tabuleiro)
-       (casa-com-ump (1- linha) (1- coluna) tabuleiro)
+       (casa-com-elementop linha (1- coluna) tabuleiro elem)
+       (casa-com-elementop (1- linha) coluna tabuleiro elem)
+       (casa-com-elementop (1- linha) (1- coluna) tabuleiro elem)
        ) 1)
      (T 0)
     )
@@ -204,10 +220,10 @@
        (not (= coluna 13))
        (not (= coluna 0))
        (not (< linha 2))
-       (casa-com-ump (1- linha) coluna tabuleiro)
-       (casa-com-ump (1- linha) (1- coluna) tabuleiro)
-       (casa-com-ump (1- linha) (1+ coluna) tabuleiro)
-       (casa-com-ump (- linha 2) coluna tabuleiro)
+       (casa-com-elementop (1- linha) coluna tabuleiro elem)
+       (casa-com-elementop (1- linha) (1- coluna) tabuleiro elem)
+       (casa-com-elementop (1- linha) (1+ coluna) tabuleiro elem)
+       (casa-com-elementop (- linha 2) coluna tabuleiro elem)
       ) 1)
      (T 0)
     )
