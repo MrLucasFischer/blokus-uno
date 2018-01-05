@@ -14,7 +14,7 @@
 ;; carregar-ficheiros
 
 (defun carregar-ficheiros ()
-  "Funcao que carrega os restantes ficheiros do projeto (puzzle.lisp e procura.lisp) para que possam ser executados" 
+  "Funcao que carrega os restantes ficheiros do projeto (puzzle.lisp e algoritmo.lisp) para que possam ser executados" 
   (let (
         (caminho (ler-caminho))
        )
@@ -22,12 +22,12 @@
     ;/home/lucas-fischer/Dropbox/Faculdade/IA/2018/Projeto/blokus-uno
     ;C:/Users/Andreia Pereira/Google Drive/3� Ano - 1� Semestre/IA/Projeto/blokus-uno
     (progn
+      (compile-file (concatenate 'string caminho "/puzzle.lisp"))
       (compile-file (concatenate 'string caminho "/algoritmo.lisp"))
-      (compile-file (concatenate 'string caminho "/procura.lisp"))
-      (load (concatenate 'string caminho "/algoritmo.ufasl"));ufasl para Unix
-      (load (concatenate 'string caminho "/procura.ufasl"))
+      (load (concatenate 'string caminho "/puzzle.ufasl"));ufasl para Unix
+      (load (concatenate 'string caminho "/algoritmo.ufasl"))
       ;(load (concatenate 'string caminho "/puzzle.ofasl"));ofasl para windows
-      ;(load (concatenate 'string caminho "/procura.ofasl"))
+      ;(load (concatenate 'string caminho "/algoritmo.ofasl"))
       (menu-principal caminho)
     )
   )
@@ -65,11 +65,12 @@
     (format T "~%|                 |---   |     |      | |\\   |    |       \\                     |")
     (format T "~%|                 |   |  |     |      | | \\  |    | \\     |                     |")
     (format T "~%|                 |---   |____  \\____/  |  \\  \\__/   \\___/                      |")
-    (format T "~%|                                            ____                               |")
-    (format T "~%|                            |     | |\\   | /    \\                              |")
-    (format T "~%|                            |     | | \\  | |    |                              |")
-    (format T "~%|                            |     | |  \\ | |    |                              |")
-    (format T "~%|                             \\___/  |   \\|  \\___/                              |")
+    (format T "~%|                            _____             ______                           |")
+    (format T "~%|                           |     \\   |     | /      \\                          |")
+    (format T "~%|                           |      \\  |     | |      |                          |")
+    (format T "~%|                           |      /  |     | |      |                          |")
+    (format T "~%|                           |_____/    \\___/   \\____/                           |")
+    (format T "~%|                                                                               |")
     (format T "~%|                                                                               |")
     (format T "~%|                                                                               |")
     (format T "~%|                                1 - Iniciar                                    |")
