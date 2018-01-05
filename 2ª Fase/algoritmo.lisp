@@ -2,6 +2,11 @@
 ;;;;Projeto 1 - Blokus Uno
 ;;;;Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
 ;;;Implementacao do Algoritmo AlfaBeta e da funcao sucessores
+
+;;;;;;;; Variaveis Globais ;;;;;;;;
+
+(defvar *melhor-jogada* nil)
+
 ;;;;;;;; Sucessores ;;;;;;;;
 
 ;; sucessores 
@@ -154,7 +159,6 @@
 
 
 
-
 ;; alfabeta
 
 (defun alfabeta (no profundidade-limite operadores funcao-utilidade &optional (alfa most-negative-fixnum) (beta most-positive-fixnum))
@@ -195,7 +199,7 @@
       (let*
           (
            (novo-v (max v (alfabeta (first sucessores) (1- profundidade) operadores funcao-utilidade alfa beta) ))
-           (novo-alfa (max alfa novo-v))
+           (novo-alfa (verificar-melhor-jogada alfa novo-v (first sucessores)))
           )
 
         (cond 
@@ -224,4 +228,15 @@
    )
   )      
  )
+)
+
+
+;; verificar-melhor-jogada
+
+(defun verificar-melhor-jogada (alfa v sucessor)
+  "Funcao que ira fazer o max entre o alfa e o valor de utilidade do sucessor, caso o valor de utilidade seja superior ao alfa atualiza-se a melhor jogada para que seja o sucessor passado por argumento"
+  (cond
+    ((> v alfa) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
+    (T alfa) ;Caso contrario mantem-se a melhor jogada e o alfa
+  )
 )
