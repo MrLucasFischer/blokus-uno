@@ -101,42 +101,44 @@
 (defun iniciar (caminho)
   "Funcao que ira iniciar a aplicacao, pedindo ao utilizador para que escolha o tabuleiro que pretenda que seja o no inicial, o algoritmo que pretende utilizar e a profundidade maxima que pretende para o algoritmo dfs"
   (let* (
-         (tabuleiro-escolhido (ler-tabuleiro caminho))
-         (algoritmo-escolhido (ler-algoritmo))
-         (profundidade-escolhida (cond
-                                  ((equal algoritmo-escolhido 'dfs) (ler-profundidade))
-                                  (T nil)
-                                 ))
-         (heuristica-escolhida (cond
-                                ((or 
-                                  (equal algoritmo-escolhido 'a*) 
-                                  (equal algoritmo-escolhido 'ida*)
-                                 ) (ler-heuristica))
-                                (T 'heuristica)
-                               ))
-         (pecas-no-raiz (list 
-                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena))
-                       (- 10 (peca-contagem tabuleiro-escolhido 'media))
-                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz))
+         ;(tabuleiro-escolhido (ler-tabuleiro caminho)) ;Perguntar se vai haver outros tabuleiros ou se e sempre o mesmo
+         (tabuleiro-escolhido (tabuleiro-vazio))
+
+         ;(tempo-limite (ler-tempo-limite))
+
+         (profundidade-escolhida  (ler-profundidade))
+
+         (pecas-jogador1-no-raiz (list 
+                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena 1))
+                       (- 10 (peca-contagem tabuleiro-escolhido 'media 1))
+                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz 1))
                        ))
 
-         (heuristica-no-raiz (funcall heuristica-escolhida tabuleiro-escolhido pecas-no-raiz))
+
+        ;(valor-jogador-escolhido (escolher-jogador)) ;Caso tenha escolhido Humano-Computador
+
+
+        (pecas-jogador2-no-raiz (list 
+                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena 2))
+                       (- 10 (peca-contagem tabuleiro-escolhido 'media 2))
+                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz 2))
+                       ))
 
          (no (cria-no tabuleiro-escolhido 
-                      pecas-no-raiz
-                      0 ;profundidade do no raiz
-                      heuristica-no-raiz
-                      heuristica-no-raiz ;f do no raiz, que vai ser igual a heuristica porque g=0
-                      nil ;no pai
+                      pecas-jogador1-no-raiz
+                      pecas-jogador2-no-raiz
+                      1 ;Valor do jogador escolhido, provisorio
              ))
         )
 
-    (cond
-     ((equal algoritmo-escolhido 'dfs)
-      (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
+        no
 
-     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
-    )
+    ; (cond
+    ;  ((equal algoritmo-escolhido 'dfs)
+    ;   (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
+
+    ;  (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
+    ; )
     
   )
 )
@@ -221,42 +223,10 @@
 
 
 
-;; ler-algoritmo
-
-(defun ler-algoritmo ()
-  "Funcao que questiona o utilizador sobre qual o algoritmo de procura em espaco de estados que pretende utilizar"
-  (progn
-    (format T "~% -> Escolha o algoritmo de procura em espaco de estados que pretende")
-    (format T "~% -> 1 - Breadth-First (bfs)")
-    (format T "~% -> 2 - Depth-First (dfs)")
-    (format T "~% -> 3 - A*")
-    (format T "~% -> 4 - IDA*~%")
-
-    (let (
-          (resposta (read))
-         )
-
-      (cond
-       ((not (numberp resposta)) (format T "~% > Precisa de inserir um numero entre 1 e 4~%") (ler-algoritmo))
-       ((= resposta 1) 'bfs)
-       ((= resposta 2) 'dfs)
-       ((= resposta 3) 'a*)
-       ((= resposta 4) 'ida*)
-       (T (format T "~% -> Precisa de inserir um numero entre 1 e 4~%") (ler-algoritmo))
-      )
-
-    )
-
-  )
-)
-
-
-
-
 ;; ler-profundidade
 
 (defun ler-profundidade (&optional (resposta nil))
-  "Funcao que ira questionar o utilizador sobre qual a profundidade maxima que pretende para o algortimo Depth-First"
+  "Funcao que ira questionar o utilizador sobre qual a profundidade maxima que pretende no decorrer do algoritmo alfa beta"
   (cond
 
    ((null resposta) (format T "~% -> Insira a profundidade maxima que deseja para o algoritmo~%") (ler-profundidade (read)))
@@ -266,36 +236,6 @@
    ((<= resposta 0) (format T "~% -> Por favor insira um numero maior do que 0~%") (ler-profundidade))
 
    (T resposta)
-  )
-
-)
-
-
-
-
-
-;; ler-heuristica
-
-(defun ler-heuristica ()
-  "Funcao que questiona o utilizador sobre qual a heuristica  pretende utilizar"
-  (progn
-    (format T "~% -> Escolha a heuristica que pretende")
-    (format T "~% -> 1 - Heuristica1")
-    (format T "~% -> 2 - Heuristica2 ~%")
-
-    (let (
-          (resposta (read))
-         )
-
-      (cond
-       ((not (numberp resposta)) (format T "~% > Precisa de inserir um numero entre 1 e 2~%") (ler-algoritmo))
-       ((= resposta 1) 'heuristica)
-       ((= resposta 2) 'heuristica2)
-       (T (format T "~% -> Precisa de inserir um numero entre 1 e 2~%") (ler-heuristica))
-      )
-
-    )
-
   )
 )
 
