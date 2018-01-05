@@ -161,21 +161,30 @@
 
 ;; alfabeta
 
-(defun alfabeta (no profundidade-limite operadores funcao-utilidade &optional (alfa most-negative-fixnum) (beta most-positive-fixnum))
+(defun alfabeta (no profundidade-limite operadores funcao-utilidade &optional (alfa most-negative-fixnum) (beta most-positive-fixnum) (tempo-inicial (get-universal-time)) (tempo-limite 5))
   "Funcao que implementa o algoritmo alfabeta"
-  
-  (cond
-   ((or (zerop profundidade-limite) (no-objetivo-p no)) (funcall funcao-utilidade no))
+  (let* 
+      (
+        (tempo-atual (get-universal-time))
+        (tempo-gasto (- tempo-atual tempo-inicial))
+      )
     
-   (T
-    (let
-        (
-         (sucessores-no (sucessores no operadores))
-        )  
-      (percorrer-sucessores sucessores-no alfa beta profundidade-limite operadores funcao-utilidade)
-     ) 
-   )
- )
+    (cond
+
+     ((>= tempo-gasto tempo-limite) (funcall funcao-utilidade no)) ;Acabou o tempo
+
+     ((or (zerop profundidade-limite) (no-objetivo-p no)) (funcall funcao-utilidade no)) ;Caso tenhamos atingido a profundidade maxima ou o no seja um no folha
+        
+     (T
+      (let
+          (
+           (sucessores-no (sucessores no operadores)) ;Expandir o no
+           )  
+        (percorrer-sucessores sucessores-no alfa beta profundidade-limite operadores funcao-utilidade tempo-inicial tempo-limite)
+        ) 
+      )
+     )
+  )
 )
 
 
@@ -185,7 +194,7 @@
 
 ;; percorrer-sucessores
 
-(defun percorrer-sucessores (sucessores alfa beta profundidade operadores funcao-utilidade &optional (v (cond ((equal (get-tipo-no (first sucessores)) 'max) most-negative-fixnum) (T most-positive-fixnum)))) 
+(defun percorrer-sucessores (sucessores alfa beta profundidade operadores funcao-utilidade tempo-inicial tempo-limite &optional (v (cond ((equal (get-tipo-no (first sucessores)) 'max) most-negative-fixnum) (T most-positive-fixnum)))) 
   "Funcao que percorre cada um dos sucessores e atualiza o alfa ou beta"  
   (cond
    ((null sucessores) v)
@@ -198,14 +207,15 @@
 
       (let*
           (
-           (novo-v (max v (alfabeta (first sucessores) (1- profundidade) operadores funcao-utilidade alfa beta) ))
-           (novo-alfa (verificar-melhor-jogada alfa novo-v (first sucessores)))
+           (novo-v (max v (alfabeta (first sucessores) (1- profundidade) operadores funcao-utilidade alfa beta tempo-inicial tempo-limite) ))
+           ;(novo-alfa (verificar-melhor-jogada alfa novo-v (first sucessores)))
+           (novo-alfa (max alfa novo-v))
           )
 
         (cond 
          ((<= beta novo-alfa) beta) ;Condicao de corte, aplicando fail-hard
 
-         (T (percorrer-sucessores (rest sucessores) novo-alfa beta profundidade operadores funcao-utilidade novo-v))
+         (T (percorrer-sucessores (rest sucessores) novo-alfa beta profundidade operadores funcao-utilidade tempo-inicial tempo-limite novo-v))
         )
        )
      )
@@ -214,14 +224,15 @@
      (T 
       (let*
           (
-           (novo-v (min v (alfabeta (first sucessores) (1- profundidade) operadores funcao-utilidade alfa beta)))
-           (novo-beta (min beta novo-v))
+           (novo-v (min v (alfabeta (first sucessores) (1- profundidade) operadores funcao-utilidade alfa beta tempo-inicial tempo-limite)))
+           ;(novo-beta (min beta novo-v))
+           (novo-beta (verificar-melhor-jogada beta novo-v (first sucessores)))
           )
 
         (cond 
          ((<= novo-beta alfa) alfa) ;Condicao de corte, aplicando fail-hard
 
-         (T (percorrer-sucessores (rest sucessores) alfa novo-beta profundidade operadores funcao-utilidade novo-v))
+         (T (percorrer-sucessores (rest sucessores) alfa novo-beta profundidade operadores funcao-utilidade tempo-inicial tempo-limite novo-v))
         )
        )
      )
@@ -233,10 +244,16 @@
 
 ;; verificar-melhor-jogada
 
-(defun verificar-melhor-jogada (alfa v sucessor)
+(defun verificar-melhor-jogada (beta v sucessor)
   "Funcao que ira fazer o max entre o alfa e o valor de utilidade do sucessor, caso o valor de utilidade seja superior ao alfa atualiza-se a melhor jogada para que seja o sucessor passado por argumento"
+  ; (cond
+  ;   ((> v alfa) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
+  ;   (T alfa) ;Caso contrario mantem-se a melhor jogada e o alfa
+  ; )
+
   (cond
-    ((> v alfa) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
-    (T alfa) ;Caso contrario mantem-se a melhor jogada e o alfa
+    ((< v beta) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
+    (T beta) ;Caso contrario mantem-se a melhor jogada e o alfa
   )
+
 )
