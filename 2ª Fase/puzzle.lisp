@@ -881,9 +881,29 @@
 
 ;;;;;;;;;; Funcao de Utilidade ;;;;;;;;;;
 
+
+
 ;; funcao-utilidade
 
 (defun funcao-utilidade (no)
+  "Funcao de utilidade que tem em conta o numero de quadrados que um jogador possui, premiando as jogadas que levem a uma maior reducao de quadrados"
+  (let (
+         (pecas (cond
+                 ((= (get-valor-jogador-no no) 1) (get-pecas-jogador1-no no))
+                 (T (get-pecas-jogador2-no no))))
+        )
+    (- (+ (* 5 15) (* 4 10) 10) (+ (* 5 (third pecas)) (* 4 (second pecas)) (first pecas)))
+  )
+)
+
+
+
+
+
+
+;; funcao-utilidade2
+
+(defun funcao-utilidade2 (no)
   "Funcao que retorna a utilidade de um no"
   (let* (
          (pecas (cond
@@ -944,13 +964,4 @@
 
     )
   )
-)
-
-
-
-
-
-;; existe-vencedorp
-;; Os dois jogadores so passam a vez se nao tiverem pecas ou nao tiverem jogadas possiveis
-(defun existe-vencedorp (no1 no2)
 )
