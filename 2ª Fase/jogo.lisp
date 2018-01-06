@@ -101,21 +101,26 @@
 (defun iniciar (caminho)
   "Funcao que ira iniciar a aplicacao, pedindo ao utilizador para que escolha o tabuleiro que pretenda que seja o no inicial, o algoritmo que pretende utilizar e a profundidade maxima que pretende para o algoritmo dfs"
   (let* (
+
+         (tipo-de-jogo (ler-tipo-de-jogo)) ;Perguntar se quer jogar Computador vs Computador ou Computador vs Humano
+
+         (jogador-escolhido (cond
+                              ((equal tipo-de-jogador 'humano) (ler-escolha-jogador))
+                              (T 1)
+                            ))
+
+         (tempo-limite (ler-tempo-limite))
+
          ;(tabuleiro-escolhido (ler-tabuleiro caminho)) ;Perguntar se vai haver outros tabuleiros ou se e sempre o mesmo
          (tabuleiro-escolhido (tabuleiro-vazio))
 
-         ;(tempo-limite (ler-tempo-limite))
-
-         (profundidade-escolhida  (ler-profundidade))
+         (profundidade-escolhida (ler-profundidade))
 
          (pecas-jogador1-no-raiz (list 
                        (- 10 (peca-contagem tabuleiro-escolhido 'pequena 1))
                        (- 10 (peca-contagem tabuleiro-escolhido 'media 1))
                        (- 15 (peca-contagem tabuleiro-escolhido 'cruz 1))
                        ))
-
-
-        ;(valor-jogador-escolhido (escolher-jogador)) ;Caso tenha escolhido Humano-Computador
 
 
         (pecas-jogador2-no-raiz (list 
@@ -127,11 +132,9 @@
          (no (cria-no tabuleiro-escolhido 
                       pecas-jogador1-no-raiz
                       pecas-jogador2-no-raiz
-                      1 ;Valor do jogador escolhido, provisorio
+                      jogador-escolhido
              ))
         )
-
-        no
 
     ; (cond
     ;  ((equal algoritmo-escolhido 'dfs)
@@ -239,6 +242,78 @@
   )
 )
 
+
+
+
+;; ler-tipo-de-jogo
+
+(defun ler-tipo-de-jogo ()
+  "Funcao que ira questionar o utilizar sobre se pretende jogar contra o computador ou jogar Computador vs Computador"
+  (progn
+    (format T "~% -> Escolha como pretende jogar:")
+    (format T "~% -> 1- Humano vs Computador")
+    (format T "~% -> 2- Computador vs Computador~%")
+
+    (let
+        (
+          (resposta (read))
+        )
+        (cond
+          ((not (numberp resposta)) (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-tipo-de-jogo))
+          ((= resposta 1) 'humano)
+          ((= resposta 2) 'computador)
+          (T (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-tipo-de-jogo))
+        )
+    )
+  )
+)
+
+
+
+
+
+;; ler-escolha-jogador
+
+(defun ler-escolha-jogador ()
+  "Funcao que ira questionar o utilizador sobre com que qual peca deseja jogar"
+  (progn
+      (format T "~% -> Escolha com que peca pretende jogar:")
+      (format T "~% -> 1- Jogador1 (primeiro a jogar)")
+      (format T "~% -> 2- Jogador2~%")
+
+      (let
+          (
+            (resposta (read))
+          )
+          (cond
+            ((not (numberp resposta)) (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-escolha-jogador))
+            ((= resposta 1) 1)
+            ((= resposta 2) 2)
+            (T (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-escolha-jogador))
+          )
+      )
+    )
+)
+
+
+
+
+
+;; ler-tempo-limite
+
+(defun ler-tempo-limite(&optional (resposta nil))
+  "Funcao que ira questionar o utilizador sobre o tempo maximo que o computador tem para decidir sobre uma jogada"
+  (cond
+
+   ((null resposta) (format T "~% -> Insira o tempo maximo que o computador tem para decidir sobre uma jogada~%") (ler-tempo-limite (read)))
+
+   ((not (numberp resposta)) (format T "~% -> Por favor insira um numero entre 1 e 10~%") (ler-tempo-limite))
+
+   ((or (<= resposta 0) (>= resposta 11)) (format T "~% -> Por favor insira um numero entre 1 e 10~%") (ler-tempo-limite))
+
+   (T resposta)
+  )
+)
 
 
 
