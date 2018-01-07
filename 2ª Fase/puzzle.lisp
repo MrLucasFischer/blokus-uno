@@ -29,20 +29,20 @@
 
 (defun tabuleiro-vazio ()
   '(
-  (1 1 0 0 0 0 0 0 0 0 1 0 2 0)
-  (1 1 0 1 0 1 0 1 0 1 1 1 0 2)
-  (0 0 1 1 1 0 1 1 1 0 1 0 2 0)
-  (0 1 0 1 0 1 0 1 0 1 0 2 2 2)
-  (1 1 1 0 1 0 1 0 1 1 1 0 2 0)
-  (0 1 0 1 0 1 1 1 0 1 0 2 0 2)
-  (1 0 1 1 1 0 1 0 1 0 2 2 2 0)
-  (0 1 0 1 0 2 0 2 0 2 0 2 0 2)
-  (1 1 1 0 2 2 2 0 2 2 2 0 2 0)
-  (0 1 0 1 0 2 0 2 0 2 0 2 2 2)
-  (1 0 1 1 1 0 2 2 2 0 2 0 2 0)
-  (0 1 0 1 0 2 0 2 0 2 2 2 0 0)
-  (1 1 1 0 2 2 2 0 2 0 2 0 2 2)
-  (0 1 0 1 0 2 0 2 0 2 0 0 2 2)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
   )
 )
 
@@ -974,6 +974,40 @@
 
      (T T)
 
+    )
+  )
+)
+
+
+
+
+
+
+;;;;;;;;;; Decidir Vencedor ;;;;;;;;;;
+
+;; decidir-vencedor
+
+(defun decidir-vencedor (no)
+  "Funcao que recebe um no terminal, apos ambos os jogadores terem passado a vez, e determina qual o vencedor"
+  (let*
+      (
+       (pecas-pequenas-jogador1 (first (get-pecas-jogador1-no no)))
+       (pecas-medias-jogador1 (first (get-pecas-jogador1-no no)))
+       (pecas-cruz-jogador1 (first (get-pecas-jogador1-no no)))
+
+       (pecas-pequenas-jogador2 (first (get-pecas-jogador2-no no)))
+       (pecas-medias-jogador2 (second (get-pecas-jogador2-no no)))
+       (pecas-cruz-jogador2 (third (get-pecas-jogador2-no no)))
+
+       (soma-quadrados-jogador1 (+ pecas-pequenas-jogador1 (* 4 pecas-medias-jogador1) (* 5 pecas-cruz-jogador1)))
+
+
+       (soma-quadrados-jogador2 (+ pecas-pequenas-jogador2 (* 4 pecas-medias-jogador2) (* 5 pecas-cruz-jogador2)))
+      )
+    (cond
+     ((> soma-quadrados-jogador1 soma-quadrados-jogador2) 'jogador2)
+     ((< soma-quadrados-jogador1 soma-quadrados-jogador2) 'jogador1)
+     (T 'empate)
     )
   )
 )

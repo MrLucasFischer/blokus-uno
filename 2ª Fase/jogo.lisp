@@ -195,7 +195,18 @@
        
       (cond
 
-       ((and jogador1-passou-vez jogador2-passou-vez) 'acabou) ;Se ambos jogadores passaram a vez entao o jogo termina
+       ((and jogador1-passou-vez jogador2-passou-vez)
+        (let 
+            (
+             (resultado (decidir-vencedor no))
+            )
+          (cond
+           ((equal resultado 'jogador1) (format T "Vencedor: Jogador 1!"))
+           ((equal resultado 'jogador2) (format T "Vencedor: Jogador 2!"))
+           ((equal resultado 'empate) (format T "Empate !"))
+          )
+        )
+       ) ;Se ambos jogadores passaram a vez entao o jogo termina
 
        ((null (first novo-no))
  
