@@ -29,22 +29,20 @@
 
 (defun tabuleiro-vazio ()
   '(
-    (1 0 0 0 0 0 0 0 0 0 0 0)
-    (0 1 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 0 0)
-    (0 0 0 0 0 0 0 0 0 0 2 0)
-    (0 0 0 0 0 0 0 0 0 0 0 2)
+    (1 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
   )
 )
 
@@ -70,7 +68,7 @@
     (- 10(peca-contagem (tabuleiro-vazio) 'media 2))
     (- 15 (peca-contagem (tabuleiro-vazio) 'cruz 2))
     )
-   1
+   2
    )
   )
 
@@ -364,7 +362,7 @@
   (let (
         (linha-cima (first linhas))
         (linha-baixo (second linhas))
-       )
+        )
 
     (cond
      ((null linha-cima) nil)
@@ -378,13 +376,14 @@
 
      (T
       (construir-listas
-        (list (first linha-cima) (first linha-baixo))
-        (inserir-peca-media-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-baixo)) elem)
+       (list (first linha-cima) (first linha-baixo))
+       (inserir-peca-media-na-coluna (1- coluna) (list (rest linha-cima) (rest linha-baixo)) elem)
+       )
       )
-     )
 
-    )
+     )
   )
+  
 )
 
 
@@ -550,7 +549,12 @@
 
      ((= jogador 1)
       (cond
-       ((zerop (nth 0 (nth 0 tabuleiro))) '(0 0)) ;Se for o jogador 1, a primeira peca tem que ser no canto esquerdo
+       ((zerop (nth 0 (nth 0 tabuleiro))) 
+        (cond
+         ((not (equal tipo-peca 'cruz)) '((0 0)))
+         (T nil)
+        )
+       ) ;Se for o jogador 1, a primeira peca tem que ser no canto esquerdo
 
        (T (percorre-matriz-peca tabuleiro tipo-peca jogador))
       )
@@ -558,7 +562,15 @@
 
      (T
       (cond
-       ((zerop (nth ultima-coluna (nth ultima-linha tabuleiro))) (list ultima-linha ultima-coluna))
+       ((zerop (nth 0 (nth 0 tabuleiro))) nil) ;Se o jogador 1 ainda nao tiver jogado, o jogador 2 nao pode jogar
+
+       ((zerop (nth ultima-coluna (nth ultima-linha tabuleiro))) 
+        (cond
+         ((equal tipo-peca 'pequena) (list (list ultima-linha ultima-coluna)))
+         ((equal tipo-peca 'media) (list (list (1- ultima-linha) (1- ultima-coluna))))
+         (T nil)
+        )
+       )
 
        (T (percorre-matriz-peca tabuleiro tipo-peca jogador))
       )
