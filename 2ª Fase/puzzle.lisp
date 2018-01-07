@@ -29,7 +29,7 @@
 
 (defun tabuleiro-vazio ()
   '(
-    (1 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
     (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
     (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
     (0 0 0 0 0 0 0 0 0 0 0 0 0 0)
@@ -68,7 +68,7 @@
     (- 10(peca-contagem (tabuleiro-vazio) 'media 2))
     (- 15 (peca-contagem (tabuleiro-vazio) 'cruz 2))
     )
-   2
+   1
    )
   )
 
@@ -948,7 +948,7 @@
 
 
 
-;;;;;;;;;; Solucao ;;;;;;;;;;
+;;;;;;;;;; Nos-folhas ;;;;;;;;;;
 
 ;;no-objetivo-p
 

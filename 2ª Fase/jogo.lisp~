@@ -14,7 +14,7 @@
 ;; carregar-ficheiros
 
 (defun carregar-ficheiros ()
-  "Funcao que carrega os restantes ficheiros do projeto (puzzle.lisp e procura.lisp) para que possam ser executados" 
+  "Funcao que carrega os restantes ficheiros do projeto (puzzle.lisp e algoritmo.lisp) para que possam ser executados" 
   (let (
         (caminho (ler-caminho))
        )
@@ -23,11 +23,11 @@
     ;C:/Users/Andreia Pereira/Google Drive/3� Ano - 1� Semestre/IA/Projeto/blokus-uno
     (progn
       (compile-file (concatenate 'string caminho "/puzzle.lisp"))
-      (compile-file (concatenate 'string caminho "/procura.lisp"))
+      (compile-file (concatenate 'string caminho "/algoritmo.lisp"))
       (load (concatenate 'string caminho "/puzzle.ufasl"));ufasl para Unix
-      (load (concatenate 'string caminho "/procura.ufasl"))
+      (load (concatenate 'string caminho "/algoritmo.ufasl"))
       ;(load (concatenate 'string caminho "/puzzle.ofasl"));ofasl para windows
-      ;(load (concatenate 'string caminho "/procura.ofasl"))
+      ;(load (concatenate 'string caminho "/algoritmo.ofasl"))
       (menu-principal caminho)
     )
   )
@@ -65,11 +65,12 @@
     (format T "~%|                 |---   |     |      | |\\   |    |       \\                     |")
     (format T "~%|                 |   |  |     |      | | \\  |    | \\     |                     |")
     (format T "~%|                 |---   |____  \\____/  |  \\  \\__/   \\___/                      |")
-    (format T "~%|                                            ____                               |")
-    (format T "~%|                            |     | |\\   | /    \\                              |")
-    (format T "~%|                            |     | | \\  | |    |                              |")
-    (format T "~%|                            |     | |  \\ | |    |                              |")
-    (format T "~%|                             \\___/  |   \\|  \\___/                              |")
+    (format T "~%|                            _____             ______                           |")
+    (format T "~%|                           |     \\   |     | /      \\                          |")
+    (format T "~%|                           |      \\  |     | |      |                          |")
+    (format T "~%|                           |      /  |     | |      |                          |")
+    (format T "~%|                           |_____/    \\___/   \\____/                           |")
+    (format T "~%|                                                                               |")
     (format T "~%|                                                                               |")
     (format T "~%|                                                                               |")
     (format T "~%|                                1 - Iniciar                                    |")
@@ -100,42 +101,47 @@
 (defun iniciar (caminho)
   "Funcao que ira iniciar a aplicacao, pedindo ao utilizador para que escolha o tabuleiro que pretenda que seja o no inicial, o algoritmo que pretende utilizar e a profundidade maxima que pretende para o algoritmo dfs"
   (let* (
-         (tabuleiro-escolhido (ler-tabuleiro caminho))
-         (algoritmo-escolhido (ler-algoritmo))
-         (profundidade-escolhida (cond
-                                  ((equal algoritmo-escolhido 'dfs) (ler-profundidade))
-                                  (T nil)
-                                 ))
-         (heuristica-escolhida (cond
-                                ((or 
-                                  (equal algoritmo-escolhido 'a*) 
-                                  (equal algoritmo-escolhido 'ida*)
-                                 ) (ler-heuristica))
-                                (T 'heuristica)
-                               ))
-         (pecas-no-raiz (list 
-                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena))
-                       (- 10 (peca-contagem tabuleiro-escolhido 'media))
-                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz))
+
+         (tipo-de-jogo (ler-tipo-de-jogo)) ;Perguntar se quer jogar Computador vs Computador ou Computador vs Humano
+
+         (jogador-escolhido (cond
+                              ((equal tipo-de-jogador 'humano) (ler-escolha-jogador))
+                              (T 1)
+                            ))
+
+         (tempo-limite (ler-tempo-limite))
+
+         ;(tabuleiro-escolhido (ler-tabuleiro caminho)) ;Perguntar se vai haver outros tabuleiros ou se e sempre o mesmo
+         (tabuleiro-escolhido (tabuleiro-vazio))
+
+         (profundidade-escolhida (ler-profundidade))
+
+         (pecas-jogador1-no-raiz (list 
+                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena 1))
+                       (- 10 (peca-contagem tabuleiro-escolhido 'media 1))
+                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz 1))
                        ))
 
-         (heuristica-no-raiz (funcall heuristica-escolhida tabuleiro-escolhido pecas-no-raiz))
+
+        (pecas-jogador2-no-raiz (list 
+                       (- 10 (peca-contagem tabuleiro-escolhido 'pequena 2))
+                       (- 10 (peca-contagem tabuleiro-escolhido 'media 2))
+                       (- 15 (peca-contagem tabuleiro-escolhido 'cruz 2))
+                       ))
 
          (no (cria-no tabuleiro-escolhido 
-                      pecas-no-raiz
-                      0 ;profundidade do no raiz
-                      heuristica-no-raiz
-                      heuristica-no-raiz ;f do no raiz, que vai ser igual a heuristica porque g=0
-                      nil ;no pai
+                      pecas-jogador1-no-raiz
+                      pecas-jogador2-no-raiz
+                      jogador-escolhido
              ))
         )
 
-    (cond
-     ((equal algoritmo-escolhido 'dfs)
-      (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
+    ; (cond
+    ;  ((equal algoritmo-escolhido 'dfs)
+    ;   (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
 
-     (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
-    )
+    ;  (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
+    ; )
     
   )
 )
@@ -220,42 +226,10 @@
 
 
 
-;; ler-algoritmo
-
-(defun ler-algoritmo ()
-  "Funcao que questiona o utilizador sobre qual o algoritmo de procura em espaco de estados que pretende utilizar"
-  (progn
-    (format T "~% -> Escolha o algoritmo de procura em espaco de estados que pretende")
-    (format T "~% -> 1 - Breadth-First (bfs)")
-    (format T "~% -> 2 - Depth-First (dfs)")
-    (format T "~% -> 3 - A*")
-    (format T "~% -> 4 - IDA*~%")
-
-    (let (
-          (resposta (read))
-         )
-
-      (cond
-       ((not (numberp resposta)) (format T "~% > Precisa de inserir um numero entre 1 e 4~%") (ler-algoritmo))
-       ((= resposta 1) 'bfs)
-       ((= resposta 2) 'dfs)
-       ((= resposta 3) 'a*)
-       ((= resposta 4) 'ida*)
-       (T (format T "~% -> Precisa de inserir um numero entre 1 e 4~%") (ler-algoritmo))
-      )
-
-    )
-
-  )
-)
-
-
-
-
 ;; ler-profundidade
 
 (defun ler-profundidade (&optional (resposta nil))
-  "Funcao que ira questionar o utilizador sobre qual a profundidade maxima que pretende para o algortimo Depth-First"
+  "Funcao que ira questionar o utilizador sobre qual a profundidade maxima que pretende no decorrer do algoritmo alfa beta"
   (cond
 
    ((null resposta) (format T "~% -> Insira a profundidade maxima que deseja para o algoritmo~%") (ler-profundidade (read)))
@@ -266,38 +240,80 @@
 
    (T resposta)
   )
-
 )
 
 
 
 
+;; ler-tipo-de-jogo
 
-;; ler-heuristica
-
-(defun ler-heuristica ()
-  "Funcao que questiona o utilizador sobre qual a heuristica  pretende utilizar"
+(defun ler-tipo-de-jogo ()
+  "Funcao que ira questionar o utilizar sobre se pretende jogar contra o computador ou jogar Computador vs Computador"
   (progn
-    (format T "~% -> Escolha a heuristica que pretende")
-    (format T "~% -> 1 - Heuristica1")
-    (format T "~% -> 2 - Heuristica2 ~%")
+    (format T "~% -> Escolha como pretende jogar:")
+    (format T "~% -> 1- Humano vs Computador")
+    (format T "~% -> 2- Computador vs Computador~%")
 
-    (let (
+    (let
+        (
           (resposta (read))
-         )
-
-      (cond
-       ((not (numberp resposta)) (format T "~% > Precisa de inserir um numero entre 1 e 2~%") (ler-algoritmo))
-       ((= resposta 1) 'heuristica)
-       ((= resposta 2) 'heuristica2)
-       (T (format T "~% -> Precisa de inserir um numero entre 1 e 2~%") (ler-heuristica))
-      )
-
+        )
+        (cond
+          ((not (numberp resposta)) (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-tipo-de-jogo))
+          ((= resposta 1) 'humano)
+          ((= resposta 2) 'computador)
+          (T (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-tipo-de-jogo))
+        )
     )
-
   )
 )
 
+
+
+
+
+;; ler-escolha-jogador
+
+(defun ler-escolha-jogador ()
+  "Funcao que ira questionar o utilizador sobre com que qual peca deseja jogar"
+  (progn
+      (format T "~% -> Escolha com que peca pretende jogar:")
+      (format T "~% -> 1- Jogador1 (primeiro a jogar)")
+      (format T "~% -> 2- Jogador2~%")
+
+      (let
+          (
+            (resposta (read))
+          )
+          (cond
+            ((not (numberp resposta)) (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-escolha-jogador))
+            ((= resposta 1) 1)
+            ((= resposta 2) 2)
+            (T (format T "~% -> Por favor insira o numero 1 ou 2~%") (ler-escolha-jogador))
+          )
+      )
+    )
+)
+
+
+
+
+
+;; ler-tempo-limite
+
+(defun ler-tempo-limite(&optional (resposta nil))
+  "Funcao que ira questionar o utilizador sobre o tempo maximo que o computador tem para decidir sobre uma jogada"
+  (cond
+
+   ((null resposta) (format T "~% -> Insira o tempo maximo que o computador tem para decidir sobre uma jogada~%") (ler-tempo-limite (read)))
+
+   ((not (numberp resposta)) (format T "~% -> Por favor insira um numero entre 1 e 10~%") (ler-tempo-limite))
+
+   ((or (<= resposta 0) (>= resposta 11)) (format T "~% -> Por favor insira um numero entre 1 e 10~%") (ler-tempo-limite))
+
+   (T resposta)
+  )
+)
 
 
 

@@ -161,7 +161,7 @@
 
 ;; alfabeta
 
-(defun alfabeta (no profundidade-limite operadores funcao-utilidade &optional (alfa most-negative-fixnum) (beta most-positive-fixnum) (tempo-inicial (get-universal-time)) (tempo-limite 1))
+(defun alfabeta (no profundidade-limite operadores funcao-utilidade &optional (alfa most-negative-fixnum) (beta most-positive-fixnum) (tempo-inicial (get-universal-time)) (tempo-limite 5))
   "Funcao que implementa o algoritmo alfabeta"
   (let* 
       (
@@ -179,11 +179,14 @@
       (let
           (
            (sucessores-no (sucessores no operadores)) ;Expandir o no
-           )  
-        (percorrer-sucessores sucessores-no alfa beta profundidade-limite operadores funcao-utilidade tempo-inicial tempo-limite)
-        ) 
-      )
+          )
+        (cond
+         ((null sucessores-no) -1) ;Nao tem sucessores, passa a vez
+         (T (percorrer-sucessores sucessores-no alfa beta profundidade-limite operadores funcao-utilidade tempo-inicial tempo-limite))
+        )
+      ) 
      )
+   )
   )
 )
 
