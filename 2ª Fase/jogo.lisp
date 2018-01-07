@@ -140,14 +140,6 @@
      ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida))
      (T (comecar-jogo-computador no tempo-limite profundidade-escolhida))
     )
-
-    ; (cond
-    ;  ((equal algoritmo-escolhido 'dfs)
-    ;   (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
-
-    ;  (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
-    ; )
-    
   )
 )
 
@@ -184,13 +176,9 @@
     (let* 
         (
          (apresentar-info (cond
-                           ((not (null (first novo-no))) (formatar-tabuleiro (get-estado-no novo-no)))
+                           ((not (null (first novo-no))) (escrever-resultados novo-no (get-valor-jogador-no no)))
                            (T nil)
-                           ))
-         (nova-linha (cond 
-                      ((not (null (first novo-no))) (format t "~%")) 
-                      (t nil)
-                      ))
+                          ))
        )
        
       (cond
@@ -414,7 +402,7 @@
 
 ;; ler-tempo-limite
 
-(defun ler-tempo-limite(&optional (resposta nil))
+(defun ler-tempo-limite (&optional (resposta nil))
   "Funcao que ira questionar o utilizador sobre o tempo maximo que o computador tem para decidir sobre uma jogada"
   (cond
 
@@ -432,51 +420,6 @@
 
 
 
-;; escrever-resultados
-
-(defun escrever-resultados (resultado caminho)
-  "Funcao que ira imprimir o resultado para o ecra de uma forma mais clara bem como escrever as estatisticas num ficheiro estatisticas.dat"
-  (cond
-   ((not (null resultado))
-    (let* (
-           (no-objetivo (first resultado))
-           (tabuleiro (get-estado-no no-objetivo))
-           (pecas (get-pecas-no no-objetivo))
-           (profundidade (get-profundidade-no no-objetivo))
-           (heuristica-resultado (get-heuristica-no no-objetivo))
-           (custo-resultado (get-f-no no-objetivo))
-           (no-pai-resultado (get-pai-no no-objetivo))
-         
-           (tempo-inicial (second resultado))
-           
-           (nos-expandidos (third resultado))
-           (nos-gerados (fourth resultado))
-          )
-      (progn
-        (formatar-tabuleiro tabuleiro) ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
-
-        (format T "~%~%  -Pecas pequenas: ~A" (first pecas))
-        (format T "~%  -Pecas medias: ~A" (second pecas))
-        (format T "~%  -Pecas em cruz: ~A" (third pecas))
-        (format T "~%~%  -Profundidade da solucao: ~A" profundidade)
-        (format T "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
-        (format T "~%  -Custo do no-objetivo: ~A" custo-resultado)
-
-        (format T "~%~%  -Nos expandidos: ~A" nos-expandidos)
-        (format T "~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
-        (format T "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
-        (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
-        (format T "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
-
-        (format T "~%~%  -No pai: ~A" no-pai-resultado)
-
-        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-expandidos nos-gerados)
-      )
-    ))
-   (T nil)
-  )
-  
-)
 
 
 
@@ -495,35 +438,17 @@
 
 
 
-;; escrever-estatisticas-ficheiro
 
-(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-expandidos nos-gerados)
-  "Funcao que permite a escrita das estatisticas para um ficheiro estatisticas.dat"
 
-  (with-open-file (ficheiro-estatisticas 
-                   (concatenate 'string caminho "/estatisticas.dat")
-                   :direction :output
-                   :if-exists :append
-                   :if-does-not-exist :create
-                  )
-    (progn
-      (formatar-tabuleiro tabuleiro ficheiro-estatisticas)  ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
 
-      (format ficheiro-estatisticas "~%~%  -Pecas pequenas: ~A" (first pecas))
-      (format ficheiro-estatisticas "~%  -Pecas medias: ~A" (second pecas))
-      (format ficheiro-estatisticas "~%  -Pecas em cruz: ~A" (third pecas))
-      (format ficheiro-estatisticas "~%~%  -Profundidade da solucao: ~A" profundidade)
-      (format ficheiro-estatisticas "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
-      (format ficheiro-estatisticas "~%  -Custo do no-objetivo: ~A" custo-resultado)
+;; escrever-resultados
 
-      (format ficheiro-estatisticas "~%~%  -Nos expandidos: ~A" nos-expandidos)
-      (format ficheiro-estatisticas "~%  -Nos gerados: ~A" nos-gerados)
-      (format ficheiro-estatisticas "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
-      (format ficheiro-estatisticas "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
-      (format ficheiro-estatisticas "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
-
-      (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------")
-      (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------~%") 
-    )
+(defun escrever-resultados (no jogador-que-jogou)
+  "Funcao que ira escrever no ecra os resultados de cada jogada realizada"
+  (progn
+    (formatar-tabuleiro (get-estado-no no))
+    (format T "~%~%  -Jogador que fez a jogada: Jogador ~A" jogador-que-jogou)
+    (format T "~%  -Pecas Jogador 1: ~A | Pecas Jogador 2: ~A" (get-pecas-jogador1-no no) (get-pecas-jogador2-no no))
+    (format T "~%~%---------------------------------------------------------------------------------------------~%")
   )
 )
