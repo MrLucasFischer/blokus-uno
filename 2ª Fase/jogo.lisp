@@ -171,12 +171,24 @@
                  'MAX ;not sure about this
                  (get-pai-no *melhor-jogada*)
                  ))
-       (reset-melhor-jogada (setf *melhor-jogada* nil))
+       (reset-melhor-jogada (setf *melhor-jogada* nil)) ;Fazer reset a melhor jogada encontrada
+
+       (nos-analisados *nos-analisados*) ;Guardar o numero de nos analisados
+
+       (reset-nos-analisados (setf *nos-analisados* 0)) ;Fazer reset aos nos analisados
+
+       (cortes-alfa *cortes-alfa*) ;Guardar o numero de cortes alfa
+
+       (reset-cortes-alfa (setf *cortes-alfa* 0)) ;Fazer reset aos cortes alfa
+
+       (cortes-beta *cortes-beta*) ;Guardar o numero de cortes beta
+
+       (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
      )
     (let* 
         (
          (apresentar-info (cond
-                           ((not (null (first novo-no))) (escrever-resultados novo-no (get-valor-jogador-no no)))
+                           ((not (null (first novo-no))) (escrever-resultados novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
                            (T nil)
                           ))
        )
@@ -443,12 +455,15 @@
 
 ;; escrever-resultados
 
-(defun escrever-resultados (no jogador-que-jogou)
+(defun escrever-resultados (no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
   "Funcao que ira escrever no ecra os resultados de cada jogada realizada"
   (progn
     (formatar-tabuleiro (get-estado-no no))
     (format T "~%~%  -Jogador que fez a jogada: Jogador ~A" jogador-que-jogou)
     (format T "~%  -Pecas Jogador 1: ~A | Pecas Jogador 2: ~A" (get-pecas-jogador1-no no) (get-pecas-jogador2-no no))
+    (format T "~%~%  -Nos analisados: ~A" nos-analisados)
+    (format T "~%  -Cortes Alfa: ~A" cortes-alfa)
+    (format T "~%  -Cortes Beta: ~A" cortes-beta)
     (format T "~%~%---------------------------------------------------------------------------------------------~%")
   )
 )
