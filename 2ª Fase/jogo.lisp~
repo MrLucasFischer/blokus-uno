@@ -105,7 +105,7 @@
          (tipo-de-jogo (ler-tipo-de-jogo)) ;Perguntar se quer jogar Computador vs Computador ou Computador vs Humano
 
          (jogador-escolhido (cond
-                              ((equal tipo-de-jogador 'humano) (ler-escolha-jogador))
+                              ((equal tipo-de-jogo 'humano) (ler-escolha-jogador))
                               (T 1)
                             ))
 
@@ -136,6 +136,11 @@
              ))
         )
 
+    (cond
+     ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida))
+     (T (comecar-jogo-computador no tempo-limite profundidade-escolhida))
+    )
+
     ; (cond
     ;  ((equal algoritmo-escolhido 'dfs)
     ;   (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
@@ -146,6 +151,39 @@
   )
 )
 
+
+
+;; comecar-jogo-humano
+
+(defun comecar-jogo-humano (no tempo-limite profundidade-maxima)
+  "Funcao que implementa um jogo entre um humano e um computador"
+)
+
+
+
+
+
+;; comecar-jogo-computador
+
+(defun comecar-jogo-computador (no tempo-limite profundidade-maxima)
+  "Funcao que implementa um jogo entre dois computadores"
+    (let* 
+      (
+       (resultado-alfabeta (alfabeta no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
+       (novo-no (cria-no 
+                 (get-estado-no *melhor-jogada*)
+                 (get-pecas-jogador1-no *melhor-jogada*)
+                 (get-pecas-jogador2-no *melhor-jogada*)
+                 (get-valor-jogador-no *melhor-jogada*)
+                 (get-profundidade-no *melhor-jogada*)
+                 'MAX ;not sure about this
+                 (get-pai-no *melhor-jogada*)
+                ))
+       (reset-melhor-jogada (setf *melhor-jogada* nil))
+      )
+    novo-no
+  )
+)
 
 
 

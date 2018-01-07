@@ -165,9 +165,9 @@
 
 ;; comecar-jogo-computador
 
-(defun comecar-jogo-computador (no tempo-limite profundidade-maxima)
+(defun comecar-jogo-computador (no tempo-limite profundidade-maxima &optional (jogador1-passou-vez nil) (jogador2-passou-vez nil))
   "Funcao que implementa um jogo entre dois computadores"
-    (let* 
+  (let* 
       (
        (resultado-alfabeta (alfabeta no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
        (novo-no (cria-no 
@@ -178,10 +178,74 @@
                  (get-profundidade-no *melhor-jogada*)
                  'MAX ;not sure about this
                  (get-pai-no *melhor-jogada*)
-                ))
+                 ))
        (reset-melhor-jogada (setf *melhor-jogada* nil))
+     )
+    (let* 
+        (
+         (apresentar-info (cond
+                           ((not (null (first novo-no))) (formatar-tabuleiro (get-estado-no novo-no)))
+                           (T nil)
+                           ))
+         (nova-linha (cond 
+                      ((not (null (first novo-no))) (format t "~%")) 
+                      (t nil)
+                      ))
+       )
+       
+      (cond
+
+       ((and jogador1-passou-vez jogador2-passou-vez) 'acabou) ;Se ambos jogadores passaram a vez entao o jogo termina
+
+       ((null (first novo-no))
+ 
+        (cond
+
+         ((= (get-valor-jogador-no no) 1) (comecar-jogo-computador 
+                                           (cria-no (get-estado-no no)
+                                                    (get-pecas-jogador1-no no)
+                                                    (get-pecas-jogador2-no no)
+                                                    2 ;Mudar de jogador
+                                                    (get-profundidade-no no)
+                                                    'MAX
+                                                    (get-pai-no no)
+                                           )
+                                           tempo-limite 
+                                           profundidade-maxima 
+                                           T 
+                                           jogador2-passou-vez
+                                         )
+          ) ;Jogador 1 passou a vez
+           
+         (T (comecar-jogo-computador 
+             (cria-no (get-estado-no no)
+                      (get-pecas-jogador1-no no)
+                      (get-pecas-jogador2-no no)
+                      1 ;Mudar de jogador
+                      (get-profundidade-no no)
+                      'MAX
+                      (get-pai-no no)
+                      ) 
+             tempo-limite 
+             profundidade-maxima 
+             jogador1-passou-vez 
+             T
+            )
+         ) ;Jogador 2 passou a vez
+       )
+     )
+
+       (T 
+
+        (cond
+         ((= (get-valor-jogador-no no) 1) (comecar-jogo-computador novo-no tempo-limite profundidade-maxima nil jogador2-passou-vez)) ;Dizer que o jogador 1 nao passou a vez
+             
+         (T (comecar-jogo-computador novo-no tempo-limite profundidade-maxima jogador1-passou-vez nil)) ; Dizer que o jogador 2 nao passou a vez
+        )
       )
-    novo-no
+
+     )
+    )
   )
 )
 

@@ -68,7 +68,7 @@
     (- 10(peca-contagem (tabuleiro-vazio) 'media 2))
     (- 15 (peca-contagem (tabuleiro-vazio) 'cruz 2))
     )
-   2
+   1
    )
   )
 
