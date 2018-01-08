@@ -137,17 +137,9 @@
         )
 
     (cond
-     ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida))
+     ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida jogador-escolhido))
      (T (comecar-jogo-computador no tempo-limite profundidade-escolhida))
     )
-
-    ; (cond
-    ;  ((equal algoritmo-escolhido 'dfs)
-    ;   (escrever-resultados (dfs no 'no-objetivo-p 'sucessores (operadores) profundidade-escolhida heuristica-escolhida) caminho))
-
-    ;  (T (escrever-resultados (funcall algoritmo-escolhido no 'no-objetivo-p 'sucessores (operadores) heuristica-escolhida) caminho))
-    ; )
-    
   )
 )
 
@@ -155,8 +147,141 @@
 
 ;; comecar-jogo-humano
 
-(defun comecar-jogo-humano (no tempo-limite profundidade-maxima)
+(defun comecar-jogo-humano (no tempo-limite profundidade-maxima peca-humano &optional (humano-passou-vez nil) (maquina-passou-vez nil))
   "Funcao que implementa um jogo entre um humano e um computador"
+  
+  (cond
+
+   ((and humano-passou-vez maquina-passou-vez) 'acabou)
+
+   ;Se for a primeira jogada e o humano tiver escolhido o jogador2 -> mudar a vez para o pc
+   ((and (null (get-pai-no no)) (= peca-humano 2))
+    (comecar-jogo-humano (cria-no (get-estado-no no)
+                                  (get-pecas-jogador1-no no)
+                                  (get-pecas-jogador2-no no)
+                                  1
+                                  (get-profundidade-no no)
+                                  'MAX
+                                  (get-pai-no no)
+                         )
+                         tempo-limite
+                         profundidade-maxima
+                         peca-humano
+    )
+   )
+
+   (T
+    (cond
+     ;Caso seja o humano a jogar
+     ((= (get-valor-jogador-no no) peca-humano)
+      ;Mostrar o tabuleiro
+      ;Mostrar pecas jogador1
+      ;Mostrar pecas jogador2
+      ;Mostrar as Jogadas possiveis para por uma peca pequena
+      ;Mostrar as Jogadas possiveis para por uma peca media
+      ;Mostrar as Jogadas possiveis para por um peca cruz
+      ;Carregar numa opcao para passar a vez (ou sera automatico ??)
+      (let* 
+          (
+           (pecas-jogador (cond
+                           ((= peca-humano 1) (get-pecas-jogador1-no no))
+                           (T (get-pecas-jogador2-no no))
+                          ))
+
+           (pecas-maquina (cond
+                           ((= peca-humano 1) (get-pecas-jogador2-no no))
+                           (T (get-pecas-jogador1-no no))
+                          ))
+ 
+           (tabuleiro (get-estado-no no))
+           
+           (jogadas-possiveis-pequena (cond
+                                       ((<= (first pecas-jogador) 0) nil)
+                                       (T (jogadas-possiveis tabuleiro 'pequena peca-humano))
+                                      ))
+
+           (jogadas-possiveis-media (cond
+                                       ((<= (second pecas-jogador) 0) nil)
+                                       (T (jogadas-possiveis tabuleiro 'media peca-humano))
+                                      ))
+
+           (jogadas-possiveis-cruz (cond
+                                       ((<= (third pecas-jogador) 0) nil)
+                                       (T (jogadas-possiveis tabuleiro 'cruz peca-humano))
+                                      ))
+          )
+        (cond
+
+         ;Caso nao haja jogadas possiveis para este tabuleiro -> passar a vez
+         ((zerop (+ (length jogadas-possiveis-pequena) (length jogadas-possiveis-media) (length jogadas-possiveis-cruz))) (format T "~%   ---Nao tem jogadas possiveis para este tabuleiro--~%") (comecar-jogo-humano (cria-no (get-estado-no no) (get-pecas-jogador1-no no) (get-pecas-jogador2-no no) (trocar-jogador no) (get-profundidade-no no) 'MAX (get-pai-no no)) tempo-limite profundidade-maxima peca-humano T maquina-passou-vez))
+
+         (T
+          (let 
+              (
+               (apresentar-informacao (mostrar-info tabuleiro pecas-jogador pecas-maquina jogadas-possiveis-pequena jogadas-possiveis-media jogadas-possiveis-cruz))
+               
+               ;(resposta (r
+              )
+          )
+         )
+        )
+      )
+     )
+
+
+     ;Caso seja a maquina a jogar
+     (T 
+      (let* 
+          (
+           (resultado-alfabeta (alfabeta no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
+
+           (novo-no (cria-no (get-estado-no *melhor-jogada*) 
+                             (get-pecas-jogador1-no *melhor-jogada*)
+                             (get-pecas-jogador2-no *melhor-jogada*)
+                             (get-valor-jogador-no *melhor-jogada*)
+                             (get-profundidade-no *melhor-jogada*)
+                             'MAX ;not sure about this
+                             (get-pai-no *melhor-jogada*)
+                             ))
+           (reset-melhor-jogada (setf *melhor-jogada* nil)) ;Fazer reset a melhor jogada encontrada
+           (nos-analisados *nos-analisados*) ;Guardar o numero de nos analisados
+
+           (reset-nos-analisados (setf *nos-analisados* 0)) ;Fazer reset aos nos analisados
+
+           (cortes-alfa *cortes-alfa*) ;Guardar o numero de cortes alfa
+
+           (reset-cortes-alfa (setf *cortes-alfa* 0)) ;Fazer reset aos cortes alfa
+
+           (cortes-beta *cortes-beta*) ;Guardar o numero de cortes beta
+
+           (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
+          )
+
+        (cond
+         ;Caso a maquina tenha passado a vez
+         ((null (first novo-no))
+          (comecar-jogo-humano (cria-no (get-estado-no no)
+                                        (get-pecas-jogador1-no no)
+                                        (get-pecas-jogador2-no no)
+                                        peca-humano ;Mudar para a peca do jogador
+                                        'MAX
+                                        (get-pai-no no))
+                               tempo-limite
+                               profundidade-maxima
+                               peca-humano
+                               humano-passou-vez
+                               T)
+         )
+
+         (T (comecar-jogo-humano novo-no tempo-limite profundidade-maxima peca-humano humano-passou-vez nil)) ;Dizer que a maquina nao passou a vez
+
+      )
+
+     )
+    )
+   )
+  )
+ )
 )
 
 
@@ -165,9 +290,9 @@
 
 ;; comecar-jogo-computador
 
-(defun comecar-jogo-computador (no tempo-limite profundidade-maxima)
+(defun comecar-jogo-computador (no tempo-limite profundidade-maxima &optional (jogador1-passou-vez nil) (jogador2-passou-vez nil))
   "Funcao que implementa um jogo entre dois computadores"
-    (let* 
+  (let* 
       (
        (resultado-alfabeta (alfabeta no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
        (novo-no (cria-no 
@@ -178,10 +303,93 @@
                  (get-profundidade-no *melhor-jogada*)
                  'MAX ;not sure about this
                  (get-pai-no *melhor-jogada*)
-                ))
-       (reset-melhor-jogada (setf *melhor-jogada* nil))
+                 ))
+       (reset-melhor-jogada (setf *melhor-jogada* nil)) ;Fazer reset a melhor jogada encontrada
+
+       (nos-analisados *nos-analisados*) ;Guardar o numero de nos analisados
+
+       (reset-nos-analisados (setf *nos-analisados* 0)) ;Fazer reset aos nos analisados
+
+       (cortes-alfa *cortes-alfa*) ;Guardar o numero de cortes alfa
+
+       (reset-cortes-alfa (setf *cortes-alfa* 0)) ;Fazer reset aos cortes alfa
+
+       (cortes-beta *cortes-beta*) ;Guardar o numero de cortes beta
+
+       (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
+     )
+    (let* 
+        (
+         (apresentar-info (cond
+                           ((not (null (first novo-no))) (escrever-resultados novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
+                           (T nil)
+                          ))
+       )
+       
+      (cond
+
+       ((and jogador1-passou-vez jogador2-passou-vez)
+        (let 
+            (
+             (resultado (decidir-vencedor no))
+            )
+          (cond
+           ((equal resultado 'jogador1) (format T "Vencedor: Jogador 1!"))
+           ((equal resultado 'jogador2) (format T "Vencedor: Jogador 2!"))
+           ((equal resultado 'empate) (format T "Empate !"))
+          )
+        )
+       ) ;Se ambos jogadores passaram a vez entao o jogo termina
+
+       ((null (first novo-no))
+ 
+        (cond
+
+         ((= (get-valor-jogador-no no) 1) (comecar-jogo-computador 
+                                           (cria-no (get-estado-no no)
+                                                    (get-pecas-jogador1-no no)
+                                                    (get-pecas-jogador2-no no)
+                                                    2 ;Mudar de jogador
+                                                    (get-profundidade-no no)
+                                                    'MAX
+                                                    (get-pai-no no)
+                                           )
+                                           tempo-limite 
+                                           profundidade-maxima 
+                                           T 
+                                           jogador2-passou-vez
+                                         )
+          ) ;Jogador 1 passou a vez
+           
+         (T (comecar-jogo-computador 
+             (cria-no (get-estado-no no)
+                      (get-pecas-jogador1-no no)
+                      (get-pecas-jogador2-no no)
+                      1 ;Mudar de jogador
+                      (get-profundidade-no no)
+                      'MAX
+                      (get-pai-no no)
+                      ) 
+             tempo-limite 
+             profundidade-maxima 
+             jogador1-passou-vez 
+             T
+            )
+         ) ;Jogador 2 passou a vez
+       )
+     )
+
+       (T 
+
+        (cond
+         ((= (get-valor-jogador-no no) 1) (comecar-jogo-computador novo-no tempo-limite profundidade-maxima nil jogador2-passou-vez)) ;Dizer que o jogador 1 nao passou a vez
+             
+         (T (comecar-jogo-computador novo-no tempo-limite profundidade-maxima jogador1-passou-vez nil)) ; Dizer que o jogador 2 nao passou a vez
+        )
       )
-    novo-no
+
+     )
+    )
   )
 )
 
@@ -339,7 +547,7 @@
 
 ;; ler-tempo-limite
 
-(defun ler-tempo-limite(&optional (resposta nil))
+(defun ler-tempo-limite (&optional (resposta nil))
   "Funcao que ira questionar o utilizador sobre o tempo maximo que o computador tem para decidir sobre uma jogada"
   (cond
 
@@ -357,51 +565,6 @@
 
 
 
-;; escrever-resultados
-
-(defun escrever-resultados (resultado caminho)
-  "Funcao que ira imprimir o resultado para o ecra de uma forma mais clara bem como escrever as estatisticas num ficheiro estatisticas.dat"
-  (cond
-   ((not (null resultado))
-    (let* (
-           (no-objetivo (first resultado))
-           (tabuleiro (get-estado-no no-objetivo))
-           (pecas (get-pecas-no no-objetivo))
-           (profundidade (get-profundidade-no no-objetivo))
-           (heuristica-resultado (get-heuristica-no no-objetivo))
-           (custo-resultado (get-f-no no-objetivo))
-           (no-pai-resultado (get-pai-no no-objetivo))
-         
-           (tempo-inicial (second resultado))
-           
-           (nos-expandidos (third resultado))
-           (nos-gerados (fourth resultado))
-          )
-      (progn
-        (formatar-tabuleiro tabuleiro) ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
-
-        (format T "~%~%  -Pecas pequenas: ~A" (first pecas))
-        (format T "~%  -Pecas medias: ~A" (second pecas))
-        (format T "~%  -Pecas em cruz: ~A" (third pecas))
-        (format T "~%~%  -Profundidade da solucao: ~A" profundidade)
-        (format T "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
-        (format T "~%  -Custo do no-objetivo: ~A" custo-resultado)
-
-        (format T "~%~%  -Nos expandidos: ~A" nos-expandidos)
-        (format T "~%  -Nos gerados: ~A" nos-gerados) ; para o IDA nao pode ser isto
-        (format T "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
-        (format T "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
-        (format T "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
-
-        (format T "~%~%  -No pai: ~A" no-pai-resultado)
-
-        (escrever-estatisticas-ficheiro caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-expandidos nos-gerados)
-      )
-    ))
-   (T nil)
-  )
-  
-)
 
 
 
@@ -420,35 +583,47 @@
 
 
 
-;; escrever-estatisticas-ficheiro
-
-(defun escrever-estatisticas-ficheiro (caminho tabuleiro pecas profundidade heuristica-resultado custo-resultado tempo-inicial nos-expandidos nos-gerados)
-  "Funcao que permite a escrita das estatisticas para um ficheiro estatisticas.dat"
-
-  (with-open-file (ficheiro-estatisticas 
-                   (concatenate 'string caminho "/estatisticas.dat")
-                   :direction :output
-                   :if-exists :append
-                   :if-does-not-exist :create
-                  )
-    (progn
-      (formatar-tabuleiro tabuleiro ficheiro-estatisticas)  ;Formata o estado no objetivo de modo a tornar-se mais apresentavel
-
-      (format ficheiro-estatisticas "~%~%  -Pecas pequenas: ~A" (first pecas))
-      (format ficheiro-estatisticas "~%  -Pecas medias: ~A" (second pecas))
-      (format ficheiro-estatisticas "~%  -Pecas em cruz: ~A" (third pecas))
-      (format ficheiro-estatisticas "~%~%  -Profundidade da solucao: ~A" profundidade)
-      (format ficheiro-estatisticas "~%  -Heuristica do no objetivo: ~A" heuristica-resultado)
-      (format ficheiro-estatisticas "~%  -Custo do no-objetivo: ~A" custo-resultado)
-
-      (format ficheiro-estatisticas "~%~%  -Nos expandidos: ~A" nos-expandidos)
-      (format ficheiro-estatisticas "~%  -Nos gerados: ~A" nos-gerados)
-      (format ficheiro-estatisticas "~%  -Tempo de Execucao: ~A segundo(s)" (- (get-universal-time) tempo-inicial))
-      (format ficheiro-estatisticas "~%  -Penetrancia: ~A" (penetrancia profundidade nos-gerados))
-      (format ficheiro-estatisticas "~%  -Fator de Ramificacao: ~A" (fator-ramificacao profundidade nos-gerados))
-
-      (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------")
-      (format ficheiro-estatisticas"~%----------------------------------------------------------------------------------~%") 
+;; mostrar-info
+(defun mostrar-info (tabuleiro pecas-jogador pecas-maquina jogadas-pequena jogadas-media jogadas-cruz)
+  "Funcao que ira apresentar ao utilizador informacao sobre as jogadas que pode efetuar"
+  (progn
+    (format T "~%  -E a sua vez de jogar !")
+    (formatar-tabuleiro tabuleiro)
+    (format T "~%~%  -Suas pecas: ~A  | Pecas do Adversario: ~A" pecas-jogador pecas-maquina)
+    (format T "~%~%  -Escolha a sua jogada:")
+    (cond
+     ((not (null jogadas-pequena)) (format T "~% Jogadas possiveis para a peca pequena: Exemplo: p12 -> linha 1 coluna 2~% ~A" jogadas-pequena))
+     (t nil)
     )
+    (cond
+     ((not (null jogadas-media)) (format T "~%~% Jogadas possiveis para a peca media: Exemplo: m12 -> linha 1 coluna 2~% ~A" jogadas-media))
+     (t nil)
+    )
+    (cond
+     ((not (null jogadas-cruz)) (format T "~%~% Jogadas possiveis para a peca cruz: Exemplo: c12 -> linha 1 coluna 2~% ~A~%" jogadas-cruz))
+     (t nil)
+    )
+  )
+)
+
+
+
+
+
+
+
+
+;; escrever-resultados
+
+(defun escrever-resultados (no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+  "Funcao que ira escrever no ecra os resultados de cada jogada realizada"
+  (progn
+    (formatar-tabuleiro (get-estado-no no))
+    (format T "~%~%  -Jogador que fez a jogada: Jogador ~A" jogador-que-jogou)
+    (format T "~%  -Pecas Jogador 1: ~A | Pecas Jogador 2: ~A" (get-pecas-jogador1-no no) (get-pecas-jogador2-no no))
+    (format T "~%~%  -Nos analisados: ~A" nos-analisados)
+    (format T "~%  -Cortes Alfa: ~A" cortes-alfa)
+    (format T "~%  -Cortes Beta: ~A" cortes-beta)
+    (format T "~%~%---------------------------------------------------------------------------------------------~%")
   )
 )
