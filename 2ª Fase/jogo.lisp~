@@ -220,7 +220,7 @@
               (
                (apresentar-informacao (mostrar-info tabuleiro pecas-jogador pecas-maquina jogadas-possiveis-pequena jogadas-possiveis-media jogadas-possiveis-cruz))
                
-               ;(resposta (r
+               ;(resposta  (equal (char (read-line) 2) #\q) USAR ISTO 
               )
           )
          )

@@ -168,7 +168,7 @@
                          profundidade-maxima
                          peca-humano
     )
-   )
+   ) ;;Esta aqui algum problema qualquer
 
    (T
     (cond
@@ -216,12 +216,42 @@
          ((zerop (+ (length jogadas-possiveis-pequena) (length jogadas-possiveis-media) (length jogadas-possiveis-cruz))) (format T "~%   ---Nao tem jogadas possiveis para este tabuleiro--~%") (comecar-jogo-humano (cria-no (get-estado-no no) (get-pecas-jogador1-no no) (get-pecas-jogador2-no no) (trocar-jogador no) (get-profundidade-no no) 'MAX (get-pai-no no)) tempo-limite profundidade-maxima peca-humano T maquina-passou-vez))
 
          (T
-          (let 
+          (let* 
               (
                (apresentar-informacao (mostrar-info tabuleiro pecas-jogador pecas-maquina jogadas-possiveis-pequena jogadas-possiveis-media jogadas-possiveis-cruz))
                
-               ;(resposta  (equal (char (read-line) 2) #\q) USAR ISTO 
+               (resposta (obter-resposta-jogada tabuleiro peca-humano)) ;Devolve (operador-desejado linha-desejada coluna-desejada)
+
+               (novo-tabuleiro (funcall (first resposta) (second resposta) (third resposta) tabuleiro peca-humano)) ;Tabuleiro com a jogada do humano
+
+               (novas-pecas-humano (cond
+                                    ((equal (first resposta) 'inserir-peca-pequena) (list (1- (first pecas-jogador)) (second pecas-jogador) (third pecas-jogador)))
+
+                                    ((equal (first resposta) 'inserir-peca-media) (list (first pecas-jogador) (1- (second pecas-jogador)) (third pecas-jogador)))
+
+                                    ((equal (first resposta) 'inserir-peca-cruz) (list (first pecas-jogador) (second pecas-jogador) (1- (third pecas-jogador))))
+                                   ))
+
+               (novo-no (cond
+                         ((= peca-humano 1) (cria-no novo-tabuleiro 
+                                                     novas-pecas-humano
+                                                     pecas-maquina
+                                                     2
+                                                     (1+ (get-profundidade-no no))
+                                                     'MAX
+                                                     no))
+
+                         (T (cria-no novo-tabuleiro 
+                                     pecas-maquina
+                                     novas-pecas-humano
+                                     1
+                                     (1+ (get-profundidade-no no))
+                                     'MAX
+                                     no))
+                        ))
               )
+
+            (comecar-jogo-humano novo-no tempo-limite profundidade-maxima peca-humano nil maquina-passou-vez) ;Dizer que o jogador nao passou a vez
           )
          )
         )
@@ -592,15 +622,15 @@
     (format T "~%~%  -Suas pecas: ~A  | Pecas do Adversario: ~A" pecas-jogador pecas-maquina)
     (format T "~%~%  -Escolha a sua jogada:")
     (cond
-     ((not (null jogadas-pequena)) (format T "~% Jogadas possiveis para a peca pequena: Exemplo: p12 -> linha 1 coluna 2~% ~A" jogadas-pequena))
+     ((not (null jogadas-pequena)) (format T "~% Jogadas possiveis para a peca pequena: ~% ~A" jogadas-pequena))
      (t nil)
     )
     (cond
-     ((not (null jogadas-media)) (format T "~%~% Jogadas possiveis para a peca media: Exemplo: m12 -> linha 1 coluna 2~% ~A" jogadas-media))
+     ((not (null jogadas-media)) (format T "~%~% Jogadas possiveis para a peca media: ~% ~A" jogadas-media))
      (t nil)
     )
     (cond
-     ((not (null jogadas-cruz)) (format T "~%~% Jogadas possiveis para a peca cruz: Exemplo: c12 -> linha 1 coluna 2~% ~A~%" jogadas-cruz))
+     ((not (null jogadas-cruz)) (format T "~%~% Jogadas possiveis para a peca cruz: ~% ~A~%" jogadas-cruz))
      (t nil)
     )
   )
@@ -625,5 +655,107 @@
     (format T "~%  -Cortes Alfa: ~A" cortes-alfa)
     (format T "~%  -Cortes Beta: ~A" cortes-beta)
     (format T "~%~%---------------------------------------------------------------------------------------------~%")
+  )
+)
+
+
+
+
+
+
+;;;;;;;;;;Funcoe Auxiliares para obter a jogada do utilizador;;;;;;;;;;
+
+
+
+
+
+;;obter-resposta-jogada
+
+(defun obter-resposta-jogada (tabuleiro peca-humano)
+  "Funcao que ira obter qual a jogada que o jogador humano deseja fazer, validando-a"
+  (let* 
+      (
+       (pergunta-operador (format T "~%~%  -Qual tipo de jogada pretende fazer ? (1 - jogar uma peca pequena, 2 - jogar uma peca media, 3 - jogar uma peca em cruz)~%"))
+       
+       (resposta-operador (read))
+
+       (resposta-linha (obter-resposta-linha (1- (length tabuleiro))))
+       
+       (resposta-coluna (obter-resposta-coluna (1- (length (first tabuleiro)))))
+      )
+    (cond
+
+     ((not (numberp resposta-operador)) (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+
+     ((= resposta-operador 1) (cond
+                                    ((jogada-in-jogadas-possiveis-p (list resposta-linha resposta-coluna) tabuleiro 'pequena peca-humano) (list 'inserir-peca-pequena resposta-linha resposta-coluna))
+                                     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+                                   ))
+
+
+
+     ((= resposta-operador 2) (cond
+                                    ((jogada-in-jogadas-possiveis-p (list resposta-linha resposta-coluna) tabuleiro 'media peca-humano) (list 'inserir-peca-media resposta-linha resposta-coluna))
+                                     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+                                   ))
+
+
+
+     ((= resposta-operador 3) (cond
+                                    ((jogada-in-jogadas-possiveis-p (list resposta-linha resposta-coluna) tabuleiro 'cruz peca-humano) (list 'inserir-peca-cruz resposta-linha resposta-coluna))
+                                     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+                                   ))
+
+
+     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+    )
+  )
+)
+
+
+
+;; obter-resposta-linha
+
+(defun obter-resposta-linha (linha-maxima)
+  "Funcao que ira questionar o utilizador pela linha em que deseja jogar"
+  (let* 
+      (
+       (pergunta-linha (format T "~%  -Insira a linha onde pretende jogar: (0 - ~A)~%" linha-maxima))
+       (resposta (read))
+      )
+    (cond
+     ((not (numberp resposta)) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" linha-maxima) (obter-resposta-linha linha-maxima))
+     
+     ((< resposta 0) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" linha-maxima) (obter-resposta-linha linha-maxima))
+     
+     ((> resposta linha-maxima) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" linha-maxima) (obter-resposta-linha linha-maxima))
+     
+     (T resposta)
+    )
+  )
+)
+
+
+
+
+
+;; obter-resposta-coluna
+
+(defun obter-resposta-coluna (coluna-maxima)
+  "Funcao que ira questionar o utilizador pela coluna em que deseja jogar"
+  (let* 
+      (
+       (pergunta-linha (format T "~%  -Insira a coluna onde pretende jogar: (0 - ~A)~%" coluna-maxima))
+       (resposta (read))
+      )
+    (cond
+     ((not (numberp resposta)) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
+     
+     ((< resposta 0) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
+     
+     ((> resposta coluna-maxima) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
+     
+     (T resposta)
+    )
   )
 )
