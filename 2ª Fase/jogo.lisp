@@ -294,6 +294,7 @@
                                         (get-pecas-jogador1-no no)
                                         (get-pecas-jogador2-no no)
                                         peca-humano ;Mudar para a peca do jogador
+                                        (get-profundidade-no no)
                                         'MAX
                                         (get-pai-no no))
                                tempo-limite
@@ -324,7 +325,7 @@
   "Funcao que implementa um jogo entre dois computadores"
   (let* 
       (
-       (resultado-alfabeta (alfabeta no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
+       (resultado-alfabeta (alfabeta-memo no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
        (novo-no (cria-no 
                  (get-estado-no *melhor-jogada*)
                  (get-pecas-jogador1-no *melhor-jogada*)
@@ -700,6 +701,7 @@
 
 (defun imprimir-vencedor (caminho vencedor)
   "Funcao que ira imprimir no ecra e no ficheiro de logs qual o vencedor do jogo"
+  (progn
   (cond
     ((equal vencedor 'jogador1)
       (progn
@@ -755,8 +757,40 @@
 
 
   )
+  (jogar-outra-vez caminho)
+ )
 )
 
+
+
+
+
+
+
+
+
+
+;; jogar-outra-vez 
+
+(defun jogar-outra-vez (caminho)
+  "Funcao que ira questionar o utilizador sobre se pretende jogar outra vez ou nao"
+  (progn
+    (format T "~%  -Pretende jogar outra vez ?")
+    (format T "~%  1- Sim")
+    (format T "~%  2- Nao~%")
+    (let 
+        (
+         (resposta (read))
+        )
+      (cond
+       ((not (numberp resposta)) (format T "~%  -Por favor insira o numero 1 ou 2") (jogar-outra-vez caminho))
+       ((= resposta 1) (iniciar caminho))
+       ((= resposta 2) (format T "~%  >Adeus!"))
+       (T (format T "~%  -Por favor insira o numero 1 ou 2") (jogar-outra-vez caminho))
+      )
+    )  
+  )
+)
 
 
 
