@@ -9,6 +9,7 @@
 (defvar *nos-analisados* 0)
 (defvar *cortes-alfa* 0)
 (defvar *cortes-beta* 0)
+(defvar *tabela* (make-hash-table))
 
 ;;;;;;;; Sucessores ;;;;;;;;
 
@@ -158,6 +159,33 @@
     )
   )
 )
+
+
+
+
+
+;;;;;;;; Memoizacao ;;;;;;;;
+
+
+
+
+;; alfabeta-memo
+
+(let ((tab (make-hash-table :test 'equal)))
+  (defun alfabeta-memo (no profundidade-limite operadores funcao-utilidade &optional (tempo-limite 5))
+    "Funcao que verifica se ja existe um resultado alfabeta para o no passado na hash table, caso exista devolve-o, caso nao exista calcula o seu valor, retorna-o e insere-o na hash table"
+    (or (gethash (hash-node no) tab)
+        (let 
+            (
+             (resultado-alfabeta (alfabeta no profundidade-limite operadores funcao-utilidade tempo-limite))
+            )
+          (setf (gethash (hash-node no) tab) resultado-alfabeta)
+          resultado-alfabeta
+        )
+    )
+  )
+)
+
 
 
 

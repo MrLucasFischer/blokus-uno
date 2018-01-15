@@ -6,6 +6,9 @@
 ;;;;;;;; Variaveis Globais ;;;;;;;;
 
 (defvar *melhor-jogada* nil)
+(defvar *nos-analisados* 0)
+(defvar *cortes-alfa* 0)
+(defvar *cortes-beta* 0)
 
 ;;;;;;;; Sucessores ;;;;;;;;
 
@@ -167,6 +170,7 @@
       (
         (tempo-atual (get-universal-time))
         (tempo-gasto (- tempo-atual tempo-inicial))
+        (nos-analisados (setf *nos-analisados* (1+ *nos-analisados*)))
       )
     
     (cond
@@ -216,7 +220,7 @@
           )
 
         (cond 
-         ((<= beta novo-alfa) beta) ;Condicao de corte, aplicando fail-hard
+         ((<= beta novo-alfa) (setf *cortes-alfa* (1+ *cortes-alfa*)) beta) ;Condicao de corte, aplicando fail-hard
 
          (T (percorrer-sucessores (rest sucessores) novo-alfa beta profundidade operadores funcao-utilidade tempo-inicial tempo-limite tipo-no-pai novo-v))
         )
@@ -233,7 +237,7 @@
           )
 
         (cond 
-         ((<= novo-beta alfa) alfa) ;Condicao de corte, aplicando fail-hard
+         ((<= novo-beta alfa) (setf *cortes-beta* (1+ *cortes-beta*)) alfa) ;Condicao de corte, aplicando fail-hard
 
          (T (percorrer-sucessores (rest sucessores) alfa novo-beta profundidade operadores funcao-utilidade tempo-inicial tempo-limite tipo-no-pai novo-v))
         )
@@ -249,7 +253,7 @@
 ;; verificar-melhor-jogada-afa
 
 (defun verificar-melhor-jogada-alfa (alfa v sucessor)
-  "Funcao que ira fazer o max entre o alfa e o valor de utilidade do sucessor, caso o valor de utilidade seja superior ao alfa atualiza-se a melhor jogada para que seja o sucessor passado por argumento"
+  "Funcao que ira fazer o max entre o alfa e o valor de utilidade do sucessor, caso o valor de utilidade seja superior ao alfa, atualiza-se a melhor jogada para que seja o sucessor passado por argumento"
    (cond
      ((> v alfa) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
      (T alfa) ;Caso contrario mantem-se a melhor jogada e o alfa
@@ -263,12 +267,7 @@
 ;; verificar-melhor-jogada-beta
 
 (defun verificar-melhor-jogada-beta (beta v sucessor)
-  "Funcao que ira fazer o max entre o alfa e o valor de utilidade do sucessor, caso o valor de utilidade seja superior ao alfa atualiza-se a melhor jogada para que seja o sucessor passado por argumento"
-  ; (cond
-  ;   ((> v alfa) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
-  ;   (T alfa) ;Caso contrario mantem-se a melhor jogada e o alfa
-  ; )
-
+  "Funcao que ira fazer o min entre o beta e o valor de utilidade do sucessor, caso o valor de utilidade seja inferior ao beta, atualiza-se a melhor jogada para que seja o sucessor passado por argumento"
   (cond
     ((< v beta) (setf *melhor-jogada* sucessor) v) ;Se o valor de utilidade do sucessor for maior que o alfa atual atualiza-se a melhor jogada e o alfa passa a ser o v
     (T beta) ;Caso contrario mantem-se a melhor jogada e o alfa

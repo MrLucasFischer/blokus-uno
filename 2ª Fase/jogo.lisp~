@@ -138,7 +138,7 @@
 
     (cond
      ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida jogador-escolhido))
-     (T (comecar-jogo-computador no tempo-limite profundidade-escolhida))
+     (T (comecar-jogo-computador no tempo-limite profundidade-escolhida caminho))
     )
   )
 )
@@ -320,7 +320,7 @@
 
 ;; comecar-jogo-computador
 
-(defun comecar-jogo-computador (no tempo-limite profundidade-maxima &optional (jogador1-passou-vez nil) (jogador2-passou-vez nil))
+(defun comecar-jogo-computador (no tempo-limite profundidade-maxima caminho &optional (jogador1-passou-vez nil) (jogador2-passou-vez nil))
   "Funcao que implementa um jogo entre dois computadores"
   (let* 
       (
@@ -351,7 +351,7 @@
     (let* 
         (
          (apresentar-info (cond
-                           ((not (null (first novo-no))) (escrever-resultados novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
+                           ((not (null (first novo-no))) (escrever-resultados caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
                            (T nil)
                           ))
        )
@@ -364,9 +364,9 @@
              (resultado (decidir-vencedor no))
             )
           (cond
-           ((equal resultado 'jogador1) (format T "Vencedor: Jogador 1!"))
-           ((equal resultado 'jogador2) (format T "Vencedor: Jogador 2!"))
-           ((equal resultado 'empate) (format T "Empate !"))
+           ((equal resultado 'jogador1) (imprimir-vencedor caminho 'jogador1))
+           ((equal resultado 'jogador2) (imprimir-vencedor caminho 'jogador2))
+           ((equal resultado 'empate) (imprimir-vencedor caminho 'empate))
           )
         )
        ) ;Se ambos jogadores passaram a vez entao o jogo termina
@@ -385,7 +385,8 @@
                                                     (get-pai-no no)
                                            )
                                            tempo-limite 
-                                           profundidade-maxima 
+                                           profundidade-maxima
+                                           caminho
                                            T 
                                            jogador2-passou-vez
                                          )
@@ -401,7 +402,8 @@
                       (get-pai-no no)
                       ) 
              tempo-limite 
-             profundidade-maxima 
+             profundidade-maxima
+             caminho 
              jogador1-passou-vez 
              T
             )
@@ -412,9 +414,9 @@
        (T 
 
         (cond
-         ((= (get-valor-jogador-no no) 1) (comecar-jogo-computador novo-no tempo-limite profundidade-maxima nil jogador2-passou-vez)) ;Dizer que o jogador 1 nao passou a vez
+         ((= (get-valor-jogador-no no) 1) (comecar-jogo-computador novo-no tempo-limite profundidade-maxima caminho nil jogador2-passou-vez)) ;Dizer que o jogador 1 nao passou a vez
              
-         (T (comecar-jogo-computador novo-no tempo-limite profundidade-maxima jogador1-passou-vez nil)) ; Dizer que o jogador 2 nao passou a vez
+         (T (comecar-jogo-computador novo-no tempo-limite profundidade-maxima caminho jogador1-passou-vez nil)) ; Dizer que o jogador 2 nao passou a vez
         )
       )
 
@@ -645,7 +647,7 @@
 
 ;; escrever-resultados
 
-(defun escrever-resultados (no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+(defun escrever-resultados (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
   "Funcao que ira escrever no ecra os resultados de cada jogada realizada"
   (progn
     (formatar-tabuleiro (get-estado-no no))
@@ -655,8 +657,108 @@
     (format T "~%  -Cortes Alfa: ~A" cortes-alfa)
     (format T "~%  -Cortes Beta: ~A" cortes-beta)
     (format T "~%~%---------------------------------------------------------------------------------------------~%")
+    (escrever-log-ficheiro caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
   )
 )
+
+
+
+
+
+
+
+
+;; escrever-log-ficheiro
+
+(defun escrever-log-ficheiro (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+  "Funcao que ira escrever os dados obtidos de uma jogada num jogo entre duas maquinas"
+  (with-open-file (ficheiro-log 
+                   (concatenate 'string caminho "/log.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+    (formatar-tabuleiro (get-estado-no no) ficheiro-log)
+    (format ficheiro-log "~%~%  -Jogador que fez a jogada: Jogador ~A" jogador-que-jogou)
+    (format ficheiro-log "~%  -Pecas Jogador 1: ~A | Pecas Jogador 2: ~A" (get-pecas-jogador1-no no) (get-pecas-jogador2-no no))
+    (format ficheiro-log "~%~%  -Nos analisados: ~A" nos-analisados)
+    (format ficheiro-log "~%  -Cortes Alfa: ~A" cortes-alfa)
+    (format ficheiro-log "~%  -Cortes Beta: ~A" cortes-beta)
+    (format ficheiro-log "~%~%---------------------------------------------------------------------------------------------~%")
+  )
+)
+
+
+
+
+
+
+
+
+
+;; imprimir-vencedor
+
+(defun imprimir-vencedor (caminho vencedor)
+  "Funcao que ira imprimir no ecra e no ficheiro de logs qual o vencedor do jogo"
+  (cond
+    ((equal vencedor 'jogador1)
+      (progn
+        (format T "~%~%  -Vencedor: Jogador 1!~%")
+          (with-open-file (ficheiro-log 
+                   (concatenate 'string caminho "/log.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+            (progn
+              (format ficheiro-log "~%~%  -Vencedor: Jogador 1!~%")
+              (format ficheiro-log "~%~%---------------------------------------FIM DO JOGO------------------------------------------~%")
+            )
+          )
+      ) 
+    )
+
+
+    ((equal vencedor 'jogador2)
+      (progn
+        (format T "~%~%  -Vencedor: Jogador 2!~%")
+          (with-open-file (ficheiro-log 
+                   (concatenate 'string caminho "/log.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+            (progn
+              (format ficheiro-log "~%~%  -Vencedor: Jogador 2!~%")
+              (format ficheiro-log "~%~%---------------------------------------FIM DO JOGO------------------------------------------~%")
+            )
+          )
+      ) 
+    )
+
+    (t
+      (progn
+        (format T "~%~%  -Empate!~%")
+          (with-open-file (ficheiro-log 
+                   (concatenate 'string caminho "/log.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+            (progn
+              (format ficheiro-log "~%~%  -Empate!~%")
+              (format ficheiro-log "~%~%---------------------------------------FIM DO JOGO------------------------------------------~%")
+            )
+          )
+      ) 
+    )
+
+
+  )
+)
+
+
+
 
 
 
