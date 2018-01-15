@@ -675,7 +675,7 @@
   "Funcao que ira obter qual a jogada que o jogador humano deseja fazer, validando-a"
   (let* 
       (
-       (pergunta-operador (format T "~%~%  -Qual tipo de jogada pretende fazer ? (1 - jogar uma peca pequena, 2 - jogar uma peca media, 3 - jogar uma peca em cruz)~%"))
+       (pergunta-operador (format T "~%  -Qual tipo de jogada pretende fazer ? (1 - jogar uma peca pequena, 2 - jogar uma peca media, 3 - jogar uma peca em cruz)~%"))
        
        (resposta-operador (read))
 
@@ -685,29 +685,29 @@
       )
     (cond
 
-     ((not (numberp resposta-operador)) (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+     ((not (numberp resposta-operador)) (format T "~%~%  ----- ATENCAO: Essa jogada nao e valida, tente novamente -----~%~%") (obter-resposta-jogada tabuleiro peca-humano))
 
      ((= resposta-operador 1) (cond
                                     ((jogada-in-jogadas-possiveis-p (list resposta-linha resposta-coluna) tabuleiro 'pequena peca-humano) (list 'inserir-peca-pequena resposta-linha resposta-coluna))
-                                     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+                                     (T (format T "~%~%  ----- ATENCAO: Essa jogada nao e valida, tente novamente -----~%~%") (obter-resposta-jogada tabuleiro peca-humano))
                                    ))
 
 
 
      ((= resposta-operador 2) (cond
                                     ((jogada-in-jogadas-possiveis-p (list resposta-linha resposta-coluna) tabuleiro 'media peca-humano) (list 'inserir-peca-media resposta-linha resposta-coluna))
-                                     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+                                     (T (format T "~%~%  ----- ATENCAO: Essa jogada nao e valida, tente novamente -----~%~%") (obter-resposta-jogada tabuleiro peca-humano))
                                    ))
 
 
 
      ((= resposta-operador 3) (cond
                                     ((jogada-in-jogadas-possiveis-p (list resposta-linha resposta-coluna) tabuleiro 'cruz peca-humano) (list 'inserir-peca-cruz resposta-linha resposta-coluna))
-                                     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+                                     (T (format T "~%~%  ----- ATENCAO: Essa jogada nao e valida, tente novamente -----~%~%") (obter-resposta-jogada tabuleiro peca-humano))
                                    ))
 
 
-     (T (format T "~%  -Essa jogada nao e valida, tente novamente~%") (obter-respota-jogada tabuleiro peca-humano))
+     (T (format T "~%~%  ----- ATENCAO: Essa jogada nao e valida, tente novamente -----~%~%") (obter-resposta-jogada tabuleiro peca-humano))
     )
   )
 )
@@ -724,11 +724,11 @@
        (resposta (read))
       )
     (cond
-     ((not (numberp resposta)) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" linha-maxima) (obter-resposta-linha linha-maxima))
+     ((not (numberp resposta)) (format T "~%~%  ----- ATENCAO: Por favor insira um numero entre 0 e ~A -----~%~%" linha-maxima) (obter-resposta-linha linha-maxima))
      
-     ((< resposta 0) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" linha-maxima) (obter-resposta-linha linha-maxima))
+     ((< resposta 0) (format T "~%~%  ----- ATENCAO: Por favor insira um numero entre 0 e ~A -----~%~%" linha-maxima) (obter-resposta-linha linha-maxima))
      
-     ((> resposta linha-maxima) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" linha-maxima) (obter-resposta-linha linha-maxima))
+     ((> resposta linha-maxima) (format T "~%  ----- ATENCAO: Por favor insira um numero entre 0 e ~A -----~%~%" linha-maxima) (obter-resposta-linha linha-maxima))
      
      (T resposta)
     )
@@ -749,11 +749,11 @@
        (resposta (read))
       )
     (cond
-     ((not (numberp resposta)) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
+     ((not (numberp resposta)) (format T "~%~%  ----- ATENCAO: Por favor insira um numero entre 0 e ~A -----~%~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
      
-     ((< resposta 0) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
+     ((< resposta 0) (format T "~%~%  ----- ATENCAO: Por favor insira um numero entre 0 e ~A -----~%~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
      
-     ((> resposta coluna-maxima) (format T "~%  -Por favor insira um numero entre 0 e ~A~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
+     ((> resposta coluna-maxima) (format T "~%~%  ----- ATENCAO: Por favor insira um numero entre 0 e ~A -----~%~%" coluna-maxima) (obter-resposta-linha coluna-maxima))
      
      (T resposta)
     )
