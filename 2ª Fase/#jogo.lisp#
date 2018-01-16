@@ -20,7 +20,7 @@
        )
     ;Para Ubuntu, no meu caso:
     ;/home/lucas-fischer/Dropbox/Faculdade/IA/2018/Projeto/blokus-uno
-    ;C:/Users/Andreia Pereira/Google Drive/3� Ano - 1� Semestre/IA/Projeto/blokus-uno
+    ;C:/Users/Andreia Pereira/Google Drive/3ï¿½ Ano - 1ï¿½ Semestre/IA/Projeto/blokus-uno
     (progn
       (compile-file (concatenate 'string caminho "/puzzle.lisp"))
       (compile-file (concatenate 'string caminho "/algoritmo.lisp"))
@@ -85,7 +85,7 @@
            (resposta (read))
           )
       (cond
-       ((not (numberp resposta)) (format T "~% -> Precisa de Inserir um n�mero (1 ou 2)") (menu-principal caminho))
+       ((not (numberp resposta)) (format T "~% -> Precisa de Inserir um nï¿½mero (1 ou 2)") (menu-principal caminho))
        ((= resposta 1 ) (iniciar caminho))
        ((= resposta 2) (format T "~% -> Adeus!"))
        (T (format T "~% -> Precisa de Inserir um numero (1 ou 2)") (menu-principal caminho))
@@ -166,7 +166,7 @@
    )
 
    ;Se for a primeira jogada e o humano tiver escolhido o jogador2 -> mudar a vez para o pc
-   ((and (null (get-pai-no no)) (= get-valor-jogador-no 2))
+   ((and (null (get-pai-no no)) (= (get-valor-jogador-no no) 2))
     (comecar-jogo-humano (cria-no (get-estado-no no)
                                   (get-pecas-jogador1-no no)
                                   (get-pecas-jogador2-no no)
