@@ -111,8 +111,8 @@
 
          (tempo-limite (ler-tempo-limite))
 
-         ;(tabuleiro-escolhido (ler-tabuleiro caminho)) ;Perguntar se vai haver outros tabuleiros ou se e sempre o mesmo
-         (tabuleiro-escolhido (tabuleiro-vazio))
+         (tabuleiro-escolhido (ler-tabuleiro caminho)) ;Perguntar se vai haver outros tabuleiros ou se e sempre o mesmo
+         ;(tabuleiro-escolhido (tabuleiro-vazio))
 
          (profundidade-escolhida (ler-profundidade))
 
@@ -137,7 +137,7 @@
         )
 
     (cond
-     ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida jogador-escolhido))
+     ((equal tipo-de-jogo 'humano) (comecar-jogo-humano no tempo-limite profundidade-escolhida jogador-escolhido caminho))
      (T (comecar-jogo-computador no tempo-limite profundidade-escolhida caminho))
     )
   )
@@ -147,15 +147,26 @@
 
 ;; comecar-jogo-humano
 
-(defun comecar-jogo-humano (no tempo-limite profundidade-maxima peca-humano &optional (humano-passou-vez nil) (maquina-passou-vez nil))
+(defun comecar-jogo-humano (no tempo-limite profundidade-maxima peca-humano caminho &optional (humano-passou-vez nil) (maquina-passou-vez nil))
   "Funcao que implementa um jogo entre um humano e um computador"
   
   (cond
 
-   ((and humano-passou-vez maquina-passou-vez) 'acabou)
+   ((and humano-passou-vez maquina-passou-vez)
+    (let 
+        (
+         (resultado (decidir-vencedor no))
+        )
+      (cond
+       ((equal resultado 'jogador1) (imprimir-vencedor caminho 'jogador1))
+       ((equal resultado 'jogador2) (imprimir-vencedor caminho 'jogador2))
+       ((equal resultado 'empate) (imprimir-vencedor caminho 'empate))
+      )
+     )
+   )
 
    ;Se for a primeira jogada e o humano tiver escolhido o jogador2 -> mudar a vez para o pc
-   ((and (null (get-pai-no no)) (= peca-humano 2))
+   ((and (null (get-pai-no no)) (= (get-valor-jogador-no no) 2))
     (comecar-jogo-humano (cria-no (get-estado-no no)
                                   (get-pecas-jogador1-no no)
                                   (get-pecas-jogador2-no no)
@@ -167,6 +178,7 @@
                          tempo-limite
                          profundidade-maxima
                          peca-humano
+                         caminho
     )
    ) ;;Esta aqui algum problema qualquer
 
@@ -174,13 +186,6 @@
     (cond
      ;Caso seja o humano a jogar
      ((= (get-valor-jogador-no no) peca-humano)
-      ;Mostrar o tabuleiro
-      ;Mostrar pecas jogador1
-      ;Mostrar pecas jogador2
-      ;Mostrar as Jogadas possiveis para por uma peca pequena
-      ;Mostrar as Jogadas possiveis para por uma peca media
-      ;Mostrar as Jogadas possiveis para por um peca cruz
-      ;Carregar numa opcao para passar a vez (ou sera automatico ??)
       (let* 
           (
            (pecas-jogador (cond
@@ -213,12 +218,12 @@
         (cond
 
          ;Caso nao haja jogadas possiveis para este tabuleiro -> passar a vez
-         ((zerop (+ (length jogadas-possiveis-pequena) (length jogadas-possiveis-media) (length jogadas-possiveis-cruz))) (format T "~%   ---Nao tem jogadas possiveis para este tabuleiro--~%") (comecar-jogo-humano (cria-no (get-estado-no no) (get-pecas-jogador1-no no) (get-pecas-jogador2-no no) (trocar-jogador no) (get-profundidade-no no) 'MAX (get-pai-no no)) tempo-limite profundidade-maxima peca-humano T maquina-passou-vez))
+         ((zerop (+ (length jogadas-possiveis-pequena) (length jogadas-possiveis-media) (length jogadas-possiveis-cruz))) (format T "~%   ---Nao tem jogadas possiveis para este tabuleiro--~%") (comecar-jogo-humano (cria-no (get-estado-no no) (get-pecas-jogador1-no no) (get-pecas-jogador2-no no) (trocar-jogador no) (get-profundidade-no no) 'MAX (get-pai-no no)) tempo-limite profundidade-maxima peca-humano caminho T maquina-passou-vez))
 
          (T
           (let* 
               (
-               (apresentar-informacao (mostrar-info tabuleiro pecas-jogador pecas-maquina jogadas-possiveis-pequena jogadas-possiveis-media jogadas-possiveis-cruz))
+               (apresentar-informacao (mostrar-info caminho tabuleiro pecas-jogador pecas-maquina jogadas-possiveis-pequena jogadas-possiveis-media jogadas-possiveis-cruz))
                
                (resposta (obter-resposta-jogada tabuleiro peca-humano)) ;Devolve (operador-desejado linha-desejada coluna-desejada)
 
@@ -251,7 +256,7 @@
                         ))
               )
 
-            (comecar-jogo-humano novo-no tempo-limite profundidade-maxima peca-humano nil maquina-passou-vez) ;Dizer que o jogador nao passou a vez
+            (comecar-jogo-humano novo-no tempo-limite profundidade-maxima peca-humano caminho nil maquina-passou-vez) ;Dizer que o jogador nao passou a vez
           )
          )
         )
@@ -287,27 +292,35 @@
            (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
           )
 
-        (cond
+        (let 
+            (
+             (apresentar-info (cond
+                               ((not (null (first novo-no))) (escrever-log-ficheiro-computador caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
+                               (T nil)
+                               ))
+            )
+          (cond
          ;Caso a maquina tenha passado a vez
-         ((null (first novo-no))
-          (comecar-jogo-humano (cria-no (get-estado-no no)
-                                        (get-pecas-jogador1-no no)
-                                        (get-pecas-jogador2-no no)
-                                        peca-humano ;Mudar para a peca do jogador
-                                        (get-profundidade-no no)
-                                        'MAX
-                                        (get-pai-no no))
-                               tempo-limite
-                               profundidade-maxima
-                               peca-humano
-                               humano-passou-vez
-                               T)
-         )
+           ((null (first novo-no))
+            (comecar-jogo-humano (cria-no (get-estado-no no)
+                                          (get-pecas-jogador1-no no)
+                                          (get-pecas-jogador2-no no)
+                                          peca-humano ;Mudar para a peca do jogador
+                                          (get-profundidade-no no)
+                                          'MAX
+                                          (get-pai-no no))
+                                 tempo-limite
+                                 profundidade-maxima
+                                 peca-humano
+                                 caminho
+                                 humano-passou-vez
+                                 T)
+            )
 
-         (T (comecar-jogo-humano novo-no tempo-limite profundidade-maxima peca-humano humano-passou-vez nil)) ;Dizer que a maquina nao passou a vez
+           (T (comecar-jogo-humano novo-no tempo-limite profundidade-maxima peca-humano caminho humano-passou-vez nil)) ;Dizer que a maquina nao passou a vez
 
-      )
-
+           )
+        )
      )
     )
    )
@@ -349,7 +362,7 @@
 
        (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
      )
-    (let* 
+    (let 
         (
          (apresentar-info (cond
                            ((not (null (first novo-no))) (escrever-resultados caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
@@ -617,7 +630,7 @@
 
 
 ;; mostrar-info
-(defun mostrar-info (tabuleiro pecas-jogador pecas-maquina jogadas-pequena jogadas-media jogadas-cruz)
+(defun mostrar-info (caminho tabuleiro pecas-jogador pecas-maquina jogadas-pequena jogadas-media jogadas-cruz)
   "Funcao que ira apresentar ao utilizador informacao sobre as jogadas que pode efetuar"
   (progn
     (format T "~%  -E a sua vez de jogar !")
@@ -636,6 +649,7 @@
      ((not (null jogadas-cruz)) (format T "~%~% Jogadas possiveis para a peca cruz: ~% ~A~%" jogadas-cruz))
      (t nil)
     )
+    (escrever-log-ficheiro-humano caminho tabuleiro pecas-jogador pecas-maquina jogadas-pequena jogadas-media jogadas-cruz)
   )
 )
 
@@ -658,7 +672,7 @@
     (format T "~%  -Cortes Alfa: ~A" cortes-alfa)
     (format T "~%  -Cortes Beta: ~A" cortes-beta)
     (format T "~%~%---------------------------------------------------------------------------------------------~%")
-    (escrever-log-ficheiro caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+    (escrever-log-ficheiro-computador caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
   )
 )
 
@@ -669,10 +683,10 @@
 
 
 
-;; escrever-log-ficheiro
+;; escrever-log-ficheiro-computador
 
-(defun escrever-log-ficheiro (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
-  "Funcao que ira escrever os dados obtidos de uma jogada num jogo entre duas maquinas"
+(defun escrever-log-ficheiro-computador (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+  "Funcao que ira escrever num ficheiro os dados obtidos de uma jogada num jogo entre duas maquinas"
   (with-open-file (ficheiro-log 
                    (concatenate 'string caminho "/log.dat")
                    :direction :output
@@ -685,6 +699,7 @@
     (format ficheiro-log "~%~%  -Nos analisados: ~A" nos-analisados)
     (format ficheiro-log "~%  -Cortes Alfa: ~A" cortes-alfa)
     (format ficheiro-log "~%  -Cortes Beta: ~A" cortes-beta)
+    (format ficheiro-log "~%  --- Jogada feita pelo Computador ---")
     (format ficheiro-log "~%~%---------------------------------------------------------------------------------------------~%")
   )
 )
@@ -692,6 +707,36 @@
 
 
 
+
+;; escrever-log-ficheiro-humano
+(defun escrever-log-ficheiro-humano (caminho tabuleiro pecas-jogador pecas-maquina jogadas-pequena jogadas-media jogadas-cruz)
+  "Funcao que ira escrever num ficheiro os dados obtidos de um jogada de um humano"
+  (with-open-file (ficheiro-log 
+                   (concatenate 'string caminho "/log.dat")
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create
+                  )
+    (progn
+      (formatar-tabuleiro tabuleiro ficheiro-log)
+      (format ficheiro-log "~%~%  -Suas pecas: ~A  | Pecas do Adversario: ~A" pecas-jogador pecas-maquina)
+      (format ficheiro-log "~%~%  -Escolha a sua jogada:")
+      (cond
+       ((not (null jogadas-pequena)) (format ficheiro-log "~% Jogadas possiveis para a peca pequena: ~% ~A" jogadas-pequena))
+       (t nil)
+       )
+      (cond
+       ((not (null jogadas-media)) (format ficheiro-log "~%~% Jogadas possiveis para a peca media: ~% ~A" jogadas-media))
+       (t nil)
+       )
+      (cond
+       ((not (null jogadas-cruz)) (format ficheiro-log "~%~% Jogadas possiveis para a peca cruz: ~% ~A~%" jogadas-cruz))
+       (t nil)
+       )
+      (format ficheiro-log "~%~%---------------------------------------------------------------------------------------------~%")
+    )
+  )
+)
 
 
 

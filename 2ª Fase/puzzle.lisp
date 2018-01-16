@@ -992,8 +992,8 @@
   (let*
       (
        (pecas-pequenas-jogador1 (first (get-pecas-jogador1-no no)))
-       (pecas-medias-jogador1 (first (get-pecas-jogador1-no no)))
-       (pecas-cruz-jogador1 (first (get-pecas-jogador1-no no)))
+       (pecas-medias-jogador1 (second (get-pecas-jogador1-no no)))
+       (pecas-cruz-jogador1 (third (get-pecas-jogador1-no no)))
 
        (pecas-pequenas-jogador2 (first (get-pecas-jogador2-no no)))
        (pecas-medias-jogador2 (second (get-pecas-jogador2-no no)))
