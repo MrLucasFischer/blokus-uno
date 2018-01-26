@@ -9,6 +9,7 @@
 (defvar *nos-analisados* 0)
 (defvar *cortes-alfa* 0)
 (defvar *cortes-beta* 0)
+(defvar *tempo-gasto* 0)
 (defvar *tabela* (make-hash-table))
 
 ;;;;;;;; Sucessores ;;;;;;;;
@@ -203,9 +204,9 @@
     
     (cond
 
-     ((>= tempo-gasto tempo-limite) (funcall funcao-utilidade no)) ;Acabou o tempo
+     ((>= tempo-gasto tempo-limite) (setf *tempo-gasto* tempo-gasto) (funcall funcao-utilidade no)) ;Acabou o tempo
 
-     ((or (zerop profundidade-limite) (no-objetivo-p no)) (funcall funcao-utilidade no)) ;Caso tenhamos atingido a profundidade maxima ou o no seja um no folha
+     ((or (zerop profundidade-limite) (no-objetivo-p no)) (setf *tempo-gasto* tempo-gasto) (funcall funcao-utilidade no)) ;Caso tenhamos atingido a profundidade maxima ou o no seja um no folha
         
      (T
       (let

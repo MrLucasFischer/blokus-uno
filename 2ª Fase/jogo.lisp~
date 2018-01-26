@@ -101,7 +101,9 @@
 (defun iniciar (caminho)
   "Funcao que ira iniciar a aplicacao, pedindo ao utilizador para que escolha o tabuleiro que pretenda que seja o no inicial, o algoritmo que pretende utilizar e a profundidade maxima que pretende para o algoritmo dfs"
   (let* (
-
+         
+         (tabuleiro-escolhido (ler-tabuleiro caminho))
+         
          (tipo-de-jogo (ler-tipo-de-jogo)) ;Perguntar se quer jogar Computador vs Computador ou Computador vs Humano
 
          (jogador-escolhido (cond
@@ -111,8 +113,6 @@
 
          (tempo-limite (ler-tempo-limite))
 
-         (tabuleiro-escolhido (ler-tabuleiro caminho)) ;Perguntar se vai haver outros tabuleiros ou se e sempre o mesmo
-         ;(tabuleiro-escolhido (tabuleiro-vazio))
 
          (profundidade-escolhida (ler-profundidade))
 
@@ -448,43 +448,45 @@
 
   (progn
     (format T "~% -> Escolha um tabuleiro que pretende utilizar como estado do no inicial")
-    (format T "~% -> 1 - Tabuleiro a)")
-    (format T "~% -> 2 - Tabuleiro b)")
-    (format T "~% -> 3 - Tabuleiro c)")
-    (format T "~% -> 4 - Tabuleiro d)")
-    (format T "~% -> 5 - Tabuleiro e)")
-    (format T "~% -> 6 - Tabuleiro f)")
-    (format T "~% -> 7 - Tabuleiro 16 x 12)")
-    (format T "~% -> 8 - Tabuleiro 10 x 11)")
-    (format T "~% -> 9 - Tabuleiro 20 x 10)~%")
+    (format T "~% -> 1 - Tabuleiro vazio 14x14")
+    (format T "~% -> 2 - Tabuleiro vazio 10x11")
+    (format T "~% -> 3 - Tabuleiro vazio 20x10")
+    (format T "~% -> 4 - Tabuleiro a)")
+    (format T "~% -> 5 - Tabuleiro b)")
+    (format T "~% -> 6 - Tabuleiro c)")
+    (format T "~% -> 7 - Tabuleiro d)")
+    (format T "~% -> 8 - Tabuleiro e)")
+    (format T "~% -> 9 - Tabuleiro f)~%")
 
     (let (
           (resposta (read))
          )
       (with-open-file (ficheiro (concatenate 'string caminho "/problemas.dat") :direction :input)
         (let* (
+               (tabuleiro-catorze (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-dez (ler-tabuleiro-ficheiro ficheiro))
+               (tabuleiro-vinte (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-a (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-b (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-c (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-d (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-e (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-f (ler-tabuleiro-ficheiro ficheiro))
-               (tabuleiro-g (ler-tabuleiro-ficheiro ficheiro)) ;Problema 16x12
-               (tabuleiro-dez-onze (ler-tabuleiro-ficheiro ficheiro)) ;Problema 10x11
-               (tabuleiro-vinte-dez (ler-tabuleiro-ficheiro ficheiro)) ;Problema 20x10
+               ;tabuleiro-g (ler-tabuleiro-ficheiro ficheiro)) ;Problema avaliacao-oral
               )
 
         (cond
          ((not (numberp resposta)) (format T "~% -> Precisa de inserir um numero de 1 a 9~%") (ler-tabuleiro caminho))
-         ((= resposta 1) tabuleiro-a)
-         ((= resposta 2) tabuleiro-b)
-         ((= resposta 3) tabuleiro-c)
-         ((= resposta 4) tabuleiro-d)
-         ((= resposta 5) tabuleiro-e)
-         ((= resposta 6) tabuleiro-f)
-         ((= resposta 7) tabuleiro-g)
-         ((= resposta 8) tabuleiro-dez-onze)
-         ((= resposta 9) tabuleiro-vinte-dez)
+         ((= resposta 1) tabuleiro-catorze)
+         ((= resposta 2) tabuleiro-dez)
+         ((= resposta 3) tabuleiro-vinte)
+         ((= resposta 4) tabuleiro-a)
+         ((= resposta 5) tabuleiro-b)
+         ((= resposta 6) tabuleiro-c)
+         ((= resposta 7) tabuleiro-d)
+         ((= resposta 8) tabuleiro-e)
+         ((= resposta 9) tabuleiro-f)
+         ;((= resposta 10) tabuleiro-g)
          (T (format T "~% -> Precisa de inserir um numero de 1 a 9~%") (ler-tabuleiro caminho))
        )
       )
