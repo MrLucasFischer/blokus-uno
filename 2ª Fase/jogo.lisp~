@@ -290,12 +290,16 @@
            (cortes-beta *cortes-beta*) ;Guardar o numero de cortes beta
 
            (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
+
+           (tempo-gasto *tempo-gasto*) ; Guardar o tempo gasto na jogada
+
+           (reset-tempo-gasto (setf *tempo-gasto* 0)) ;Fazer reset ao tempo gasto numa jogada
           )
 
         (let 
             (
              (apresentar-info (cond
-                               ((not (null (first novo-no))) (escrever-log-ficheiro-computador caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
+                               ((not (null (first novo-no))) (escrever-log-ficheiro-computador caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta tempo-gasto))
                                (T nil)
                                ))
             )
@@ -361,11 +365,15 @@
        (cortes-beta *cortes-beta*) ;Guardar o numero de cortes beta
 
        (reset-cortes-beta (setf *cortes-beta* 0)) ;Fazer reset aos cortes beta
+
+       (tempo-gasto *tempo-gasto*) ; Guardar o tempo gasto na jogada
+
+       (reset-tempo-gasto (setf *tempo-gasto* 0)) ;Fazer reset ao tempo gasto numa jogada
      )
     (let 
         (
          (apresentar-info (cond
-                           ((not (null (first novo-no))) (escrever-resultados caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta))
+                           ((not (null (first novo-no))) (escrever-resultados caminho novo-no (get-valor-jogador-no no) nos-analisados cortes-alfa cortes-beta tempo-gasto))
                            (T nil)
                           ))
        )
@@ -664,7 +672,7 @@
 
 ;; escrever-resultados
 
-(defun escrever-resultados (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+(defun escrever-resultados (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta tempo-gasto)
   "Funcao que ira escrever no ecra os resultados de cada jogada realizada"
   (progn
     (formatar-tabuleiro (get-estado-no no))
@@ -673,8 +681,9 @@
     (format T "~%~%  -Nos analisados: ~A" nos-analisados)
     (format T "~%  -Cortes Alfa: ~A" cortes-alfa)
     (format T "~%  -Cortes Beta: ~A" cortes-beta)
+    (format T "~%  -Tempo gasto na Jogada: ~A segundos" tempo-gasto)
     (format T "~%~%---------------------------------------------------------------------------------------------~%")
-    (escrever-log-ficheiro-computador caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+    (escrever-log-ficheiro-computador caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta tempo-gasto)
   )
 )
 
@@ -687,7 +696,7 @@
 
 ;; escrever-log-ficheiro-computador
 
-(defun escrever-log-ficheiro-computador (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta)
+(defun escrever-log-ficheiro-computador (caminho no jogador-que-jogou nos-analisados cortes-alfa cortes-beta tempo-gasto)
   "Funcao que ira escrever num ficheiro os dados obtidos de uma jogada num jogo entre duas maquinas"
   (with-open-file (ficheiro-log 
                    (concatenate 'string caminho "/log.dat")
@@ -701,6 +710,7 @@
     (format ficheiro-log "~%~%  -Nos analisados: ~A" nos-analisados)
     (format ficheiro-log "~%  -Cortes Alfa: ~A" cortes-alfa)
     (format ficheiro-log "~%  -Cortes Beta: ~A" cortes-beta)
+    (format ficheiro-log "~%  -Tempo gasto na Jogada: ~A segundos" tempo-gasto)
     (format ficheiro-log "~%  --- Jogada feita pelo Computador ---")
     (format ficheiro-log "~%~%---------------------------------------------------------------------------------------------~%")
   )

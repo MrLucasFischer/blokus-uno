@@ -342,7 +342,7 @@
   "Funcao que implementa um jogo entre dois computadores"
   (let* 
       (
-       (resultado-alfabeta (alfabeta-memo no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
+       (resultado-alfabeta (alfabeta no profundidade-maxima (operadores) 'funcao-utilidade tempo-limite))
        (novo-no (cria-no 
                  (get-estado-no *melhor-jogada*)
                  (get-pecas-jogador1-no *melhor-jogada*)
