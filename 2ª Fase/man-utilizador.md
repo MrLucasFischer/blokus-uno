@@ -140,3 +140,31 @@ Aqui tem a informação sobre quais são as jogadas que pode efetuar, aparecendo
 </p>
 
 Após ter analisádo toda a árvore de jogo mentalmente e já se sente confiante para vencer o computador, pode então escolher qual a jogada que pretende efetuar e para isso começa por: **Escolher qual o tipo de peça**, depois **Escolher qual a linha que pretende jogar** e finalmente **Escolher qual a coluna que pretende jogar**.
+
+* <b>Computador vs Computador</b>
+
+Caso tenha medo de perder contra o computador e tenha decidido observar apenas um jogo entre os mesmo então ser-lhe-á apresentado um ecrã semelhante ao seguinte:
+
+<p align="center">
+    <img src="../1ª Fase/images/segunda-fase/jogar-c.png">
+</p>
+
+Nesta ecrã é-lhe apresentado o estado corrente do jogo, i.e, o tabuleiro do jogo bem como as peças que cada jogador ainda tem para jogar. Também lhe é apresentado a informação sobre quem jogou, e por ultimo é apresentado quatro informações referentes à eficiência do algoritmo para esta jogada.<br/>Nestas últimas informações encontram-se informações sobre **quantos nós foram analisádos pelo algoritmo** (quantos mais forem analisádos maior a probabilidade de ficar sem memória ao analisá-los), **número de cortes alfa e beta** que representam em suma quantos nós foram cortados, i.e., não foram considerados pelo algoritmo por não serem relevantes, e finalmente o **tempo gasto na jogada** que indica como deve imaginar, quantos segundos o computador demorou a pensar sobre a jogada que fez.
+
+<br/><br/>
+
+<h1>5- Ficheiro log.dat</h1>
+
+ Para que não tenha que estar sempre a repetir todos estes passos e estar constantemente a executar a aplicação, esta mesma escreve os resultados tal como apresentados anteriormente, num ficheiro situado na diretoria principal do projeto denominado _**log.dat**_.
+
+ <p align="center">
+    <img src="../1ª Fase/images/segunda-fase/ficheiro-log.png">
+</p>
+
+<br/><br/>
+
+<h1>6- Conclusão</h1>
+
+ Agora que já concluiu a leitura deste manual já possui todas as capacidades para executar a aplicação e tirar toda a informação que precisa sobre ela, espero que goste!
+
+ Happy coding from **Andreia Pereira** & **Lucas Fischer**!
