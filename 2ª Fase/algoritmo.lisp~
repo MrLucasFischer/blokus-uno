@@ -173,12 +173,12 @@
 ;; alfabeta-memo
 
 (let ((tab (make-hash-table :test 'equal)))
-  (defun alfabeta-memo (no profundidade-limite operadores funcao-utilidade &optional (tempo-limite 5))
+  (defun alfabeta-memo (no profundidade-limite operadores funcao-utilidade &optional (tempo-limite 5) (alfa most-negative-fixnum) (beta most-positive-fixnum) (tempo-inicial (get-universal-time)))
     "Funcao que verifica se ja existe um resultado alfabeta para o no passado na hash table, caso exista devolve-o, caso nao exista calcula o seu valor, retorna-o e insere-o na hash table"
     (or (gethash (hash-node no) tab)
         (let 
             (
-             (resultado-alfabeta (alfabeta no profundidade-limite operadores funcao-utilidade tempo-limite))
+             (resultado-alfabeta (alfabeta no profundidade-limite operadores funcao-utilidade tempo-limite alfa beta tempo-inicial))
             )
           (setf (gethash (hash-node no) tab) resultado-alfabeta)
           resultado-alfabeta
@@ -211,7 +211,7 @@
      (T
       (let
           (
-           (sucessores-no (sucessores no operadores)) ;Expandir o no
+           (sucessores-no (ordenar-sucessores (sucessores no operadores) (get-tipo-no no))) ;Expandir o no, ordenando os sucessores conforme o tipo do no
           )
         (cond
          ((null sucessores-no) -1) ;Nao tem sucessores, passa a vez
@@ -239,7 +239,7 @@
     (cond
 
      ;Caso o pai seja max
-     ((equal tipo-no-pai 'max )
+     ((equal tipo-no-pai 'max)
 
       (let*
           (
@@ -302,4 +302,18 @@
     (T beta) ;Caso contrario mantem-se a melhor jogada e o alfa
   )
 
+)
+
+
+
+
+
+;; ordenar-sucessores
+
+(defun ordenar-sucessores (sucessores tipo-no)
+  "Funcao que ordena os sucessores de um no (com base na sua funcao de utilidade) de modo a aumentar a eficiencia dos cortes. Se o no for do tipo MAX, ordenar de forma crescente, caso contrario ordenar de forma decreste"
+  (cond
+   ((equal tipo-no 'max) (sort sucessores #'< :key #'funcao-utilidade))
+   (T (sort sucessores #'> :key #'funcao-utilidade))
+  )
 )

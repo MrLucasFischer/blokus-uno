@@ -904,7 +904,10 @@
                  ((= (get-valor-jogador-no no) 1) (get-pecas-jogador1-no no))
                  (T (get-pecas-jogador2-no no))))
         )
-    (- (+ (* 5 15) (* 4 10) 10) (+ (* 5 (third pecas)) (* 4 (second pecas)) (first pecas)))
+    (- 
+     (+ (* 5 15) (* 4 10) 10) ;Total de quadrados iniciais
+     (+ (* 5 (third pecas)) (* 4 (second pecas)) (first pecas)) ;Quadrados que o jogador tem
+    )
   )
 )
 

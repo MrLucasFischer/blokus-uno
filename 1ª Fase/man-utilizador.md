@@ -47,7 +47,6 @@
     <img src="./images/main-menu.png">
 </p>
 
-
  Neste magnífico menu principal pode escolher uma de duas opções:
 1. **Iniciar** - Esta opção dará início à aplicação, levando-lhe para outros menus onde tem a possibilidade de escolher qual o **tabuleiro inicial** que deseja, qual o **algoritmo** de procura que deseja, qual a **heurística** que deseja e qual a **profundidade máxima** que deseja (caso tenha selecionado o algoritmo _Depth First_)
 
