@@ -1,5 +1,6 @@
+;;;;jogo.lisp
 ;;;;Disciplina de IA - 2017/2018
-;;;;Projeto 1 - Blokus Uno
+;;;;Projeto 2 - Blokus Duo
 ;;;;Autor: Andreia Pereira (n 150221021) e Lucas Fischer (n 140221004)
 
 ;;;;Funcoes de interacao com o utilizador e de escrita e leitura de ficheiros

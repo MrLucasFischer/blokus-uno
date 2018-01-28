@@ -150,7 +150,6 @@
 
 (defun comecar-jogo-humano (no tempo-limite profundidade-maxima peca-humano caminho &optional (humano-passou-vez nil) (maquina-passou-vez nil))
   "Funcao que implementa um jogo entre um humano e um computador"
-  
   (cond
 
    ((and humano-passou-vez maquina-passou-vez)
@@ -181,7 +180,7 @@
                          peca-humano
                          caminho
     )
-   ) ;;Esta aqui algum problema qualquer
+   )
 
    (T
     (cond
@@ -229,7 +228,7 @@
                (resposta (obter-resposta-jogada tabuleiro peca-humano)) ;Devolve (operador-desejado linha-desejada coluna-desejada)
 
                (novo-tabuleiro (funcall (first resposta) (second resposta) (third resposta) tabuleiro peca-humano)) ;Tabuleiro com a jogada do humano
-
+               
                (novas-pecas-humano (cond
                                     ((equal (first resposta) 'inserir-peca-pequena) (list (1- (first pecas-jogador)) (second pecas-jogador) (third pecas-jogador)))
 
@@ -541,6 +540,8 @@
 
    ((<= resposta 0) (format T "~% -> Por favor insira um numero maior do que 0~%") (ler-profundidade))
 
+   ((<= resposta 3) 4)
+
    (T resposta)
   )
 )
@@ -649,15 +650,15 @@
     (format T "~%~%  -Suas pecas: ~A  | Pecas do Adversario: ~A" pecas-jogador pecas-maquina)
     (format T "~%~%  -Escolha a sua jogada:")
     (cond
-     ((not (null jogadas-pequena)) (format T "~% Jogadas possiveis para a peca pequena: ~% ~A" jogadas-pequena))
+     ((not (null jogadas-pequena)) (format T "~% Jogadas possiveis para a peca pequena: ~% ~A" (remove-duplicates jogadas-pequena :test #'equal)))
      (t nil)
     )
     (cond
-     ((not (null jogadas-media)) (format T "~%~% Jogadas possiveis para a peca media: ~% ~A" jogadas-media))
+     ((not (null jogadas-media)) (format T "~%~% Jogadas possiveis para a peca media: ~% ~A" (remove-duplicates jogadas-media :test #'equal)))
      (t nil)
     )
     (cond
-     ((not (null jogadas-cruz)) (format T "~%~% Jogadas possiveis para a peca cruz: ~% ~A~%" jogadas-cruz))
+     ((not (null jogadas-cruz)) (format T "~%~% Jogadas possiveis para a peca cruz: ~% ~A~%" (remove-duplicates jogadas-cruz :test #'equal)))
      (t nil)
     )
     (escrever-log-ficheiro-humano caminho tabuleiro pecas-jogador pecas-maquina jogadas-pequena jogadas-media jogadas-cruz)
@@ -953,6 +954,7 @@
     )
   )
 )
+
 
 
 
