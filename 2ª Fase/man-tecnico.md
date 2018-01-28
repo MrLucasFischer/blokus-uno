@@ -64,3 +64,15 @@ blokus-uno/
 ```
 
 <br/><br/>
+
+<h1>Detalhes da Implementação</h1>
+
+ Dado que Common Lisp é uma linguagem de programação de natureza funcional o desenvolvimento da aplicação consistiu em desenvolver código num paradigma funcional, deste modo algumas técnicas como sequênciação, ciclos e atribuição não foram utilizadas para poder-se focar na recursividade e desenvolvimento de funções. Embora tenham sido permitidas algumas utilizações especiais de ciclos, estes não foram utilizados, sendo que apenas foram utilizados atribuições a variáveis globais quando necessárias de maneira a facilitar a compreensão e manutenção do código.
+
+<br/><br/>
+
+<h1>Limitações</h1>
+
+Devido à inexistência de um compilador de LISP incorporado na maioria dos Sistemas Operativos, é necessário recorrer a software de terceiros para conseguir complar código LISP. Neste projeto foi utilizado o software LispWorks para este objétivo, e dado ser a versão gratuita deste software cadece de limitações de memória Stack e Heap o que compromete a execução de alguns algoritmos para alguns problemas. 
+<br/> 
+A componente de memoização do projeto, embora implementada na função **alfabeta-memo** do ficheiro **algoritmo.lisp**, não foi incorporada no produto final por possuir algumas falhas que levassem à imperfeição do jogo. As falhas consistiam em algumas jogadas não serem consideradas o que levaria a resultados diferentes no jogo.
