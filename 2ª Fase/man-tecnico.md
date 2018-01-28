@@ -56,7 +56,7 @@
 <br/>
 
 ```
-blokus-uno/
+blokus-duo/
         ├── jogo.lisp ; Ficheiro onde é iniciada a aplicação
         ├── algoritmo.lisp ; Contem a implementação do algoritmo alfabeta
         ├── puzzle.lisp ; Contem as funções do domínio do problema

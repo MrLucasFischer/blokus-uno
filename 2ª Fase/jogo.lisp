@@ -480,7 +480,7 @@
                (tabuleiro-d (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-e (ler-tabuleiro-ficheiro ficheiro))
                (tabuleiro-f (ler-tabuleiro-ficheiro ficheiro))
-               ;tabuleiro-g (ler-tabuleiro-ficheiro ficheiro)) ;Problema avaliacao-oral
+               ;(tabuleiro-g (ler-tabuleiro-ficheiro ficheiro)) ;Problema avaliacao-oral
               )
 
         (cond
